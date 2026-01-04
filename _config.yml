@@ -18,8 +18,8 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Демид Морозов
-description: Я начал рисовать с августа 2024 года. Пробовал работать в живописи и графике с большинством материалов. 
+title: Run Rabbit Junk
+description: Site of authors of Rabbit and Sphere comics.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
@@ -57,10 +57,6 @@ kramdown:
 nav:
   - title: главная
     url: /
-  - title: блог
-    url: /blog
-  - title: галерея
-    url: /gallery
   - title: telegram
     url: https://t.me/chchch1234
   - title: instagram
