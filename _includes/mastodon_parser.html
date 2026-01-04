@@ -1,0 +1,618 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastodon Parser</title>
+    <!-- Подключение Galleria -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/galleria/1.6.1/themes/classic/galleria.classic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/galleria/1.6.1/themes/folio/galleria.folio.min.css">
+    <link rel="stylesheet" href="/uploads/galleria-1.6.1/miniml/galleria.miniml.css">
+    <link rel="stylesheet" href="/uploads/galleria-1.6.1/twelve/galleria.twelve.css">
+    <link rel="stylesheet" href="/uploads/galleria-1.6.1/azur/galleria.azur.css">
+    <style>
+        /* Основные стили */
+        .galleria-container { 
+            width: 100%; 
+            max-width: 800px;
+            height: 500px; 
+            margin: 20px auto;
+            display: block; 
+        }
+        
+        .post-group { 
+            margin: 30px 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hidden { display: none; }
+        .no-title { color: #999; font-style: italic; }
+        .error { color: red; padding: 10px; background: #ffe6e6; border-radius: 5px; margin: 20px 0; }
+        
+        .post-text {
+            white-space: pre-wrap;
+            font-family: inherit;
+            line-height: 1.4;
+            text-align: justify;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: none;
+            box-sizing: border-box;
+        }
+        
+        /* Загрузка */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007cba;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .no-images {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        /* Заголовки */
+        .post-group h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        /* Статистика */
+        .main-container > div:last-child {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Галерея */
+        .gallery-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Список постов */
+        .posts-index {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .posts-index h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007cba;
+            padding-bottom: 10px;
+        }
+        
+        .posts-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .posts-list li {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        
+        .posts-list li:hover {
+            background-color: #e9ecef;
+        }
+        
+        .posts-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .post-link {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .post-link:hover {
+            color: #007cba;
+        }
+        
+        .post-date {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Кнопка возврата */
+        .back-to-index {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+        
+        .back-to-index:hover {
+            background: #005a87;
+        }
+        
+        .hashtag-indicator {
+            font-size: 0.75em;
+            color: #007cba;
+            margin-left: 8px;
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+
+        /* Медиа-запрос для мобильных устройств */
+        @media (max-width: 768px) {
+            .galleria-container {
+                height: 400px;
+            }
+        }
+
+        .galleria-theme-classic {
+            background: transparent;
+        }
+
+        .galleria-theme-classic .galleria-thumbnails-container {
+         bottom: auto;
+         }
+
+        .galleria-theme-classic .galleria-image-nav-left {
+            opacity: 0;
+        }
+
+         .galleria-theme-classic .galleria-image-nav-right {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="posts-index-container"></div>
+        <div id="mastodon-posts-container"></div>
+    </div>
+
+    <!-- Подключение библиотек -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/galleria/1.6.1/galleria.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/galleria/1.6.1/themes/classic/galleria.classic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/galleria/1.6.1/themes/folio/galleria.folio.min.js"></script>
+    <script src="/uploads/galleria-1.6.1/miniml/galleria.miniml.js"></script>
+    <script src="/uploads/galleria-1.6.1/azur/galleria.azur.js"></script>
+    <script src="/uploads/galleria-1.6.1/twelve/galleria.twelve.js"></script>
+
+    <script>
+        // === КОНФИГУРАЦИЯ MASTODON ===
+        const MASTODON_CONFIG = {
+            instance: 'https://mastodon.social',
+            account_id: '115350825601639031'
+        };
+
+        // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function scrollToElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function parseNumberedCaptions(text) {
+            const captions = [];
+            const regex = /(?:^|\n)(\d+)\.\s+([^\n]+)/g;
+            
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                const number = parseInt(match[1]);
+                let captionText = match[2].trim();
+                captionText = captionText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '').trim();
+                
+                if (captionText) {
+                    captions.push({
+                        number: number,
+                        text: captionText
+                    });
+                }
+            }
+            
+            return captions.sort((a, b) => a.number - b.number);
+        }
+
+        function cleanHtmlPreservingFormatting(html) {
+            if (!html) return '';
+            
+            let text = html
+                .replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/p>/gi, '\n\n')
+                .replace(/<\/div>/gi, '\n')
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"');
+            
+            return text;
+        }
+
+        function cleanExcessiveNewlines(text) {
+            if (!text) return '';
+            return text.replace(/\n{3,}/g, '\n\n');
+        }
+
+        // Функция для определения типа устройства
+        function isMobileDevice() {
+            return window.innerWidth <= 768;
+        }
+
+        // === ОСНОВНЫЕ ФУНКЦИИ ===
+        async function fetchAllMastodonPosts(config) {
+            try {
+                console.log('Загружаем посты из Mastodon...');
+                const url = `${config.instance}/api/v1/accounts/${config.account_id}/statuses?limit=40`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${config.access_token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const posts = await response.json();
+                console.log(`Получено постов: ${posts.length}`);
+                return posts;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                throw new Error(`Не удалось загрузить данные: ${error.message}`);
+            }
+        }
+
+        function processMastodonPosts(posts) {
+            return posts.map(post => {
+                const hashtags = post.tags ? post.tags.map(tag => tag.name.toLowerCase()) : [];
+                const images = post.media_attachments 
+                    ? post.media_attachments
+                        .filter(media => media.type === 'image')
+                        .map(media => media.url)
+                    : [];
+
+                let cleanText = cleanHtmlPreservingFormatting(post.content);
+                let titleFromStars = '';
+                const starMatch = cleanText.match(/\*([^*]+)\*/);
+                if (starMatch) {
+                    titleFromStars = starMatch[1].trim();
+                    cleanText = cleanText.replace(/\*[^*]+\*/, '');
+                }
+
+                const numberedCaptions = parseNumberedCaptions(cleanText);
+                let finalText = cleanText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '');
+                finalText = cleanExcessiveNewlines(finalText).trim();
+
+                return {
+                    id: post.id,
+                    url: post.url,
+                    datetime: post.created_at,
+                    text: finalText,
+                    hashtags: hashtags,
+                    images: images,
+                    timestamp: new Date(post.created_at).getTime(),
+                    titleFromStars: titleFromStars,
+                    numberedCaptions: numberedCaptions
+                };
+            });
+        }
+
+        function groupPostsByHashtags(posts) {
+            const groups = {};
+            let renderOrderPost = null;
+            
+            const filteredPosts = posts.filter(post => {
+                if (post.hashtags.length === 0) return false;
+                if (post.hashtags.includes('порядок_рендеринга')) {
+                    if (!renderOrderPost || post.timestamp > renderOrderPost.timestamp) {
+                        renderOrderPost = post;
+                    }
+                    return false;
+                }
+                return true;
+            });
+
+            // Группируем посты
+            filteredPosts.forEach(post => {
+                const groupHashtags = post.hashtags.filter(tag => tag !== 'порядок_рендеринга');
+                if (groupHashtags.length === 0) return;
+
+                const groupKey = groupHashtags.sort().join('|');
+                if (!groups[groupKey]) {
+                    groups[groupKey] = { 
+                        hashtags: groupHashtags, 
+                        posts: [], 
+                        combinedText: '', 
+                        allImages: [],
+                        allImageCaptions: [],
+                        title: '',
+                        allNumberedCaptions: [],
+                        latestTimestamp: 0,
+                        latestDate: null
+                    };
+                }
+                groups[groupKey].posts.push(post);
+                
+                if (post.timestamp > groups[groupKey].latestTimestamp) {
+                    groups[groupKey].latestTimestamp = post.timestamp;
+                    groups[groupKey].latestDate = post.datetime;
+                }
+            });
+
+            // Обрабатываем группы
+            Object.values(groups).forEach(group => {
+                group.posts.sort((a, b) => a.timestamp - b.timestamp);
+                
+                const nonEmptyTexts = group.posts
+                    .map(post => post.text ? post.text.trim() : '')
+                    .filter(text => text.length > 0);
+                
+                if (nonEmptyTexts.length > 0) {
+                    group.combinedText = nonEmptyTexts.join('\n\n');
+                    group.combinedText = cleanExcessiveNewlines(group.combinedText);
+                }
+                
+                // Собираем подписи
+                const allGroupCaptions = [];
+                group.posts.forEach(post => {
+                    const postCaptions = parseNumberedCaptions(post.text);
+                    allGroupCaptions.push(...postCaptions);
+                });
+                
+                const uniqueCaptions = [];
+                const usedNumbers = new Set();
+                allGroupCaptions.sort((a, b) => a.number - b.number).forEach(caption => {
+                    if (!usedNumbers.has(caption.number)) {
+                        uniqueCaptions.push(caption);
+                        usedNumbers.add(caption.number);
+                    }
+                });
+                group.allNumberedCaptions = uniqueCaptions;
+                
+                // Собираем изображения
+                group.allImages = [];
+                group.allImageCaptions = [];
+                group.posts.forEach(post => {
+                    post.images.forEach((imageUrl, index) => {
+                        group.allImages.push(imageUrl);
+                        const globalImageIndex = group.allImages.length - 1;
+                        let caption = '';
+                        if (group.allNumberedCaptions && group.allNumberedCaptions.length > globalImageIndex) {
+                            const captionData = group.allNumberedCaptions[globalImageIndex];
+                            caption = `${captionData.number}. ${captionData.text}`;
+                        } else {
+                            caption = `${globalImageIndex + 1}. Изображение ${globalImageIndex + 1}`;
+                        }
+                        group.allImageCaptions.push(caption);
+                    });
+                });
+                
+                // Заголовок группы
+                if (group.posts.length > 0) {
+                    const firstPost = group.posts[0];
+                    if (firstPost.titleFromStars) {
+                        group.title = firstPost.titleFromStars;
+                    } else {
+                        const firstLine = firstPost.text.split('\n')[0];
+                        const cleanTitle = firstLine.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '').trim();
+                        group.title = cleanTitle || 'Название отсутствует';
+                    }
+                } else {
+                    group.title = 'Название отсутствует';
+                }
+            });
+
+            return { groups: groups, renderOrderPost: renderOrderPost };
+        }
+
+        function initGalleriaForContainer(containerId, images, captions, groupTitle) {
+            const container = document.getElementById(containerId);
+            if (images.length === 0) return;
+            
+            const galleriaData = images.map((imgUrl, index) => {
+                const imageCaption = captions && captions[index] ? captions[index] : `${index + 1}. Изображение ${index + 1}`;
+                return {
+                    image: imgUrl,
+                    title: imageCaption
+                };
+            });
+            
+            setTimeout(() => {
+                try {
+                    // Определяем тему в зависимости от типа устройства
+                    const theme = isMobileDevice() ? 'classic' : 'azur';
+                    
+                    Galleria.run(`#${containerId}`, { 
+                        dataSource: galleriaData, 
+                        responsive: true,
+                        theme: theme,
+                        height: 500,
+                        imageCrop: false,
+                        autoplay:true
+                    });
+                } catch (error) {
+                    console.error(`Ошибка Galleria:`, error);
+                }
+            }, 100);
+        }
+
+        // === ГЛАВНАЯ ФУНКЦИЯ ===
+        async function initMastodonParser(containerId, config = {}) {
+            const finalConfig = { ...MASTODON_CONFIG, ...config };
+            const container = document.getElementById(containerId);
+            const indexContainer = document.getElementById('posts-index-container');
+            
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Загрузка постов из Mastodon...</div>
+                </div>
+            `;
+            
+            try {
+                const rawPosts = await fetchAllMastodonPosts(finalConfig);
+                
+                if (rawPosts.length === 0) { 
+                    container.innerHTML = '<div class="error">Посты не найдены</div>'; 
+                    return; 
+                }
+                
+                const processedPosts = processMastodonPosts(rawPosts);
+                const { groups, renderOrderPost } = groupPostsByHashtags(processedPosts);
+                
+                container.innerHTML = '';
+                
+                if (Object.keys(groups).length === 0) {
+                    container.innerHTML = '<div class="error">Нет подходящих постов</div>';
+                    return;
+                }
+
+                // Создаем индекс
+                const groupsArray = Object.values(groups);
+                groupsArray.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+                
+                if (indexContainer) {
+                    const indexElement = document.createElement('div');
+                    indexElement.className = 'posts-index';
+                    indexElement.innerHTML = `
+                        <h2>Все посты</h2>
+                        <ul class="posts-list">
+                            ${groupsArray.map((group, index) => `
+                                <li>
+                                    <a class="post-link" onclick="scrollToElement('group-${index}')">
+                                        ${group.title}
+                                        <span class="hashtag-indicator">группа</span>
+                                    </a>
+                                    <div class="post-date">${formatDate(group.latestDate)}</div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    indexContainer.appendChild(indexElement);
+                }
+                
+                // Отображаем посты (от новых к старым)
+                groupsArray.forEach((group, index) => {
+                    if (!group.combinedText && group.allImages.length === 0) return;
+                    
+                    const groupElement = document.createElement('div');
+                    groupElement.className = 'post-group';
+                    groupElement.id = `group-${index}`;
+                    
+                    const titleClass = group.title === 'Название отсутствует' ? 'no-title' : '';
+                    const galleryId = `gallery-${index}`;
+                    
+                    groupElement.innerHTML = `
+                        <button class="back-to-index" onclick="scrollToElement('posts-index-container')">↑</button>
+                        <h3 class="${titleClass}">${group.title}</h3>
+                        ${group.combinedText ? `<div class="post-text">${group.combinedText}</div>` : ''}
+                        ${group.allImages.length > 0 ? 
+                            `<div class="gallery-wrapper"><div id="${galleryId}" class="galleria-container"></div></div>` : 
+                            '<div class="no-images">Нет изображений</div>'
+                        }
+                    `;
+                    
+                    container.appendChild(groupElement);
+                    
+                    if (group.allImages.length > 0) {
+                        initGalleriaForContainer(galleryId, group.allImages, group.allImageCaptions, group.title);
+                    }
+                });
+                
+                const stats = document.createElement('div');
+                stats.innerHTML = `<p><small>Загружено групп: ${groupsArray.length}</small></p>`;
+                container.appendChild(stats);
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>Ошибка загрузки:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Запуск
+        document.addEventListener('DOMContentLoaded', () => initMastodonParser('mastodon-posts-container'));
+    </script>
+</body>
+</html>
