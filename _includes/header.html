@@ -131,8 +131,18 @@
 
     <div class="trigger">
       {% for item in site.nav %}
+        {% assign title = item.title | split: ' ' %}
+        {% assign title = title[1] %}
         <a class="page-link" href="{{ item.url }}" title="{{ item.title }}">
-          <i class="bi bi-{% if item.title == 'главная' %}house-door{% elsif item.title == 'блог' %}journal-text{% elsif item.title == 'галерея' %}images{% elsif item.title == 'instagram' %}instagram{% elsif item.title == 'telegram' %}telegram{% endif %}"></i></a>
+          <i class="bi bi-{% if item.title == 'home' %}house-door{% 
+
+          elsif item.title == 'instagram lilpitkun' %}instagram lilpitkun{% 
+          elsif item.title == 'telegram lilpitkun' %}telegram lilpitkun{% 
+
+          elsif item.title == 'instagram cattopainter' %}instagram cattopainter{% 
+          elsif item.title == 'telegram cattopainter' %}telegram cattopainter{% 
+
+          endif %}"></i>{{ title }}</a>
       {% endfor %}
     </div>
   </nav>

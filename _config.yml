@@ -55,16 +55,15 @@ kramdown:
 
 
 nav:
-  - title: главная
+  - title: home
     url: /
-  - title: telegram
-    url: https://t.me/chchch1234
-  - title: instagram
+
+  - title: telegram lilpitkun
+    url: https://t.me/animalpicandother
+  - title: instagram lilpitkun
+    url: https://www.instagram.com/lilpitkun
+
+  - title: telegram cattopainter
+    url: https://t.me/catto_painter
+  - title: instagram cattopainter
     url: https://www.instagram.com/catto_painter
-    
-#  - title: трассировщик изображения
-#    url: /svgtracer
-#  - title: цветовые гармонии
-#    url: /color_harmonizer
-#  - title: тг парсер
-#    url: /tg
