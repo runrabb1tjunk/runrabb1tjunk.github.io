@@ -314,7 +314,6 @@
         // === ОСНОВНЫЕ ФУНКЦИИ ===
         async function fetchAllMastodonPosts(config) {
             try {
-                console.log('Загружаем посты из Mastodon...');
                 const url = `${config.instance}/api/v1/accounts/${config.account_id}/statuses?limit=40`;
                 
                 const response = await fetch(url, {
@@ -328,11 +327,9 @@
                 }
                 
                 const posts = await response.json();
-                console.log(`Получено постов: ${posts.length}`);
                 return posts;
                 
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
                 throw new Error(`Не удалось загрузить данные: ${error.message}`);
             }
         }
@@ -522,7 +519,6 @@
             container.innerHTML = `
                 <div class="loading-container">
                     <div class="loading-spinner"></div>
-                    <div class="loading-text">Загрузка постов из Mastodon...</div>
                 </div>
             `;
             
@@ -530,7 +526,7 @@
                 const rawPosts = await fetchAllMastodonPosts(finalConfig);
                 
                 if (rawPosts.length === 0) { 
-                    container.innerHTML = '<div class="error">Посты не найдены</div>'; 
+                    container.innerHTML = '<div class="error">DIDNT FOUND ANY POSTS</div>'; 
                     return; 
                 }
                 
@@ -540,7 +536,7 @@
                 container.innerHTML = '';
                 
                 if (Object.keys(groups).length === 0) {
-                    container.innerHTML = '<div class="error">Нет подходящих постов</div>';
+                    container.innerHTML = '<div class="error">NO ANY POSTS ARE AWAILABLE TFOR PARSING</div>';
                     return;
                 }
 
@@ -552,13 +548,12 @@
                     const indexElement = document.createElement('div');
                     indexElement.className = 'posts-index';
                     indexElement.innerHTML = `
-                        <h2>Все посты</h2>
+                        <h2>posts</h2>
                         <ul class="posts-list">
                             ${groupsArray.map((group, index) => `
                                 <li>
                                     <a class="post-link" onclick="scrollToElement('group-${index}')">
                                         ${group.title}
-                                        <span class="hashtag-indicator">группа</span>
                                     </a>
                                     <div class="post-date">${formatDate(group.latestDate)}</div>
                                 </li>
@@ -576,7 +571,7 @@
                     groupElement.className = 'post-group';
                     groupElement.id = `group-${index}`;
                     
-                    const titleClass = group.title === 'Название отсутствует' ? 'no-title' : '';
+                    const titleClass = group.title === 'UNNAMED' ? 'no-title' : '';
                     const galleryId = `gallery-${index}`;
                     
                     groupElement.innerHTML = `
@@ -585,7 +580,7 @@
                         ${group.combinedText ? `<div class="post-text">${group.combinedText}</div>` : ''}
                         ${group.allImages.length > 0 ? 
                             `<div class="gallery-wrapper"><div id="${galleryId}" class="galleria-container"></div></div>` : 
-                            '<div class="no-images">Нет изображений</div>'
+                            '<div class="no-images">NO IMAGES</div>'
                         }
                     `;
                     
@@ -596,15 +591,11 @@
                     }
                 });
                 
-                const stats = document.createElement('div');
-                stats.innerHTML = `<p><small>Загружено групп: ${groupsArray.length}</small></p>`;
-                container.appendChild(stats);
                 
             } catch (error) {
                 console.error('Ошибка:', error);
                 container.innerHTML = `
                     <div class="error">
-                        <strong>Ошибка загрузки:</strong><br>
                         ${error.message}
                     </div>
                 `;
