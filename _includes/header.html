@@ -1,3 +1,11 @@
+
+<link rel="icon" type="image/png" href="./assets/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+<link rel="shortcut icon" href="./assets/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="runrabb1tjunk" />
+<link rel="manifest" href="./assets/site.webmanifest" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
@@ -27,6 +35,14 @@
     box-shadow: none;
     border-top: none;
     border-bottom: none;
+  }
+
+  .rarible-icon {
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  vertical-align: -0.125em; /* как у Bootstrap Icons */
+  color: inherit; /* если fill="currentColor" */
   }
 
   /* Стили для мобильных */
@@ -129,21 +145,21 @@
     
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
 
-    <div class="trigger">
-      {% for item in site.nav %}
-        {% assign title = item.title | split: ' ' %}
-        {% assign title = title[1] %}
-        <a class="page-link" href="{{ item.url }}" title="{{ item.title }}">
-          <i class="bi bi-{% if item.title == 'home' %}house-door{% 
+  <div class="trigger">
+    {% for item in site.nav %}
+      {% assign parts = item.title | split: ' ' %}
+      {% assign service = parts[0] %}
+      {% assign user = parts[1] %}
 
-          elsif item.title == 'instagram lilpitkun' %}instagram lilpitkun{% 
-          elsif item.title == 'telegram lilpitkun' %}telegram lilpitkun{% 
-
-          elsif item.title == 'instagram cattopainter' %}instagram cattopainter{% 
-          elsif item.title == 'telegram cattopainter' %}telegram cattopainter{% 
-
-          endif %}"></i>{{ title }}</a>
-      {% endfor %}
-    </div>
+      <a class="page-link" href="{{ item.url }}" title="{{ item.title }}">
+        {% if service == 'rarible' %}
+          <i class="rarible-icon">{% include Rarible.svg %}</i>
+        {% else %}
+          <i class="bi bi-{% case service %}{% when 'home' %}house-door{% else %}{{ service }}{% endcase %}"></i>
+        {% endif %}
+        {{ user }}
+      </a>
+    {% endfor %}
+  </div>
   </nav>
 </header>
