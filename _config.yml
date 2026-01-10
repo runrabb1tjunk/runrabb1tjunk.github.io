@@ -19,9 +19,12 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Run Rabbit Junk
-description: Site of authors of Rabbit and Sphere comics.
+description: Site of authors of Rabbit and Sphere comics
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: https://runrabb1tjunk.github.io
+author:
+  name: Demid Morozov
+logo: /assets/web-app-manifest-512x512.png  # квадратное изображение (рекомендуется 600×600 или 1200×630)
 
 # Build settings
 theme: minima
@@ -70,3 +73,7 @@ nav:
 
   - title: rarible runrabb1tjunk
     url: https://rarible.com/user/0xaf6419b7594a4960eded23d8adc965c9f03607e3
+
+
+plugins:
+  - jekyll-seo-tag
