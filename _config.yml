@@ -24,8 +24,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: https://runrabb1tjunk.github.io
 author:
   name: Demid Morozov
-logo: /assets/web-app-manifest-512x512.png  # квадратное изображение (рекомендуется 600×600 или 1200×630)
-image: https://runrabb1tjunk.github.io/assets/preview.jpg
+image: /assets/preview.jpg
 
 # Build settings
 theme: minima
