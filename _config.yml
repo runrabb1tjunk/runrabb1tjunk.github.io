@@ -24,7 +24,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: https://runrabb1tjunk.github.io
 author:
   name: Demid Morozov
-image: /assets/preview.jpg
+image: https://runrabb1tjunk.github.io/assets/preview.jpg
 
 # Build settings
 theme: minima
@@ -77,3 +77,4 @@ nav:
 
 plugins:
   - jekyll-seo-tag
+  - jekyll-sitemap
