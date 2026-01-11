@@ -6,5 +6,4 @@ layout: page
 
 ---
 
-
 {% include mastodon_parser.html %}
