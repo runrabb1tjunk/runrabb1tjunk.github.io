@@ -1,2 +1,3 @@
 ---
 BUNDLE_PATH: "vendor/bundle"
+BUNDLE_SSL_VERIFY_MODE: "0"

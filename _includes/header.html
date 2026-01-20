@@ -1,5 +1,3 @@
-<head><meta name="google-site-verification" content="kOxc4EDj-W-jUXQmWS5cuO0-TJDZK2p79Sdtgw2wuMY" /></head>
-
 {% seo %}
 
 <link rel="icon" type="image/png" href="./assets/favicon-96x96.png" sizes="96x96" />
@@ -42,16 +40,24 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    background: white;
+
+    background: #0d1b2a;
+
+
     box-shadow: none;
     border-top: none;
     border-bottom: none;
   }
 
-  .site-footer {
-    background-color: white;
+  .site-header .page-link {
+    color: #ffffff;
   }
 
+  .site-footer {
+    background-color: #0d1b2a;
+  }
+  .footer-heading { color: #faf; }
+  .footer-col-wrapper { color: #ffffff; }
 
 
   .rarible-icon {
@@ -88,22 +94,25 @@
       transition: all 0.3s ease;
       -webkit-tap-highlight-color: transparent;
     }
+
+    .site-nav label[for="nav-trigger"] { display: grid; }
+
+    .menu-toggle .bi {
+      font-size: xx-large;
+      color: #fff;
+      -webkit-tap-highlight-color: transparent;
+      display: inline-flex;
+    }
     
     .menu-toggle:hover {
       background: transparent;
       transform: scale(1.05);
     }
     
-    .menu-toggle .bi {
-      font-size: 2em;
-      color: #333;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
     .site-nav {
       visibility: visible;
       padding: 0px;
-      background-color: transparent;
+      background-color: #0d1b2a;;
       border: none;
     }
     
@@ -119,9 +128,9 @@
       top: 80px;
       left: 0;
       width: 100%;
-      background: transparent;
+      background: #0d1b2a;
       box-shadow: none;
-      padding: 20px 0;
+      padding: 0px 0;
       -webkit-tap-highlight-color: transparent;
     }
     

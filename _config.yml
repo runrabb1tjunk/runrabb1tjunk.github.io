@@ -21,10 +21,9 @@
 title: Run Rabbit Junk
 description: Site of authors of Rabbit and Sphere comics
 baseurl: "" # the subpath of your site, e.g. /blog
-url: https://runrabb1tjunk.github.io
-author:
-  name: Demid Morozov
-image: https://runrabb1tjunk.github.io/assets/preview.jpg
+url: /
+#author: Demid Morozov
+#image: https://runrabb1tjunk.github.io/assets/preview.jpg
 
 # Build settings
 theme: minima
@@ -75,6 +74,6 @@ nav:
     url: https://rarible.com/user/0xaf6419b7594a4960eded23d8adc965c9f03607e3
 
 
-plugins:
-  - jekyll-seo-tag
-  - jekyll-sitemap
+#plugins:
+#  - jekyll-seo-tag
+#  - jekyll-sitemap
