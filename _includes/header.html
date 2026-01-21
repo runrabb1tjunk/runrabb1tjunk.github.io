@@ -13,6 +13,15 @@
 
 <style>
 
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
   body {
     font: 400 1.4em "Amatic SC";
     color: #000;
@@ -27,13 +36,17 @@
     min-height: 100vh;
     flex-direction: column;
 
-    background-image: url('/assets/carrot.gif'); /* путь к вашему GIF */
-    background-repeat: repeat;               /* замощение */
-    background-size: auto;                   /* не масштабировать */
-    background-position: left top;           /* начальная позиция */
-    background-attachment: fixed;            /* (опционально) фон не скроллится */
+    background-image: url('/assets/carrot.gif');
+    background-repeat: repeat;
+    background-size: auto;
+    background-position: left top;
+    background-attachment: fixed;
     margin: 0;
+    padding: 0;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
 
   .bi {padding: 0.1em;}
@@ -45,10 +58,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-
     background: #0d1b2a;
-
-
     box-shadow: none;
     border-top: none;
     border-bottom: none;
@@ -66,40 +76,41 @@
 
 
   .rarible-icon {
-  display: inline-block;
-  width: 1.4em;
-  height: 1.4em;
-  vertical-align: -0.125em; /* как у Bootstrap Icons */
-  color: inherit; /* если fill="currentColor" */
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    vertical-align: -0.125em;
+    color: inherit;
   }
 
   .boosty-icon {
-  display: inline-block;
-  width: 1.4em;
-  height: 1.4em;
-  vertical-align: -0.125em; /* как у Bootstrap Icons */
-  color: inherit; /* если fill="currentColor" */
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    vertical-align: -0.125em;
+    color: inherit;
   }
 
-  /* Стили для мобильных */
-  @media (max-width: 767px) {
+  /* Стили для мобильных (вертикальная и горизонтальная ориентация) */
+  @media (max-width: 767px), (max-height: 500px) {
     .site-header {
-      visibility: hidden;
+      visibility: visible;
+      position: fixed;
+      background: transparent;
     }
     
-    /* Фиксированная кнопка меню */
     .menu-toggle {
       visibility: visible;
-      position: relative;
-      top: none;
-      right: none;
+      position: fixed;
+      top: 15px;
+      right: 15px;
       z-index: 1010;
-      background: transparent;
+      background: #0d1b2a;
       border: none;
-      border-radius: 0%;
-      width: 0px;
-      height: 0px;
-      box-shadow: none;
+      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -108,7 +119,9 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .site-nav label[for="nav-trigger"] { display: grid; }
+    .site-nav label[for="nav-trigger"] { 
+      display: flex;
+    }
 
     .menu-toggle .bi {
       font-size: xx-large;
@@ -118,14 +131,14 @@
     }
     
     .menu-toggle:hover {
-      background: transparent;
+      background: #1a2a3a;
       transform: scale(1.05);
     }
     
     .site-nav {
       visibility: visible;
       padding: 0px;
-      background-color: #0d1b2a;;
+      background-color: transparent;
       border: none;
     }
     
@@ -137,23 +150,141 @@
     .nav-trigger:checked ~ .trigger {
       display: flex;
       flex-direction: column;
-      position: relative;
-      top: 80px;
+      position: fixed;
+      top: 0;
       left: 0;
-      width: 100%;
-      background: #0d1b2a;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(13, 27, 42, 0.8);
       box-shadow: none;
-      padding: 0px 0;
+      padding: 80px 20px 40px;
+      overflow-y: auto;
+      overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
+      align-items: center;
+      justify-content: center;
     }
     
     .nav-trigger:not(:checked) ~ .trigger {
       display: none;
     }
+
+    .nav-trigger:checked ~ .trigger .page-link {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: transparent;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.3em;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link i {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      flex-shrink: 0;
+      font-size: 1.2em;
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
+    .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
+      width: 40px;
+      height: 40px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Контейнеры для группировки */
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 400px;
+      gap: 10px;
+    }
+
+    .menu-single {
+      display: flex;
+      justify-content: center;
+    }
+
+    .menu-single .page-link {
+      width: 100%;
+    }
+
+    .menu-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .menu-row .page-link {
+      width: 100%;
+    }
+
+    /* Горизонтальная ориентация - двухколоночная раскладка */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .nav-trigger:checked ~ .trigger {
+        padding: 60px 20px 20px;
+      }
+
+      .nav-trigger:checked ~ .trigger .page-link {
+        font-size: 1.1em;
+        padding: 10px;
+        margin-bottom: 0;
+      }
+
+      .nav-trigger:checked ~ .trigger .page-link i,
+      .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
+      .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+      }
+
+      .menu-grid {
+        max-width: 600px;
+        gap: 8px;
+      }
+
+      .menu-single {
+        justify-content: center;
+      }
+
+      .menu-single .page-link {
+        max-width: 290px;
+      }
+
+      .menu-row {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      .menu-row .page-link {
+        flex: 1;
+      }
+    }
   }
 
   /* Стили для десктопов */
-  @media (min-width: 768px) {
+  @media (min-width: 768px) and (min-height: 501px) {
     .menu-toggle {
       display: none;
       -webkit-tap-highlight-color: transparent;
@@ -164,6 +295,59 @@
       justify-content: center; 
       float: none;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-trigger {
+      display: none;
+    }
+
+    .trigger {
+      display: block !important;
+      position: static !important;
+      width: auto !important;
+      height: auto !important;
+      background: transparent !important;
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+
+    .menu-grid {
+      display: contents !important;
+    }
+
+    .menu-single,
+    .menu-row {
+      display: contents !important;
+    }
+
+    .page-link {
+      display: inline-block !important;
+      width: auto !important;
+      max-width: none !important;
+      padding: 0 0.5em !important;
+      margin: 0 !important;
+      background: transparent !important;
+      border-radius: 0 !important;
+      font-size: inherit !important;
+      gap: 0 !important;
+    }
+
+    .page-link i {
+      width: auto !important;
+      height: auto !important;
+      background: transparent !important;
+      border-radius: 0 !important;
+      padding: 0.1em !important;
+      font-size: inherit !important;
+    }
+
+    .page-link .rarible-icon,
+    .page-link .boosty-icon {
+      width: 1.4em !important;
+      height: 1.4em !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border-radius: 0 !important;
     }
   }
 
@@ -177,7 +361,6 @@
 
 <header class="site-header" role="banner">
   <nav class="site-nav">
-    <!-- Кнопка меню для мобильных -->
     <label for="nav-trigger" class="menu-toggle">
       <i class="bi bi-list"></i>
     </label>
@@ -185,24 +368,66 @@
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
 
   <div class="trigger">
+    {% assign home_link = "" %}
+    {% assign rarible_link = "" %}
+    {% assign telegram_links = "" %}
+    {% assign instagram_links = "" %}
+    {% assign boosty_links = "" %}
+    
     {% for item in site.nav %}
       {% assign parts = item.title | split: ' ' %}
       {% assign service = parts[0] %}
       {% assign user = parts[1] %}
-
-      <a class="page-link" href="{{ item.url }}" title="{{ item.title }}">
-        {% if service == 'rarible' or service == 'boosty' %}
-          {% if service == 'rarible' %}
-            <i class="rarible-icon">{% include Rarible.svg %}</i>
-          {% else if service == 'boosty' %}
-            <i class="boosty-icon">{% include boosty.svg %}</i>
+      
+      {% capture link_html %}
+        <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ service }}">
+          {% if service == 'rarible' or service == 'boosty' %}
+            {% if service == 'rarible' %}
+              <i class="rarible-icon">{% include Rarible.svg %}</i>
+            {% else if service == 'boosty' %}
+              <i class="boosty-icon">{% include boosty.svg %}</i>
+            {% endif %}
+          {% else %}
+            <i class="bi bi-{% case service %}{% when 'home' %}house-door{% else %}{{ service }}{% endcase %}"></i>
           {% endif %}
-        {% else %}
-          <i class="bi bi-{% case service %}{% when 'home' %}house-door{% else %}{{ service }}{% endcase %}"></i>
-        {% endif %}
-        {{ user }}
-      </a>
+          {% if user %}{{ user }}{% else %}{{ service }}{% endif %}
+        </a>
+      {% endcapture %}
+      
+      {% if service == 'home' %}
+        {% assign home_link = link_html %}
+      {% elsif service == 'rarible' %}
+        {% assign rarible_link = link_html %}
+      {% elsif service == 'telegram' %}
+        {% assign telegram_links = telegram_links | append: link_html %}
+      {% elsif service == 'instagram' %}
+        {% assign instagram_links = instagram_links | append: link_html %}
+      {% elsif service == 'boosty' %}
+        {% assign boosty_links = boosty_links | append: link_html %}
+      {% endif %}
     {% endfor %}
+    
+    <div class="menu-grid">
+      {% if home_link != "" %}
+        <div class="menu-single">{{ home_link }}</div>
+      {% endif %}
+      
+      {% if telegram_links != "" %}
+        <div class="menu-row">{{ telegram_links }}</div>
+      {% endif %}
+      
+      {% if instagram_links != "" %}
+        <div class="menu-row">{{ instagram_links }}</div>
+      {% endif %}
+      
+      {% if boosty_links != "" %}
+        <div class="menu-row">{{ boosty_links }}</div>
+      {% endif %}
+      
+      {% if rarible_link != "" %}
+        <div class="menu-single">{{ rarible_link }}</div>
+      {% endif %}
+    </div>
   </div>
   </nav>
 </header>
