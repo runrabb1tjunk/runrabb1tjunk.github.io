@@ -36,6 +36,11 @@
     min-height: 100vh;
   }
 
+  .bi {padding: 0.1em;}
+
+  a:hover {text-decoration: none;}
+  a:visited {color: none;}
+
   .site-header {
     top: 0;
     width: 100%;
@@ -61,6 +66,14 @@
 
 
   .rarible-icon {
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  vertical-align: -0.125em; /* как у Bootstrap Icons */
+  color: inherit; /* если fill="currentColor" */
+  }
+
+  .boosty-icon {
   display: inline-block;
   width: 1.4em;
   height: 1.4em;
@@ -178,8 +191,12 @@
       {% assign user = parts[1] %}
 
       <a class="page-link" href="{{ item.url }}" title="{{ item.title }}">
-        {% if service == 'rarible' %}
-          <i class="rarible-icon">{% include Rarible.svg %}</i>
+        {% if service == 'rarible' or service == 'boosty' %}
+          {% if service == 'rarible' %}
+            <i class="rarible-icon">{% include Rarible.svg %}</i>
+          {% else if service == 'boosty' %}
+            <i class="boosty-icon">{% include boosty.svg %}</i>
+          {% endif %}
         {% else %}
           <i class="bi bi-{% case service %}{% when 'home' %}house-door{% else %}{{ service }}{% endcase %}"></i>
         {% endif %}
