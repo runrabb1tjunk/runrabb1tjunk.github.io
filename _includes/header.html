@@ -9,7 +9,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -25,7 +25,7 @@
   body {
     font: 400 1.4em "Amatic SC";
     color: #000;
-    background-color: transparent;
+    background-color: #0a0e27;
     -webkit-text-size-adjust: 100%;
     -webkit-font-feature-settings: "kern" 0;
     -moz-font-feature-settings: "kern" 0;
@@ -36,10 +36,13 @@
     min-height: 100vh;
     flex-direction: column;
 
-    background-image: url('/assets/carrot.gif');
-    background-repeat: repeat;
-    background-size: auto;
-    background-position: left top;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+      url('/assets/carrot.gif');
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-size: 800px 800px, 600px 600px, auto;
+    background-position: left center, right bottom, left top;
     background-attachment: fixed;
     margin: 0;
     padding: 0;
@@ -58,20 +61,55 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    background: #0d1b2a;
-    box-shadow: none;
-    border-top: none;
-    border-bottom: none;
+    background: rgba(13, 27, 42, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .site-header:hover {
+    background: rgba(13, 27, 42, 0.85);
   }
 
   .site-header .page-link {
     color: #ffffff;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .site-header .page-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+    transition: transform 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .site-header .page-link:hover::after {
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  .site-header .page-link:hover {
+    color: #4ecdc4;
+    transform: translateY(-2px);
   }
 
   .site-footer {
-    background-color: #0d1b2a;
+    background: linear-gradient(180deg, rgba(13, 27, 42, 0.9) 0%, rgba(13, 27, 42, 1) 100%);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
-  .footer-heading { color: #faf; }
+  .footer-heading { 
+    color: #ff6b6b;
+    text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+  }
   .footer-col-wrapper { color: #ffffff; }
 
 
@@ -81,6 +119,7 @@
     height: 1.4em;
     vertical-align: -0.125em;
     color: inherit;
+    transition: all 0.3s ease;
   }
 
   .boosty-icon {
@@ -89,12 +128,13 @@
     height: 1.4em;
     vertical-align: -0.125em;
     color: inherit;
+    transition: all 0.3s ease;
   }
 
   /* Стили для мобильных (вертикальная и горизонтальная ориентация) */
   @media (max-width: 767px), (max-height: 500px) {
     .site-header {
-      visibility: visible;
+      visibility: hidden;
       position: fixed;
       background: transparent;
     }
@@ -105,12 +145,13 @@
       top: 15px;
       right: 15px;
       z-index: 1010;
-      background: #0d1b2a;
-      border: none;
-      border-radius: 8px;
+      background: rgba(13, 27, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
       width: 50px;
       height: 50px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -128,11 +169,17 @@
       color: #fff;
       -webkit-tap-highlight-color: transparent;
       display: inline-flex;
+      transition: all 0.3s ease;
     }
     
     .menu-toggle:hover {
-      background: #1a2a3a;
+      background: rgba(78, 205, 196, 0.2);
+      border-color: #4ecdc4;
       transform: scale(1.05);
+    }
+
+    .menu-toggle:hover .bi {
+      color: #4ecdc4;
     }
     
     .site-nav {
@@ -155,7 +202,8 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(13, 27, 42, 0.8);
+      background: linear-gradient(135deg, rgba(10, 14, 39, 0.1) 0%, rgba(13, 27, 42, 0.1) 100%);
+      backdrop-filter: blur(20px);
       box-shadow: none;
       padding: 80px 20px 40px;
       overflow-y: auto;
@@ -163,6 +211,17 @@
       -webkit-tap-highlight-color: transparent;
       align-items: center;
       justify-content: center;
+      animation: fadeIn 0.3s ease;
+      z-index: 1005;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
     
     .nav-trigger:not(:checked) ~ .trigger {
@@ -173,42 +232,80 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      padding: 15px;
+      padding: 15px 20px;
       background: transparent;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      transition: background 0.3s ease;
+      backdrop-filter: none;
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
       text-decoration: none;
-      color: #fff;
+      color: #0a0e1a;
       font-size: 1.3em;
       width: 100%;
       max-width: 400px;
+      position: relative;
+      overflow: hidden;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link:hover::before {
+      left: 100%;
     }
 
     .nav-trigger:checked ~ .trigger .page-link:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(78, 205, 196, 0.1);
+      border: 1px solid rgba(78, 205, 196, 0.3);
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(78, 205, 196, 0.2);
     }
 
     .nav-trigger:checked ~ .trigger .page-link i {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
       border-radius: 50%;
       flex-shrink: 0;
       font-size: 1.2em;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link:hover i {
+      transform: rotate(360deg) scale(1.1);
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.5), rgba(255, 107, 107, 0.5));
     }
 
     .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
     .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
-      width: 40px;
-      height: 40px;
-      padding: 8px;
-      background: rgba(255, 255, 255, 0.2);
+      width: 45px;
+      height: 45px;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
       border-radius: 50%;
       flex-shrink: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-trigger:checked ~ .trigger .page-link:hover .rarible-icon,
+    .nav-trigger:checked ~ .trigger .page-link:hover .boosty-icon {
+      transform: rotate(360deg) scale(1.1);
+      background: linear-gradient(135deg, rgba(78, 205, 196, 0.5), rgba(255, 107, 107, 0.5));
     }
 
     /* Контейнеры для группировки */
@@ -247,15 +344,15 @@
 
       .nav-trigger:checked ~ .trigger .page-link {
         font-size: 1.1em;
-        padding: 10px;
+        padding: 10px 15px;
         margin-bottom: 0;
       }
 
       .nav-trigger:checked ~ .trigger .page-link i,
       .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
       .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
-        width: 35px;
-        height: 35px;
+        width: 38px;
+        height: 38px;
         font-size: 1em;
       }
 
@@ -339,6 +436,12 @@
       border-radius: 0 !important;
       padding: 0.1em !important;
       font-size: inherit !important;
+      transition: all 0.3s ease;
+    }
+
+    .page-link:hover i {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 8px currentColor);
     }
 
     .page-link .rarible-icon,
@@ -348,6 +451,13 @@
       padding: 0 !important;
       background: transparent !important;
       border-radius: 0 !important;
+      transition: all 0.3s ease;
+    }
+
+    .page-link:hover .rarible-icon,
+    .page-link:hover .boosty-icon {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 8px currentColor);
     }
   }
 
