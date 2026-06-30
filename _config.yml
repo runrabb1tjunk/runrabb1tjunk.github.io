@@ -59,6 +59,8 @@ kramdown:
 nav:
   - title: home
     url: /
+  - title: secretfiles
+    url: /secretfiles
 
   - title: telegram lilpitkun
     url: https://t.me/animalpicandother

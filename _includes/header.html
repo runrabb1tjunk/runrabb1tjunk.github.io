@@ -13,7 +13,6 @@
 
 <style>
 
-
   /* Переопределение z-index для canvas в галерее */
   .galleria-container canvas {
       z-index: 100 !important;
@@ -81,7 +80,6 @@
   .footer-heading { color: #faf; }
   .footer-col-wrapper { color: #ffffff; }
 
-
   .rarible-icon {
     display: inline-block;
     width: 1.4em;
@@ -98,7 +96,7 @@
     color: inherit;
   }
 
-  /* Стили для мобильных (вертикальная и горизонтальная ориентация) */
+  /* --- Стили для мобильных (вертикальная и горизонтальная ориентация) --- */
   @media (max-width: 767px), (max-height: 500px) {
     .site-header {
       visibility: hidden;
@@ -165,14 +163,14 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(13, 27, 42, 0.95);
+      background: rgba(13, 27, 42, 0.97);
       box-shadow: none;
-      padding: 80px 20px 40px;
+      padding: 60px 20px 40px;
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       z-index: 1005;
     }
     
@@ -180,131 +178,157 @@
       display: none;
     }
 
-    .nav-trigger:checked ~ .trigger .page-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 5px;
-      margin-bottom: 7px;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      color: #fff;
-      font-size: 1.1em;
-      width: 100%;
-      max-width: 270px;
-    }
-
-    .nav-trigger:checked ~ .trigger .page-link:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .nav-trigger:checked ~ .trigger .page-link i {
-      width: 27px;
-      height: 27px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      flex-shrink: 0;
-      font-size: 1em;
-    }
-
-    .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
-    .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
-      width: 27px;
-      height: 27px;
-      padding: 5px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Контейнеры для группировки */
     .menu-grid {
       display: flex;
       flex-direction: column;
       width: 100%;
-      max-width: 270px;
-      gap: 7px;
+      max-width: 280px;
+      gap: 15px;
     }
 
-    .menu-single {
+    .menu-main-row {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 15px;
+    }
+
+    /* Одиночные кнопки (home, secretfiles) */
+    .nav-trigger:checked ~ .trigger .menu-single {
+      width: 100%;
       display: flex;
       justify-content: center;
     }
 
-    .menu-single .page-link {
-      width: 100%;
-    }
-
-    .menu-row {
+    .nav-trigger:checked ~ .trigger .menu-single .page-link {
       display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .menu-row .page-link {
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      color: #fff !important;
+      text-decoration: none;
+      font-size: 1.3em;
       width: 100%;
     }
 
-    /* Горизонтальная ориентация - двухколоночная раскладка */
+    .nav-trigger:checked ~ .trigger .menu-single .page-link i {
+      font-size: 1.1em;
+      width: auto;
+      height: auto;
+      background: transparent;
+    }
+
+    /* Блок автора на мобилке */
+    .nav-trigger:checked ~ .trigger .menu-dropdown {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      width: 100% !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 5px 0 !important;
+      position: static !important;
+    }
+
+    /* Имя автора */
+    .nav-trigger:checked ~ .trigger .dropdown-btn {
+      display: block !important;
+      color: #ffffff !important;
+      font-size: 1.6em !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      padding: 0 !important;
+      margin-bottom: 10px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1px !important;
+      background: transparent !important;
+      border: none !important;
+      width: 100% !important;
+      pointer-events: none !important;
+    }
+    
+    .nav-trigger:checked ~ .trigger .dropdown-btn::after {
+      display: none !important;
+    }
+
+    /* Контейнер соцсетей автора */
+    .nav-trigger:checked ~ .trigger .dropdown-content {
+      display: flex !important;
+      position: static !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      width: 100% !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    /* Кнопки соцсетей на мобилках */
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link {
+      font-size: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex: 1 1 auto !important;
+      width: 48px !important;
+      height: 48px !important;
+      max-width: 48px !important;
+      aspect-ratio: 1 / 1 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 6px !important;
+      transition: all 0.3s !important;
+    }
+
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Иконки внутри адаптивных кнопок */
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link i,
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link .rarible-icon,
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link .boosty-icon {
+      font-size: 22px !important;
+      width: auto !important;
+      height: auto !important;
+      max-width: 50% !important;
+      max-height: 50% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #fff !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .nav-trigger:checked ~ .trigger .dropdown-content .page-link svg {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     @media (max-height: 500px) and (orientation: landscape) {
       .nav-trigger:checked ~ .trigger {
-        padding: 60px 20px 20px;
+        padding: 40px 20px 20px;
       }
-
-      .nav-trigger:checked ~ .trigger .page-link {
-        font-size: 1em;
-        padding: 7px;
-        margin-bottom: 0;
-      }
-
-      .nav-trigger:checked ~ .trigger .page-link i,
-      .nav-trigger:checked ~ .trigger .page-link .rarible-icon,
-      .nav-trigger:checked ~ .trigger .page-link .boosty-icon {
-        width: 23px;
-        height: 23px;
-        font-size: 0.9em;
-      }
-
       .menu-grid {
         max-width: 400px;
-        gap: 5px;
-      }
-
-      /* Home и Rarible в две колонки */
-      .menu-main-row {
-        display: flex;
-        flex-direction: row;
-        gap: 7px;
-        width: 100%;
-      }
-
-      .menu-main-row .menu-single {
-        flex: 1;
-      }
-
-      .menu-main-row .menu-single .page-link {
-        max-width: none;
-      }
-
-      .menu-row {
-        flex-direction: row;
-        gap: 7px;
-      }
-
-      .menu-row .page-link {
-        flex: 1;
       }
     }
   }
 
-  /* Стили для десктопов */
+  /* --- Стили для десктопов (Полное растягивание кнопок на весь бар) --- */
   @media (min-width: 768px) and (min-height: 501px) {
     .menu-toggle {
       display: none;
@@ -314,6 +338,8 @@
     .site-nav {
       display: flex;
       justify-content: center; 
+      align-items: stretch; /* Заставляем внутренние элементы тянуться во всю высоту навбара */
+      padding: 0; /* Убираем падинги, чтобы кнопки встали встык */
       float: none;
       -webkit-tap-highlight-color: transparent;
     }
@@ -323,35 +349,135 @@
     }
 
     .trigger {
-      display: block !important;
+      display: flex !important;
       position: static !important;
       width: auto !important;
       height: auto !important;
       background: transparent !important;
       padding: 0 !important;
       overflow: visible !important;
+      align-items: stretch;
     }
 
     .menu-grid {
-      display: contents !important;
-    }
-
-    .menu-single,
-    .menu-row,
-    .menu-main-row {
-      display: contents !important;
-    }
-
-    .page-link {
-      display: inline-block !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 0 !important; /* Убираем зазоры между кнопками для монолитного эффекта */
       width: auto !important;
       max-width: none !important;
-      padding: 0 0.5em !important;
-      margin: 0 !important;
-      background: transparent !important;
-      border-radius: 0 !important;
-      font-size: inherit !important;
+      align-items: stretch;
+    }
+
+    .menu-main-row {
+      display: flex !important;
+      flex-wrap: wrap !important;
       gap: 0 !important;
+      align-items: stretch !important;
+    }
+
+    .menu-dropdown {
+      position: relative;
+      display: inline-flex;
+      align-items: stretch;
+    }
+
+    /* ФИКС: Кнопка автора теперь растянута на весь бар, как и Home */
+    .dropdown-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 20px; /* Вертикальный паддинг убираем, высоту берем от навбара */
+      background: #0d1b2a;
+      border: none;
+      color: #fff;
+      border-radius: 0; /* Плиточный дизайн без скруглений сверху-снизу */
+      cursor: pointer;
+      font-size: 16px;
+      font-family: inherit;
+      font-weight: 500;
+      transition: background 0.3s;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .dropdown-btn::after {
+      content: ' ▼';
+      font-size: 11px;
+      color: #007cba;
+    }
+
+    /* Выпадающий список на десктопе */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 100%;
+      min-width: 180px;
+      background-color: #0d1b2a;
+      border: 1px solid #007cba;
+      border-radius: 0 0 4px 4px; /* Скругляем только нижние углы выпадашки */
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+      z-index: 100;
+      margin-top: 0; /* Плотно прилегает к навбару */
+      padding: 6px;
+    }
+
+    /* Ссылки внутри выпадашки */
+    .dropdown-content a {
+      color: #fff;
+      padding: 8px 12px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #007cba;
+      color: #fff;
+    }
+
+    .menu-dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .menu-dropdown:hover .dropdown-btn {
+      background: #007cba;
+    }
+
+    .menu-dropdown:hover .dropdown-btn::after {
+      color: #fff;
+    }
+
+    .menu-single {
+      display: inline-flex;
+      align-items: stretch;
+    }
+    
+    /* ФИКС: Кнопка Home и Secretfiles растянуты на весь бар */
+    .page-link {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      width: auto !important;
+      max-width: none !important;
+      padding: 0 20px !important;
+      margin: 0 !important;
+      background: #0d1b2a !important;
+      border-radius: 0 !important; /* Убираем скругления */
+      font-size: 16px !important;
+      color: #fff !important;
+      text-decoration: none;
+      transition: background 0.3s;
+      height: 100% !important;
+      box-sizing: border-box;
+    }
+
+    .page-link:hover {
+      background: #007cba !important;
     }
 
     .page-link i {
@@ -359,21 +485,20 @@
       height: auto !important;
       background: transparent !important;
       border-radius: 0 !important;
-      padding: 0.1em !important;
+      padding: 0 !important;
       font-size: inherit !important;
     }
 
     .page-link .rarible-icon,
     .page-link .boosty-icon {
-      width: 1.4em !important;
-      height: 1.4em !important;
+      width: 16px !important;
+      height: 16px !important;
       padding: 0 !important;
       background: transparent !important;
       border-radius: 0 !important;
     }
   }
 
-  /* Отступ для контента */
   main {
     margin-top: 0px;
   }
@@ -389,71 +514,68 @@
     
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
 
-  <div class="trigger">
-    {% assign home_link = "" %}
-    {% assign rarible_link = "" %}
-    {% assign telegram_links = "" %}
-    {% assign instagram_links = "" %}
-    {% assign boosty_links = "" %}
-    
-    {% for item in site.nav %}
-      {% assign parts = item.title | split: ' ' %}
-      {% assign service = parts[0] %}
-      {% assign user = parts[1] %}
+<div class="trigger">
+  {% comment %} 1. Собираем уникальный список авторов {% endcomment %}
+  {% assign authors_str = "" %}
+  {% for item in site.nav %}
+    {% assign parts = item.title | split: ' ' %}
+    {% if parts[1] %}
+      {% unless authors_str contains parts[1] %}
+        {% assign authors_str = authors_str | append: parts[1] | append: "," %}
+      {% endunless %}
+    {% endif %}
+  {% endfor %}
+  {% assign authors = authors_str | split: "," %}
+
+  <div class="menu-grid">
+    <div class="menu-main-row">
       
-      {% capture link_html %}
-        <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ service }}">
-          {% if service == 'rarible' or service == 'boosty' %}
-            {% if service == 'rarible' %}
-              <i class="rarible-icon">{% include Rarible.svg %}</i>
-            {% else if service == 'boosty' %}
-              <i class="boosty-icon">{% include boosty.svg %}</i>
-            {% endif %}
-          {% else %}
-            <i class="bi bi-{% case service %}{% when 'home' %}house-door{% else %}{{ service }}{% endcase %}"></i>
-          {% endif %}
-          {% if user %}{{ user }}{% else %}{{ service }}{% endif %}
-        </a>
-      {% endcapture %}
-      
-      {% if service == 'home' %}
-        {% assign home_link = link_html %}
-      {% elsif service == 'rarible' %}
-        {% assign rarible_link = link_html %}
-      {% elsif service == 'telegram' %}
-        {% assign telegram_links = telegram_links | append: link_html %}
-      {% elsif service == 'instagram' %}
-        {% assign instagram_links = instagram_links | append: link_html %}
-      {% elsif service == 'boosty' %}
-        {% assign boosty_links = boosty_links | append: link_html %}
-      {% endif %}
-    {% endfor %}
-    
-    <div class="menu-grid">
-      {% if home_link != "" or rarible_link != "" %}
-        <div class="menu-main-row">
-          {% if home_link != "" %}
-            <div class="menu-single">{{ home_link }}</div>
-          {% endif %}
-          
-          {% if rarible_link != "" %}
-            <div class="menu-single">{{ rarible_link }}</div>
-          {% endif %}
-        </div>
-      {% endif %}
-      
-      {% if telegram_links != "" %}
-        <div class="menu-row">{{ telegram_links }}</div>
-      {% endif %}
-      
-      {% if instagram_links != "" %}
-        <div class="menu-row">{{ instagram_links }}</div>
-      {% endif %}
-      
-      {% if boosty_links != "" %}
-        <div class="menu-row">{{ boosty_links }}</div>
-      {% endif %}
+      {% comment %} 2. Одиночные кнопки без авторов (home, secretfiles) {% endcomment %}
+      {% for item in site.nav %}
+        {% assign parts = item.title | split: ' ' %}
+        {% unless parts[1] %}
+          <div class="menu-single">
+            <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+              <i class="bi bi-{% case parts[0] %}{% when 'home' %}house-door{% when 'secretfiles' %}lock{% else %}{{ parts[0] }}{% endcase %}"></i>
+              {{ parts[0] }}
+            </a>
+          </div>
+        {% endunless %}
+      {% endfor %}
+
+      {% comment %} 3. Гибридная структура {% endcomment %}
+      {% for author in authors %}
+        {% if author != "" %}
+          <div class="menu-dropdown">
+            <div class="dropdown-btn">{{ author }}</div>
+            
+            <div class="dropdown-content">
+              
+              {% comment %} Поиск ссылок конкретного автора {% endcomment %}
+              {% for item in site.nav %}
+                {% assign parts = item.title | split: ' ' %}
+                {% if parts[1] == author %}
+                  <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+                    {% if parts[0] == 'rarible' %}
+                      <i class="rarible-icon">{% include Rarible.svg %}</i>
+                    {% elsif parts[0] == 'boosty' %}
+                      <i class="boosty-icon">{% include boosty.svg %}</i>
+                    {% else %}
+                      <i class="bi bi-{{ parts[0] }}"></i>
+                    {% endif %}
+                    {{ parts[0] | capitalize }}
+                  </a>
+                {% endif %}
+              {% endfor %}
+
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
     </div>
   </div>
-  </nav>
+</div>
+</nav>
+
 </header>

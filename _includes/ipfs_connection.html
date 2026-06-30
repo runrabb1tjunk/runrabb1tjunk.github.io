@@ -1,0 +1,198 @@
+<div class="web3-gate-wrapper">
+  <style>
+    .web3-gate-wrapper{width:100%;max-width:600px;margin:40px auto;padding:10px;box-sizing:border-box}
+    .gateway-card{background:#0d1b2a;border:1px solid #007cba;border-radius:8px;padding:30px;box-shadow:0 4px 15px rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;position:relative;box-sizing:border-box}
+    .gateway-card h1{text-align:center;margin-top:0;margin-bottom:20px;color:#007cba;font-size:1.8rem}
+    .gateway-card p{font-size:14px;line-height:1.6;color:#fff;text-align:center;margin-bottom:25px;max-width:450px}
+    .gateway-card .btn{background-color:#007cba;color:white;border:none;padding:14px 28px;font-size:1rem;font-weight:600;border-radius:4px;cursor:pointer;width:100%;max-width:320px;transition:background-color .2s,transform .1s}
+    .gateway-card .btn:hover{background-color:#005a87}
+    .gateway-card .btn:active{transform:scale(0.98)}
+    .gateway-card .btn:disabled{background-color:#475569;cursor:not-allowed}
+    .gateway-card .logout-btn{display:none;background:transparent;color:#999;border:1px solid #007cba;padding:8px 16px;font-size:0.85rem;border-radius:4px;cursor:pointer;margin-top:20px;transition:all .2s}
+    .gateway-card .logout-btn:hover{color:white;background-color:#007cba}
+    .gateway-card .loading-container{display:none;flex-direction:column;align-items:center;justify-content:center;height:150px;text-align:center;margin:20px 0}
+    .gateway-card .loading-spinner{width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #007cba;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
+    .gateway-card .loading-text{color:#007cba;font-size:14px;font-weight:500}
+    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .gateway-card .box{display:none;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
+    .gateway-card #tier-1333-box{background-color:rgba(6,95,70,0.2);border:2px dashed #34d399}
+    .gateway-card #tier-4444-box{background-color:rgba(30,58,138,0.3);border:2px dashed #3b82f6}
+    .gateway-card .error-box{display:none;color:#ff4d4d;padding:15px;background:#ffe6e6;border-left:4px solid #ff4d4d;border-radius:4px;margin-top:20px;width:100%;box-sizing:border-box}
+    .gateway-card .error-box b{color:#b30000}
+    .gateway-card .links-container{display:flex;flex-direction:column;gap:12px;margin-top:15px}
+    .gateway-card .open-btn{display:block;background-color:#34d399;color:#0d1b2a;padding:12px;font-weight:bold;text-decoration:none;border-radius:4px;text-align:center;font-size:0.95rem;transition:opacity .2s}
+    .gateway-card #tier-4444-box .open-btn{background-color:#3b82f6;color:white}
+    .gateway-card .open-btn:hover{opacity:0.9}
+  </style>
+  
+  <div class="gateway-card">
+    <h1>Web3 Access Verification</h1>
+    <p id="gateway-desc">Verify your token balance via MetaMask to unlock tier-restricted content.</p>
+    
+    <button class="btn" id="connect-btn" onclick="verifyAndSendBalance(true)">Connect with Metamask</button>
+    
+    <div class="loading-container" id="loading-loader">
+      <div class="loading-spinner"></div>
+      <div class="loading-text" id="loading-text-status">Connecting...</div>
+    </div>
+    
+    <div id="tier-1333-box" class="box">
+      <b style="color:#34d399;font-size:1.1rem">Access Granted for Tier 1333+ ✓</b>
+      <div id="links-list-1333" class="links-container"></div>
+    </div>
+    
+    <div id="tier-4444-box" class="box">
+      <b style="color:#60a5fa;font-size:1.1rem">Access Granted for Tier 4444+ ✓</b>
+      <div id="links-list-4444" class="links-container"></div>
+    </div>
+    
+    <div id="error-box" class="error-box">
+      <b>Access Denied:</b>
+      <div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
+    </div>
+    
+    <button class="logout-btn" id="logout-btn" onclick="logout()">Disconnect Wallet</button>
+  </div>
+</div>
+
+<script>
+const WORKER_URL="https://late-violet-5384.fgfg57468.workers.dev";
+const TOKEN_CONTRACT_ADDRESS="0x3047511c064Ba6319814aA80b56d3E97002cb343";
+const POLYGON_CHAIN_ID="0x89";
+
+window.addEventListener('load',()=>{
+  const savedAddress=localStorage.getItem('web3_user_address');
+  if(savedAddress){verifyAndSendBalance(false,savedAddress)}
+});
+
+async function verifyAndSendBalance(isManualClick,savedAddress=null){
+  const btn=document.getElementById('connect-btn');
+  const logoutBtn=document.getElementById('logout-btn');
+  const desc=document.getElementById('gateway-desc');
+  const box1333=document.getElementById('tier-1333-box');
+  const box4444=document.getElementById('tier-4444-box');
+  const errorBox=document.getElementById('error-box');
+  const list1333=document.getElementById('links-list-1333');
+  const list4444=document.getElementById('links-list-4444');
+  const errorOutput=document.getElementById('error-output');
+  const loader=document.getElementById('loading-loader');
+  const loaderText=document.getElementById('loading-text-status');
+  
+  box1333.style.display='none';
+  box4444.style.display='none';
+  errorBox.style.display='none';
+  list1333.innerHTML='';
+  list4444.innerHTML='';
+  
+  if(typeof window.ethereum==='undefined'){
+    errorOutput.innerText="Error: MetaMask is not installed!";
+    errorBox.style.display='block';
+    return
+  }
+  try{
+    btn.style.display='none';
+    desc.style.display='none';
+    loader.style.display='flex';
+    loaderText.innerText=isManualClick?"Connecting wallet...":"Auto-login...";
+    
+    let metamaskProvider=window.ethereum;
+    if(window.ethereum.providers&&window.ethereum.providers.length){
+      metamaskProvider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum
+    }
+    
+    let userAddress=savedAddress;
+    if(!userAddress){
+      const accounts=await metamaskProvider.request({method:'eth_requestAccounts'});
+      userAddress=accounts[0];
+      localStorage.setItem('web3_user_address',userAddress)
+    }
+    
+    loaderText.innerText="Checking network...";
+    try{
+      await metamaskProvider.request({method:'wallet_switchEthereumChain',params:[{chainId:POLYGON_CHAIN_ID}]})
+    }catch(switchError){
+      if(switchError.code===4902){
+        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://polygon-rpc.com'],blockExplorerUrls:['https://polygonscan.com']}]})
+      }else{
+        throw new Error("Please switch your network to Polygon Mainnet.")
+      }
+    }
+    
+    loaderText.innerText="Fetching balance...";
+    const paddedAddress=userAddress.substring(2).toLowerCase().padStart(64,'0');
+    const dataParam="0x70a08231"+paddedAddress;
+    const balanceHex=await metamaskProvider.request({method:'eth_call',params:[{to:TOKEN_CONTRACT_ADDRESS,data:dataParam},'latest']});
+    
+    if(!balanceHex||balanceHex==='0x'){throw new Error("Failed to read token balance.")}
+    const balanceBigInt=BigInt(balanceHex);
+    const humanBalance=Number(balanceBigInt/100000000000000000n)/10;
+    
+    loaderText.innerText="Synchronizing gateway...";
+    const response=await fetch(WORKER_URL,{
+      method:"POST",
+      mode:"cors",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({balance:humanBalance})
+    });
+    
+    const responseText=await response.text();
+    let data;
+    try{data=JSON.parse(responseText)}catch(e){}
+    if(!response.ok){
+      const serverError=data&&data.error?data.error:responseText;
+      throw new Error(serverError)
+    }
+    
+    loader.style.display='none';
+    
+    if(data&&data.tier1333&&data.tier1333.length>0){
+      data.tier1333.forEach((item)=>{
+        const a=document.createElement('a');
+        a.href=item.url; 
+        a.target="_blank";
+        a.className="open-btn";
+        a.innerText=item.name;
+        list1333.appendChild(a)
+      });
+      box1333.style.display='block'
+    }
+    
+    if(data&&data.tier4444&&data.tier4444.length>0){
+      data.tier4444.forEach((item)=>{
+        const a=document.createElement('a');
+        a.href=item.url; 
+        a.target="_blank";
+        a.className="open-btn";
+        a.innerText=item.name;
+        list4444.appendChild(a)
+      });
+      box4444.style.display='block'
+    }
+    
+    logoutBtn.style.display='block'
+  }catch(err){
+    console.error(err);
+    loader.style.display='none';
+    errorOutput.innerText=err.message;
+    errorBox.style.display='block';
+    localStorage.removeItem('web3_user_address');
+    btn.style.display='block';
+    desc.style.display='block';
+    logoutBtn.style.display='none';
+    btn.innerText="Connect with Metamask"
+  }
+}
+
+function logout(){
+  localStorage.removeItem('web3_user_address');
+  document.getElementById('tier-1333-box').style.display='none';
+  document.getElementById('tier-4444-box').style.display='none';
+  document.getElementById('error-box').style.display='none';
+  document.getElementById('logout-btn').style.display='none';
+  const btn=document.getElementById('connect-btn');
+  const desc=document.getElementById('gateway-desc');
+  btn.style.display='block';
+  btn.innerText="Connect with Metamask";
+  desc.style.display='block'
+}
+</script>
