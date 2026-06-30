@@ -14,10 +14,10 @@
     .gateway-card .loading-spinner{width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #007cba;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
     .gateway-card .loading-text{color:#007cba;font-size:14px;font-weight:500}
     @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-    .gateway-card .box{display:none;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
     
-    /* Стили для Тиров */
-    .gateway-card #tier-0-box{display:block; background-color:rgba(255,255,255,0.05);border:2px dashed #94a3b8}
+    /* ИЗМЕНЕНО: Блоки теперь по умолчанию видны (display: block), чтобы загружаться сразу */
+    .gateway-card .box{display:block;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
+    .gateway-card #tier-0-box{background-color:rgba(255,255,255,0.05);border:2px dashed #94a3b8}
     .gateway-card #tier-1333-box{background-color:rgba(6,95,70,0.2);border:2px dashed #34d399}
     .gateway-card #tier-4444-box{background-color:rgba(30,58,138,0.3);border:2px dashed #3b82f6}
     
@@ -29,8 +29,8 @@
     .gateway-card #tier-4444-box .open-btn{background-color:#3b82f6;color:white}
     .gateway-card .open-btn:hover{opacity:0.9}
     
-    /* Заглушка для закрытых файлов */
-    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.1);color:#aaa;padding:12px;border-radius:4px;text-align:center;font-size:0.95rem;border:1px solid rgba(255,255,255,0.1);font-style:italic}
+    /* Стиль для заблокированных элементов без ссылок */
+    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.07);color:#8892b0;padding:12px;border-radius:4px;text-align:center;font-size:0.95rem;border:1px dashed rgba(255,255,255,0.1);cursor:not-allowed}
   </style>
   
   <div class="gateway-card">
@@ -73,12 +73,13 @@ const WORKER_URL="https://late-violet-5384.fgfg57468.workers.dev";
 const TOKEN_CONTRACT_ADDRESS="0x3047511c064Ba6319814aA80b56d3E97002cb343";
 const POLYGON_CHAIN_ID="0x89";
 
-window.addEventListener('load',()=>{
+// ИСПРАВЛЕНО: Сразу запускаем первичную инициализацию при загрузке документа
+window.addEventListener('DOMContentLoaded',()=>{
   const savedAddress=localStorage.getItem('web3_user_address');
   if(savedAddress){
     verifyAndSendBalance(false,savedAddress);
   } else {
-    // Если кошелек не подключен, загружаем только демо-структуру (без баланса)
+    // Если пользователь еще не залогинен, все равно запрашиваем у воркера списки со значением баланса = 0
     fetchGatewayData(0);
   }
 });
@@ -87,11 +88,10 @@ async function fetchGatewayData(balanceNum) {
   const list0=document.getElementById('links-list-0');
   const list1333=document.getElementById('links-list-1333');
   const list4444=document.getElementById('links-list-4444');
-  const box1333=document.getElementById('tier-1333-box');
-  const box4444=document.getElementById('tier-4444-box');
   const title1333=document.getElementById('title-1333');
   const title4444=document.getElementById('title-4444');
 
+  // Очищаем старые списки перед рендером
   list0.innerHTML='';
   list1333.innerHTML='';
   list4444.innerHTML='';
@@ -106,8 +106,8 @@ async function fetchGatewayData(balanceNum) {
     
     const data=await response.json();
 
-    // Отрендерить Tier 0 (Всегда активны)
-    if(data.tier0){
+    // Рендер Tier 0 (Всегда кликабельный)
+    if(data.tier0 && data.tier0.length > 0){
       data.tier0.forEach(item => {
         const a=document.createElement('a');
         a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
@@ -115,43 +115,41 @@ async function fetchGatewayData(balanceNum) {
       });
     }
 
-    // Всегда показываем коробки тиров
-    box1333.style.display='block';
-    box4444.style.display='block';
-
-    // Отрендерить Tier 1333
-    if(data.tier1333){
+    // Рендер Tier 1333
+    if(data.tier1333 && data.tier1333.length > 0){
       const hasAccess = data.tier1333.some(i => i.url !== null);
       title1333.innerText = hasAccess ? "Access Granted for Tier 1333+ ✓" : "Tier 1333+ (Locked 🔒)";
+      
       data.tier1333.forEach(item => {
         if(item.url){
           const a=document.createElement('a');
           a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
           list1333.appendChild(a);
         } else {
-          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`${item.name} (Requires 1333 Tokens)`;
+          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`🔒 ${item.name}`;
           list1333.appendChild(div);
         }
       });
     }
 
-    // Отрендерить Tier 4444
-    if(data.tier4444){
+    // Рендер Tier 4444
+    if(data.tier4444 && data.tier4444.length > 0){
       const hasAccess = data.tier4444.some(i => i.url !== null);
       title4444.innerText = hasAccess ? "Access Granted for Tier 4444+ ✓" : "Tier 4444+ (Locked 🔒)";
+      
       data.tier4444.forEach(item => {
         if(item.url){
           const a=document.createElement('a');
           a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
           list4444.appendChild(a);
         } else {
-          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`${item.name} (Requires 4444 Tokens)`;
+          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`🔒 ${item.name}`;
           list4444.appendChild(div);
         }
       });
     }
   } catch(e) {
-    console.error("Error loading gateway structural content:", e);
+    console.error("Error fetching structural data from worker:", e);
   }
 }
 
@@ -211,7 +209,6 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
     
     loaderText.innerText="Synchronizing gateway...";
     
-    // Передаем баланс на бэкенд для генерации ссылок
     await fetchGatewayData(humanBalance);
     
     loader.style.display='none';
@@ -226,7 +223,7 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
     desc.style.display='block';
     logoutBtn.style.display='none';
     btn.innerText="Connect with Metamask";
-    fetchGatewayData(0); // В случае ошибки сбрасываем состояние до гостя
+    fetchGatewayData(0); 
   }
 }
 
@@ -239,7 +236,6 @@ function logout(){
   btn.style.display='block';
   btn.innerText="Connect with Metamask";
   desc.style.display='block';
-  // Перезапрашиваем данные как гость (баланс 0)
   fetchGatewayData(0);
 }
 </script>
