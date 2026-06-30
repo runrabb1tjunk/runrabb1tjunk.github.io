@@ -15,14 +15,22 @@
     .gateway-card .loading-text{color:#007cba;font-size:14px;font-weight:500}
     @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
     .gateway-card .box{display:none;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
+    
+    /* Стили для Тиров */
+    .gateway-card #tier-0-box{display:block; background-color:rgba(255,255,255,0.05);border:2px dashed #94a3b8}
     .gateway-card #tier-1333-box{background-color:rgba(6,95,70,0.2);border:2px dashed #34d399}
     .gateway-card #tier-4444-box{background-color:rgba(30,58,138,0.3);border:2px dashed #3b82f6}
+    
     .gateway-card .error-box{display:none;color:#ff4d4d;padding:15px;background:#ffe6e6;border-left:4px solid #ff4d4d;border-radius:4px;margin-top:20px;width:100%;box-sizing:border-box}
     .gateway-card .error-box b{color:#b30000}
     .gateway-card .links-container{display:flex;flex-direction:column;gap:12px;margin-top:15px}
     .gateway-card .open-btn{display:block;background-color:#34d399;color:#0d1b2a;padding:12px;font-weight:bold;text-decoration:none;border-radius:4px;text-align:center;font-size:0.95rem;transition:opacity .2s}
+    .gateway-card #tier-0-box .open-btn{background-color:#94a3b8;color:#0d1b2a}
     .gateway-card #tier-4444-box .open-btn{background-color:#3b82f6;color:white}
     .gateway-card .open-btn:hover{opacity:0.9}
+    
+    /* Заглушка для закрытых файлов */
+    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.1);color:#aaa;padding:12px;border-radius:4px;text-align:center;font-size:0.95rem;border:1px solid rgba(255,255,255,0.1);font-style:italic}
   </style>
   
   <div class="gateway-card">
@@ -35,14 +43,19 @@
       <div class="loading-spinner"></div>
       <div class="loading-text" id="loading-text-status">Connecting...</div>
     </div>
+
+    <div id="tier-0-box" class="box">
+      <b style="color:#94a3b8;font-size:1.1rem">Free Tier Access ✓</b>
+      <div id="links-list-0" class="links-container"></div>
+    </div>
     
     <div id="tier-1333-box" class="box">
-      <b style="color:#34d399;font-size:1.1rem">Access Granted for Tier 1333+ ✓</b>
+      <b id="title-1333" style="color:#34d399;font-size:1.1rem">Tier 1333+ Content</b>
       <div id="links-list-1333" class="links-container"></div>
     </div>
     
     <div id="tier-4444-box" class="box">
-      <b style="color:#60a5fa;font-size:1.1rem">Access Granted for Tier 4444+ ✓</b>
+      <b id="title-4444" style="color:#60a5fa;font-size:1.1rem">Tier 4444+ Content</b>
       <div id="links-list-4444" class="links-container"></div>
     </div>
     
@@ -62,32 +75,101 @@ const POLYGON_CHAIN_ID="0x89";
 
 window.addEventListener('load',()=>{
   const savedAddress=localStorage.getItem('web3_user_address');
-  if(savedAddress){verifyAndSendBalance(false,savedAddress)}
+  if(savedAddress){
+    verifyAndSendBalance(false,savedAddress);
+  } else {
+    // Если кошелек не подключен, загружаем только демо-структуру (без баланса)
+    fetchGatewayData(0);
+  }
 });
+
+async function fetchGatewayData(balanceNum) {
+  const list0=document.getElementById('links-list-0');
+  const list1333=document.getElementById('links-list-1333');
+  const list4444=document.getElementById('links-list-4444');
+  const box1333=document.getElementById('tier-1333-box');
+  const box4444=document.getElementById('tier-4444-box');
+  const title1333=document.getElementById('title-1333');
+  const title4444=document.getElementById('title-4444');
+
+  list0.innerHTML='';
+  list1333.innerHTML='';
+  list4444.innerHTML='';
+
+  try {
+    const response=await fetch(WORKER_URL,{
+      method:"POST",
+      mode:"cors",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({balance:balanceNum})
+    });
+    
+    const data=await response.json();
+
+    // Отрендерить Tier 0 (Всегда активны)
+    if(data.tier0){
+      data.tier0.forEach(item => {
+        const a=document.createElement('a');
+        a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
+        list0.appendChild(a);
+      });
+    }
+
+    // Всегда показываем коробки тиров
+    box1333.style.display='block';
+    box4444.style.display='block';
+
+    // Отрендерить Tier 1333
+    if(data.tier1333){
+      const hasAccess = data.tier1333.some(i => i.url !== null);
+      title1333.innerText = hasAccess ? "Access Granted for Tier 1333+ ✓" : "Tier 1333+ (Locked 🔒)";
+      data.tier1333.forEach(item => {
+        if(item.url){
+          const a=document.createElement('a');
+          a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
+          list1333.appendChild(a);
+        } else {
+          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`${item.name} (Requires 1333 Tokens)`;
+          list1333.appendChild(div);
+        }
+      });
+    }
+
+    // Отрендерить Tier 4444
+    if(data.tier4444){
+      const hasAccess = data.tier4444.some(i => i.url !== null);
+      title4444.innerText = hasAccess ? "Access Granted for Tier 4444+ ✓" : "Tier 4444+ (Locked 🔒)";
+      data.tier4444.forEach(item => {
+        if(item.url){
+          const a=document.createElement('a');
+          a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
+          list4444.appendChild(a);
+        } else {
+          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`${item.name} (Requires 4444 Tokens)`;
+          list4444.appendChild(div);
+        }
+      });
+    }
+  } catch(e) {
+    console.error("Error loading gateway structural content:", e);
+  }
+}
 
 async function verifyAndSendBalance(isManualClick,savedAddress=null){
   const btn=document.getElementById('connect-btn');
   const logoutBtn=document.getElementById('logout-btn');
   const desc=document.getElementById('gateway-desc');
-  const box1333=document.getElementById('tier-1333-box');
-  const box4444=document.getElementById('tier-4444-box');
   const errorBox=document.getElementById('error-box');
-  const list1333=document.getElementById('links-list-1333');
-  const list4444=document.getElementById('links-list-4444');
   const errorOutput=document.getElementById('error-output');
   const loader=document.getElementById('loading-loader');
   const loaderText=document.getElementById('loading-text-status');
   
-  box1333.style.display='none';
-  box4444.style.display='none';
   errorBox.style.display='none';
-  list1333.innerHTML='';
-  list4444.innerHTML='';
   
   if(typeof window.ethereum==='undefined'){
     errorOutput.innerText="Error: MetaMask is not installed!";
     errorBox.style.display='block';
-    return
+    return;
   }
   try{
     btn.style.display='none';
@@ -97,24 +179,24 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
     
     let metamaskProvider=window.ethereum;
     if(window.ethereum.providers&&window.ethereum.providers.length){
-      metamaskProvider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum
+      metamaskProvider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum;
     }
     
     let userAddress=savedAddress;
     if(!userAddress){
       const accounts=await metamaskProvider.request({method:'eth_requestAccounts'});
       userAddress=accounts[0];
-      localStorage.setItem('web3_user_address',userAddress)
+      localStorage.setItem('web3_user_address',userAddress);
     }
     
     loaderText.innerText="Checking network...";
     try{
-      await metamaskProvider.request({method:'wallet_switchEthereumChain',params:[{chainId:POLYGON_CHAIN_ID}]})
+      await metamaskProvider.request({method:'wallet_switchEthereumChain',params:[{chainId:POLYGON_CHAIN_ID}]});
     }catch(switchError){
       if(switchError.code===4902){
-        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://polygon-rpc.com'],blockExplorerUrls:['https://polygonscan.com']}]})
+        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://polygon-rpc.com'],blockExplorerUrls:['https://polygonscan.com']}]});
       }else{
-        throw new Error("Please switch your network to Polygon Mainnet.")
+        throw new Error("Please switch your network to Polygon Mainnet.");
       }
     }
     
@@ -128,48 +210,12 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
     const humanBalance=Number(balanceBigInt/100000000000000000n)/10;
     
     loaderText.innerText="Synchronizing gateway...";
-    const response=await fetch(WORKER_URL,{
-      method:"POST",
-      mode:"cors",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({balance:humanBalance})
-    });
     
-    const responseText=await response.text();
-    let data;
-    try{data=JSON.parse(responseText)}catch(e){}
-    if(!response.ok){
-      const serverError=data&&data.error?data.error:responseText;
-      throw new Error(serverError)
-    }
+    // Передаем баланс на бэкенд для генерации ссылок
+    await fetchGatewayData(humanBalance);
     
     loader.style.display='none';
-    
-    if(data&&data.tier1333&&data.tier1333.length>0){
-      data.tier1333.forEach((item)=>{
-        const a=document.createElement('a');
-        a.href=item.url; 
-        a.target="_blank";
-        a.className="open-btn";
-        a.innerText=item.name;
-        list1333.appendChild(a)
-      });
-      box1333.style.display='block'
-    }
-    
-    if(data&&data.tier4444&&data.tier4444.length>0){
-      data.tier4444.forEach((item)=>{
-        const a=document.createElement('a');
-        a.href=item.url; 
-        a.target="_blank";
-        a.className="open-btn";
-        a.innerText=item.name;
-        list4444.appendChild(a)
-      });
-      box4444.style.display='block'
-    }
-    
-    logoutBtn.style.display='block'
+    logoutBtn.style.display='block';
   }catch(err){
     console.error(err);
     loader.style.display='none';
@@ -179,20 +225,21 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
     btn.style.display='block';
     desc.style.display='block';
     logoutBtn.style.display='none';
-    btn.innerText="Connect with Metamask"
+    btn.innerText="Connect with Metamask";
+    fetchGatewayData(0); // В случае ошибки сбрасываем состояние до гостя
   }
 }
 
 function logout(){
   localStorage.removeItem('web3_user_address');
-  document.getElementById('tier-1333-box').style.display='none';
-  document.getElementById('tier-4444-box').style.display='none';
-  document.getElementById('error-box').style.display='none';
-  document.getElementById('logout-btn').style.display='none';
   const btn=document.getElementById('connect-btn');
   const desc=document.getElementById('gateway-desc');
+  document.getElementById('logout-btn').style.display='none';
+  document.getElementById('error-box').style.display='none';
   btn.style.display='block';
   btn.innerText="Connect with Metamask";
-  desc.style.display='block'
+  desc.style.display='block';
+  // Перезапрашиваем данные как гость (баланс 0)
+  fetchGatewayData(0);
 }
 </script>
