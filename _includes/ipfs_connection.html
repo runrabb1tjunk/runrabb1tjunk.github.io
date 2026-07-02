@@ -197,7 +197,7 @@ async function verifyAndSendBalance(isManualClick,savedAddress=null){
       await metamaskProvider.request({method:'wallet_switchEthereumChain',params:[{chainId:POLYGON_CHAIN_ID}]});
     }catch(switchError){
       if(switchError.code===4902){
-        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://polygon-rpc.com'],blockExplorerUrls:['https://polygonscan.com']}]});
+        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://ankr.com'],blockExplorerUrls:['https://polygonscan.com']}]});
       }else{
         throw new Error("Please switch your network to Polygon Mainnet.");
       }
