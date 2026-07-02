@@ -2,7 +2,7 @@
   <style>
     .web3-gate-wrapper{width:100%;max-width:600px;margin:40px auto;padding:10px;box-sizing:border-box}
     .gateway-card{background:#0d1b2a;border:1px solid #007cba;border-radius:8px;padding:30px;box-shadow:0 4px 15px rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;position:relative;box-sizing:border-box}
-    .gateway-card h1{text-align:center;margin-top:0;margin-bottom:20px;color:#007cba;font-size:1.8rem}
+    .gateway-card h1{text-align:center;margin-top:0;margin-bottom:20px;color:#007cba;font-size:2.5rem}
     .gateway-card p{font-size:14px;line-height:1.6;color:#fff;text-align:center;margin-bottom:25px;max-width:450px}
     .gateway-card .btn{background-color:#007cba;color:white;border:none;padding:14px 28px;font-size:1rem;font-weight:600;border-radius:4px;cursor:pointer;width:100%;max-width:320px;transition:background-color .2s,transform .1s}
     .gateway-card .btn:hover{background-color:#005a87}
@@ -17,6 +17,11 @@
     
     /* ИЗМЕНЕНО: Блоки теперь по умолчанию видны (display: block), чтобы загружаться сразу */
     .gateway-card .box{display:block;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
+    .gateway-card .box b {
+    font-size: 1.6rem !important; /* Было 1.1rem, увеличиваем заголовки тиров */
+    display: inline-block;
+    margin-bottom: 10px; /* Добавляем отступ снизу, чтобы текст не прилипал к кнопкам */
+}
     .gateway-card #tier-0-box{background-color:rgba(255,255,255,0.05);border:2px dashed #94a3b8}
     .gateway-card #tier-1333-box{background-color:rgba(6,95,70,0.2);border:2px dashed #34d399}
     .gateway-card #tier-4444-box{background-color:rgba(30,58,138,0.3);border:2px dashed #3b82f6}
@@ -24,13 +29,13 @@
     .gateway-card .error-box{display:none;color:#ff4d4d;padding:15px;background:#ffe6e6;border-left:4px solid #ff4d4d;border-radius:4px;margin-top:20px;width:100%;box-sizing:border-box}
     .gateway-card .error-box b{color:#b30000}
     .gateway-card .links-container{display:flex;flex-direction:column;gap:12px;margin-top:15px}
-    .gateway-card .open-btn{display:block;background-color:#34d399;color:#0d1b2a;padding:12px;font-weight:bold;text-decoration:none;border-radius:4px;text-align:center;font-size:0.95rem;transition:opacity .2s}
+    .gateway-card .open-btn{display:block;background-color:#34d399;color:#0d1b2a;padding:12px;text-decoration:none;border-radius:4px;text-align:center;font-size:1.4rem;transition:opacity .2s}
     .gateway-card #tier-0-box .open-btn{background-color:#94a3b8;color:#0d1b2a}
     .gateway-card #tier-4444-box .open-btn{background-color:#3b82f6;color:white}
     .gateway-card .open-btn:hover{opacity:0.9}
     
     /* Стиль для заблокированных элементов без ссылок */
-    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.07);color:#8892b0;padding:12px;border-radius:4px;text-align:center;font-size:0.95rem;border:1px dashed rgba(255,255,255,0.1);cursor:not-allowed}
+    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.07);color:#8892b0;padding:12px;border-radius:4px;text-align:center;font-size:1.4rem;border:1px dashed rgba(255,255,255,0.1);cursor:not-allowed}
   </style>
   
   <div class="gateway-card">

@@ -249,13 +249,14 @@
         };
 
         function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
+         const date = new Date(dateString);
+         return date.toLocaleDateString('en-US', {
+         year: 'numeric',
+         month: 'long',
+         day: 'numeric'
+         });
+         }
+
 
         function scrollToElement(elementId) {
             const element = document.getElementById(elementId);

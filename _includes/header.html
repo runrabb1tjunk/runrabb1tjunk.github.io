@@ -74,6 +74,17 @@
     color: #ffffff;
   }
 
+  /* Увеличиваем только главные кнопки на панели (Home, Secretfiles) */
+.menu-single .page-link {
+    font-size: 1.2em !important;
+}
+
+/* Увеличиваем имена авторов на панели */
+.dropdown-btn {
+    font-size: 1.2em !important;
+}
+
+
   .site-footer {
     background-color: #0d1b2a;
   }
@@ -216,7 +227,7 @@
     }
 
     .nav-trigger:checked ~ .trigger .menu-single .page-link i {
-      font-size: 1.1em;
+      font-size: 1.3em;
       width: auto;
       height: auto;
       background: transparent;
@@ -407,38 +418,72 @@
     }
 
     /* Выпадающий список на десктопе */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      left: 0;
-      top: 100%;
-      min-width: 180px;
-      background-color: #0d1b2a;
-      border: 1px solid #007cba;
-      border-radius: 0 0 4px 4px; /* Скругляем только нижние углы выпадашки */
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
-      z-index: 100;
-      margin-top: 0; /* Плотно прилегает к навбару */
-      padding: 6px;
-    }
+/* 1. Делаем контейнер выпадашки компактным под ряд иконок */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    min-width: auto !important; /* Убираем фиксированную ширину 180px */
+    width: max-content; /* Контейнер сожмется под размер кнопок */
+    background-color: #0d1b2a;
+    border: 1px solid #007cba;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+    z-index: 100;
+    margin-top: 0;
+    padding: 6px;
+    /* Выстраиваем иконки в одну строчку (в ряд) */
+    flex-direction: row !important; 
+    gap: 6px !important;
+}
 
-    /* Ссылки внутри выпадашки */
-    .dropdown-content a {
-      color: #fff;
-      padding: 8px 12px;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      border-radius: 4px;
-      transition: background 0.2s, color 0.2s;
-    }
+/* Включаем flex-ряд при наведении на меню автора */
+.menu-dropdown:hover .dropdown-content {
+    display: flex !important;
+}
 
-    .dropdown-content a:hover {
-      background-color: #007cba;
-      color: #fff;
-    }
+/* 2. Скрываем текст подписей и превращаем ссылки в квадратные кнопки */
+.dropdown-content a.page-link {
+    font-size: 0 !important; /* Полностью скрывает текст внутри ссылки */
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 40px !important; /* Задаем фиксированную ширину кнопки */
+    height: 40px !important; /* Задаем фиксированную высоту кнопки */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    transition: all 0.3s !important;
+}
+
+/* Эффект подсветки при наведении на иконку соцсети */
+.dropdown-content a.page-link:hover {
+    background: #007cba !important;
+    border-color: #fff !important;
+}
+
+/* 3. Возвращаем нормальный видимый размер самим иконкам внутри кнопок */
+.dropdown-content a.page-link i,
+.dropdown-content a.page-link .rarible-icon,
+.dropdown-content a.page-link .boosty-icon {
+    font-size: 20px !important; /* Размер для Bootstrap-icons */
+    width: 20px !important;     /* Размер для SVG (Boosty/Rarible) */
+    height: 20px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #fff !important;
+}
+
+/* Фикс для SVG картинок, чтобы они растягивались внутри своих контейнеров */
+.dropdown-content a.page-link svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 
     .menu-dropdown:hover .dropdown-content {
       display: block;
