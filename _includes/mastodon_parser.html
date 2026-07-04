@@ -279,19 +279,21 @@
             return captions.sort((a, b) => a.number - b.number);
         }
 
-        function cleanHtmlPreservingFormatting(html) {
-            if (!html) return '';
-            return html
-                .replace(/<br\s*\/?>/gi, '\n')
-                .replace(/<\/p>/gi, '\n\n')
-                .replace(/<\/div>/gi, '\n')
-                .replace(/<[^>]*>/g, '')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&amp;/g, '&')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&quot;/g, '"');
-        }
+function cleanHtmlPreservingFormatting(html) {
+    if (!html) return '';
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;;/g, "'")  // Проверка на двойное экранирование &amp;;
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&;/g, "'");     // Стандартная проверка
+}
 
         function cleanExcessiveNewlines(text) {
             if (!text) return '';
@@ -309,37 +311,57 @@
             return await response.json();
         }
 
-        function processMastodonPosts(posts) {
-            return posts.map(post => {
-                const hashtags = post.tags ? post.tags.map(tag => tag.name.toLowerCase()) : [];
-                const images = post.media_attachments 
-                    ? post.media_attachments.filter(media => media.type === 'image').map(media => media.url)
-                    : [];
+       function processMastodonPosts(posts) {
+    // Создаем один раз инструмент для безопасного декодирования HTML-сущностей
+    const docParser = new DOMParser();
 
-                let cleanText = cleanHtmlPreservingFormatting(post.content);
-                let titleFromStars = '';
-                const starMatch = cleanText.match(/\*([^*]+)\*/);
-                if (starMatch) {
-                    titleFromStars = starMatch[1].trim();
-                    cleanText = cleanText.replace(/\*[^*]+\*/, '');
-                }
+    return posts.map(post => {
+        if (!post.content) return post;
 
-                const numberedCaptions = parseNumberedCaptions(cleanText);
-                let finalText = cleanText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '');
-                finalText = cleanExcessiveNewlines(finalText).trim();
-
-                return {
-                    id: post.id,
-                    datetime: post.created_at,
-                    text: finalText,
-                    hashtags,
-                    images,
-                    timestamp: new Date(post.created_at).getTime(),
-                    titleFromStars,
-                    numberedCaptions
-                };
-            });
+        // Шаг 1: Декодируем HTML-сущности прямо в сыром контенте, 
+        // чтобы превратить &rsquo; и &#39; в реальные апострофы '
+        let rawContent = post.content;
+        try {
+            const decodedDoc = docParser.parseFromString(rawContent, 'text/html');
+            rawContent = decodedDoc.body.innerHTML;
+        } catch (e) {
+            console.error("Ошибка предварительного декодирования:", e);
         }
+
+        // Дальше идет ваш стандартный парсинг, но уже с чистым текстом
+        const hashtags = post.tags ? post.tags.map(tag => tag.name.toLowerCase()) : [];
+        const images = post.media_attachments 
+            ? post.media_attachments.filter(media => media.type === 'image').map(media => media.url)
+            : [];
+
+        let cleanText = cleanHtmlPreservingFormatting(rawContent);
+        let titleFromStars = '';
+        const starMatch = cleanText.match(/\*([^*]+)\*/);
+        if (starMatch) {
+            titleFromStars = starMatch[1].trim();
+            cleanText = cleanText.replace(/\*[^*]+\*/, '');
+        }
+
+        const numberedCaptions = parseNumberedCaptions(cleanText);
+        let finalText = cleanText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '');
+        finalText = cleanExcessiveNewlines(finalText).trim();
+
+        // Финальный "щит" на случай, если где-то уже проскочил битый кусок
+        if (titleFromStars) titleFromStars = titleFromStars.replace(/&[^;]*;/g, "'");
+        finalText = finalText.replace(/&[^;]*;/g, "'");
+
+        return {
+            id: post.id,
+            datetime: post.created_at,
+            text: finalText,
+            hashtags,
+            images,
+            timestamp: new Date(post.created_at).getTime(),
+            titleFromStars,
+            numberedCaptions
+        };
+    });
+}
 
         function groupPostsByHashtags(posts) {
             const groups = {};

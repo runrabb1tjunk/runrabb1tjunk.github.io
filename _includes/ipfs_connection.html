@@ -1,48 +1,214 @@
 <div class="web3-gate-wrapper">
   <style>
-    .web3-gate-wrapper{width:100%;max-width:600px;margin:40px auto;padding:10px;box-sizing:border-box}
-    .gateway-card{background:#0d1b2a;border:1px solid #007cba;border-radius:8px;padding:30px;box-shadow:0 4px 15px rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;position:relative;box-sizing:border-box}
-    .gateway-card h1{text-align:center;margin-top:0;margin-bottom:20px;color:#007cba;font-size:2.5rem}
-    .gateway-card p{font-size:14px;line-height:1.6;color:#fff;text-align:center;margin-bottom:25px;max-width:450px}
-    .gateway-card .btn{background-color:#007cba;color:white;border:none;padding:14px 28px;font-size:1rem;font-weight:600;border-radius:4px;cursor:pointer;width:100%;max-width:320px;transition:background-color .2s,transform .1s}
-    .gateway-card .btn:hover{background-color:#005a87}
-    .gateway-card .btn:active{transform:scale(0.98)}
-    .gateway-card .btn:disabled{background-color:#475569;cursor:not-allowed}
-    .gateway-card .logout-btn{display:none;background:transparent;color:#999;border:1px solid #007cba;padding:8px 16px;font-size:0.85rem;border-radius:4px;cursor:pointer;margin-top:20px;transition:all .2s}
-    .gateway-card .logout-btn:hover{color:white;background-color:#007cba}
-    .gateway-card .loading-container{display:none;flex-direction:column;align-items:center;justify-content:center;height:150px;text-align:center;margin:20px 0}
-    .gateway-card .loading-spinner{width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #007cba;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
-    .gateway-card .loading-text{color:#007cba;font-size:14px;font-weight:500}
-    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .web3-gate-wrapper {
+      width: 100%;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Amatic SC", Amatic SC;
+    }
+    .gateway-card {
+      background: #0d1b2a;
+      border: 1px solid #007cba;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .gateway-card h1 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #007cba;
+      font-size: 2.5rem;
+    }
+    .gateway-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 25px;
+      max-width: 450px;
+    }
     
-    /* ИЗМЕНЕНО: Блоки теперь по умолчанию видны (display: block), чтобы загружаться сразу */
-    .gateway-card .box{display:block;width:100%;padding:20px;border-radius:6px;margin-top:20px;box-sizing:border-box;text-align:left}
+    .wallet-buttons-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 15px;
+    }
+    .gateway-card .btn {
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color .2s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: inherit;
+    }
+    
+    .btn-metamask { background-color: #e17726; }
+    .btn-metamask:hover { background-color: #cd6517; }
+    .btn-trust { background-color: #3375bb; }
+    .btn-trust:hover { background-color: #225a95; }
+    .btn-phantom { background-color: #ab9ff3; }
+    .btn-phantom:hover { background-color: #8f80e9; }
+    
+    .gateway-card .btn:active { transform: scale(0.98); }
+    .gateway-card .btn:disabled {
+      background-color: #334155 !important;
+      color: #64748b;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    .gateway-card .logout-btn {
+      display: none;
+      background: transparent;
+      color: #999;
+      border: 1px solid #007cba;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .gateway-card .logout-btn:hover {
+      color: white;
+      background-color: #007cba;
+    }
+    .gateway-card .loading-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 150px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .gateway-card .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007cba;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    .gateway-card .loading-text {
+      color: #007cba;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .gateway-card .box {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      border-radius: 6px;
+      margin-top: 20px;
+      box-sizing: border-box;
+      text-align: left;
+    }
     .gateway-card .box b {
-    font-size: 1.6rem !important; /* Было 1.1rem, увеличиваем заголовки тиров */
-    display: inline-block;
-    margin-bottom: 10px; /* Добавляем отступ снизу, чтобы текст не прилипал к кнопкам */
-}
-    .gateway-card #tier-0-box{background-color:rgba(255,255,255,0.05);border:2px dashed #94a3b8}
-    .gateway-card #tier-1333-box{background-color:rgba(6,95,70,0.2);border:2px dashed #34d399}
-    .gateway-card #tier-4444-box{background-color:rgba(30,58,138,0.3);border:2px dashed #3b82f6}
+      font-size: 1.6rem !important;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .gateway-card #tier-0-box { background-color: rgba(255,255,255,0.05); border: 2px dashed #94a3b8; }
+    .gateway-card #tier-1333-box { background-color: rgba(6,95,70,0.2); border: 2px dashed #34d399; }
+    .gateway-card #tier-4444-box { background-color: rgba(30,58,138,0.3); border: 2px dashed #3b82f6; }
     
-    .gateway-card .error-box{display:none;color:#ff4d4d;padding:15px;background:#ffe6e6;border-left:4px solid #ff4d4d;border-radius:4px;margin-top:20px;width:100%;box-sizing:border-box}
-    .gateway-card .error-box b{color:#b30000}
-    .gateway-card .links-container{display:flex;flex-direction:column;gap:12px;margin-top:15px}
-    .gateway-card .open-btn{display:block;background-color:#34d399;color:#0d1b2a;padding:12px;text-decoration:none;border-radius:4px;text-align:center;font-size:1.4rem;transition:opacity .2s}
-    .gateway-card #tier-0-box .open-btn{background-color:#94a3b8;color:#0d1b2a}
-    .gateway-card #tier-4444-box .open-btn{background-color:#3b82f6;color:white}
-    .gateway-card .open-btn:hover{opacity:0.9}
+    .gateway-card .error-box {
+      display: none;
+      color: #ff4d4d;
+      padding: 15px;
+      background: #ffe6e6;
+      border-left: 4px solid #ff4d4d;
+      border-radius: 4px;
+      margin-top: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .gateway-card .error-box b { color: #b30000; }
     
-    /* Стиль для заблокированных элементов без ссылок */
-    .gateway-card .locked-item{display:block;background-color:rgba(255,255,255,0.07);color:#8892b0;padding:12px;border-radius:4px;text-align:center;font-size:1.4rem;border:1px dashed rgba(255,255,255,0.1);cursor:not-allowed}
+    /* Контейнер для списков ссылок */
+    .gateway-card .links-container { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      margin-top: 15px; 
+    }
+
+    /* Разделитель между языковыми блоками ссылок */
+    .gateway-card .lang-divider {
+      border-top: 1px dashed rgba(255,255,255,0.15);
+      margin: 8px 0;
+      width: 100%;
+    }
+    
+    .gateway-card .open-btn {
+      display: block;
+      background-color: #34d399;
+      color: #0d1b2a;
+      padding: 12px;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.4rem;
+      transition: opacity .2s;
+      font-family: inherit;
+    }
+    .gateway-card #tier-0-box .open-btn { background-color: #94a3b8; color: #0d1b2a; }
+    .gateway-card #tier-4444-box .open-btn { background-color: #3b82f6; color: white; }
+    .gateway-card .open-btn:hover { opacity: 0.9; }
+    
+    .gateway-card .locked-item {
+      display: block;
+      background-color: rgba(255,255,255,0.07);
+      color: #8892b0;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.4rem;
+      border: 1px dashed rgba(255,255,255,0.1);
+      cursor: not-allowed;
+    }
+
+    .gateway-card #gateway-desc {
+      font-size:1.5rem;
+    }
   </style>
   
   <div class="gateway-card">
     <h1>Web3 Access Verification</h1>
-    <p id="gateway-desc">Verify your token balance via MetaMask to unlock tier-restricted content.</p>
+    <p id="gateway-desc">Verify your token balance via your preferred Web3 wallet to unlock tier-restricted content.</p>
     
-    <button class="btn" id="connect-btn" onclick="verifyAndSendBalance(true)">Connect with Metamask</button>
+    <div class="wallet-buttons-container" id="auth-buttons-group">
+      <button class="btn btn-metamask" id="connect-metamask" onclick="verifyAndSendBalance(true, null, null, 'metamask')">MetaMask</button>
+      <button class="btn btn-trust" id="connect-trust" onclick="verifyAndSendBalance(true, null, null, 'trust')">Trust Wallet</button>
+      <button class="btn btn-phantom" id="connect-phantom" onclick="verifyAndSendBalance(true, null, null, 'phantom')">Phantom</button>
+    </div>
     
     <div class="loading-container" id="loading-loader">
       <div class="loading-spinner"></div>
@@ -50,22 +216,22 @@
     </div>
 
     <div id="tier-0-box" class="box">
-      <b style="color:#94a3b8;font-size:1.1rem">Free Tier Access ✓</b>
+      <b style="color:#94a3b8;">Free Tier Access ✓</b>
       <div id="links-list-0" class="links-container"></div>
     </div>
     
     <div id="tier-1333-box" class="box">
-      <b id="title-1333" style="color:#34d399;font-size:1.1rem">Tier 1333+ Content</b>
+      <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
       <div id="links-list-1333" class="links-container"></div>
     </div>
     
     <div id="tier-4444-box" class="box">
-      <b id="title-4444" style="color:#60a5fa;font-size:1.1rem">Tier 4444+ Content</b>
+      <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
       <div id="links-list-4444" class="links-container"></div>
     </div>
     
     <div id="error-box" class="error-box">
-      <b>Access Denied:</b>
+      <b>Connection Issue:</b>
       <div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
     </div>
     
@@ -74,173 +240,292 @@
 </div>
 
 <script>
-const WORKER_URL="https://late-violet-5384.fgfg57468.workers.dev";
-const TOKEN_CONTRACT_ADDRESS="0x3047511c064Ba6319814aA80b56d3E97002cb343";
-const POLYGON_CHAIN_ID="0x89";
+const WORKER_URL = "https://late-violet-5384.fgfg57468.workers.dev";
+const POLYGON_CHAIN_ID = "0x89";
+const SIGN_MESSAGE = "Sign this message to verify ownership of this wallet for Web3 Gate.";
 
-// ИСПРАВЛЕНО: Сразу запускаем первичную инициализацию при загрузке документа
-window.addEventListener('DOMContentLoaded',()=>{
-  const savedAddress=localStorage.getItem('web3_user_address');
-  if(savedAddress){
-    verifyAndSendBalance(false,savedAddress);
-  } else {
-    // Если пользователь еще не залогинен, все равно запрашиваем у воркера списки со значением баланса = 0
-    fetchGatewayData(0);
-  }
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    checkInstalledWallets();
+    const savedAddress = localStorage.getItem('web3_user_address');
+    const savedSignature = localStorage.getItem('web3_user_signature');
+    const savedWalletType = localStorage.getItem('web3_wallet_type');
+    
+    if (savedAddress && savedSignature && savedWalletType) {
+      verifyAndSendBalance(false, savedAddress, savedSignature, savedWalletType);
+    } else {
+      fetchGatewayData(null, null, null);
+    }
+  }, 250);
 });
 
-async function fetchGatewayData(balanceNum) {
-  const list0=document.getElementById('links-list-0');
-  const list1333=document.getElementById('links-list-1333');
-  const list4444=document.getElementById('links-list-4444');
-  const title1333=document.getElementById('title-1333');
-  const title4444=document.getElementById('title-4444');
+function checkInstalledWallets() {
+  const isAnyEth = typeof window.ethereum !== 'undefined';
+  const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
+  const hasPhantom = typeof window.phantom?.ethereum !== 'undefined';
+  
+  let hasTrust = false;
+  if (isAnyEth) {
+    if (window.ethereum.isTrust) hasTrust = true;
+    else if (window.ethereum.providers?.length) {
+      hasTrust = window.ethereum.providers.some(p => p.isTrust);
+    }
+  }
 
-  // Очищаем старые списки перед рендером
-  list0.innerHTML='';
-  list1333.innerHTML='';
-  list4444.innerHTML='';
+  if (!hasMetaMask && !isAnyEth) {
+    const mmBtn = document.getElementById('connect-metamask');
+    if(mmBtn) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Not Installed)"; }
+  }
+  if (!hasTrust) {
+    const twBtn = document.getElementById('connect-trust');
+    if(twBtn) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Not Installed)"; }
+  }
+  if (!hasPhantom) {
+    const phBtn = document.getElementById('connect-phantom');
+    if(phBtn) { phBtn.disabled = true; phBtn.innerText = "Phantom (Not Installed)"; }
+  }
+}
+
+function getProvider(walletType) {
+  if (walletType === 'phantom') return window.phantom?.ethereum || null;
+  if (typeof window.ethereum === 'undefined') return null;
+  
+  if (window.ethereum.providers && window.ethereum.providers.length) {
+    if (walletType === 'metamask') {
+      return window.ethereum.providers.find(p => p.isMetaMask && !p.isTrust) || window.ethereum.providers[0];
+    }
+    if (walletType === 'trust') {
+      return window.ethereum.providers.find(p => p.isTrust) || window.ethereum.providers[0];
+    }
+  }
+  
+  if (walletType === 'trust' && window.ethereum.isTrust) return window.ethereum;
+  return window.ethereum;
+}
+
+// Хелпер, определяющий наличие русских букв в названии файла/ссылки
+function isRussianText(text) {
+  if (!text) return false;
+  return /[а-яё]/i.test(text);
+}
+
+// Вспомогательная функция для сборки кнопок внутри одного тира с разделением на EN и RU сверху вниз
+function populateTierContainer(container, items, isTierBox = false) {
+  if (!Array.isArray(items) || items.length === 0) return;
+
+  const enItems = [];
+  const ruItems = [];
+
+  // Разносим элементы по языковым массивам
+  items.forEach(item => {
+    const name = item.name || item.title || "";
+    if (isRussianText(name)) {
+      ruItems.push(item);
+    } else {
+      enItems.push(item);
+    }
+  });
+
+  // Функция создания DOM-элемента кнопки/плашки
+  function createItemElement(item) {
+    if (item.url) {
+      const a = document.createElement('a');
+      a.href = item.url;
+      a.target = "_blank";
+      a.className = "open-btn";
+      a.innerText = item.name || item.title || "Link";
+      return a;
+    } else {
+      const div = document.createElement('div');
+      div.className = "locked-item";
+      div.innerText = `🔒 ${item.name || item.title || "Locked Content"}`;
+      return div;
+    }
+  }
+
+  // Добавляем сначала ВСЕ английские файлы (сверху)
+  enItems.forEach(item => {
+    container.appendChild(createItemElement(item));
+  });
+
+  // Если есть и английские, и русские элементы — бахаем красивую линию-разделитель между группами
+  if (enItems.length > 0 && ruItems.length > 0) {
+    const divider = document.createElement('div');
+    divider.className = "lang-divider";
+    container.appendChild(divider);
+  }
+
+  // Добавляем ВСЕ русские файлы (снизу)
+  ruItems.forEach(item => {
+    container.appendChild(createItemElement(item));
+  });
+}
+
+function renderUI(data) {
+  const list0 = document.getElementById('links-list-0');
+  const list1333 = document.getElementById('links-list-1333');
+  const list4444 = document.getElementById('links-list-4444');
+  const title1333 = document.getElementById('title-1333');
+  const title4444 = document.getElementById('title-4444');
+
+  if(!list0 || !list1333 || !list4444) return;
+
+  list0.innerHTML = ''; list1333.innerHTML = ''; list4444.innerHTML = '';
+
+  if (!data || typeof data !== 'object') return;
+
+  const t0 = data.tier0 || data.tier_0 || data.free || [];
+  const t1333 = data.tier1333 || data.tier_1333 || [];
+  const t4444 = data.tier4444 || data.tier_4444 || [];
+
+  // Заголовки для закрытых/открытых тиров
+  if (title1333) {
+    const hasAccess = t1333.some(i => i.url !== null && i.url !== undefined);
+    title1333.innerText = hasAccess ? "Access Granted for Tier 1333+ ✓" : "Tier 1333+ (Locked 🔒)";
+  }
+  if (title4444) {
+    const hasAccess = t4444.some(i => i.url !== null && i.url !== undefined);
+    title4444.innerText = hasAccess ? "Access Granted for Tier 4444+ ✓" : "Tier 4444+ (Locked 🔒)";
+  }
+
+  // Рендерим списки с нашей новой сортировкой по языкам (сверху EN, снизу RU)
+  populateTierContainer(list0, t0);
+  populateTierContainer(list1333, t1333);
+  populateTierContainer(list4444, t4444);
+}
+
+async function fetchGatewayData(userAddress, signature, message) {
+  const errorBox = document.getElementById('error-box');
+  if (errorBox) errorBox.style.display = 'none';
 
   try {
-    const response=await fetch(WORKER_URL,{
-      method:"POST",
-      mode:"cors",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({balance:balanceNum})
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address: userAddress, signature: signature, message: message })
     });
     
-    const data=await response.json();
-
-    // Рендер Tier 0 (Всегда кликабельный)
-    if(data.tier0 && data.tier0.length > 0){
-      data.tier0.forEach(item => {
-        const a=document.createElement('a');
-        a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
-        list0.appendChild(a);
-      });
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || "Worker responded with error status");
     }
-
-    // Рендер Tier 1333
-    if(data.tier1333 && data.tier1333.length > 0){
-      const hasAccess = data.tier1333.some(i => i.url !== null);
-      title1333.innerText = hasAccess ? "Access Granted for Tier 1333+ ✓" : "Tier 1333+ (Locked 🔒)";
-      
-      data.tier1333.forEach(item => {
-        if(item.url){
-          const a=document.createElement('a');
-          a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
-          list1333.appendChild(a);
-        } else {
-          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`🔒 ${item.name}`;
-          list1333.appendChild(div);
-        }
-      });
-    }
-
-    // Рендер Tier 4444
-    if(data.tier4444 && data.tier4444.length > 0){
-      const hasAccess = data.tier4444.some(i => i.url !== null);
-      title4444.innerText = hasAccess ? "Access Granted for Tier 4444+ ✓" : "Tier 4444+ (Locked 🔒)";
-      
-      data.tier4444.forEach(item => {
-        if(item.url){
-          const a=document.createElement('a');
-          a.href=item.url; a.target="_blank"; a.className="open-btn"; a.innerText=item.name;
-          list4444.appendChild(a);
-        } else {
-          const div=document.createElement('div'); div.className="locked-item"; div.innerText=`🔒 ${item.name}`;
-          list4444.appendChild(div);
-        }
-      });
-    }
+    
+    const data = await response.json();
+    renderUI(data);
   } catch(e) {
-    console.error("Error fetching structural data from worker:", e);
+    console.error("Network or parse issue:", e);
+    const errorOutput = document.getElementById('error-output');
+    if (errorBox && errorOutput) {
+      errorOutput.innerText = e.message || "Could not sync data with server.";
+      errorBox.style.display = 'block';
+    }
   }
 }
 
-async function verifyAndSendBalance(isManualClick,savedAddress=null){
-  const btn=document.getElementById('connect-btn');
-  const logoutBtn=document.getElementById('logout-btn');
-  const desc=document.getElementById('gateway-desc');
-  const errorBox=document.getElementById('error-box');
-  const errorOutput=document.getElementById('error-output');
-  const loader=document.getElementById('loading-loader');
-  const loaderText=document.getElementById('loading-text-status');
+async function verifyAndSendBalance(isManualClick, savedAddress = null, savedSignature = null, walletType = 'metamask') {
+  const authButtonsGroup = document.getElementById('auth-buttons-group');
+  const logoutBtn = document.getElementById('logout-btn');
+  const desc = document.getElementById('gateway-desc');
+  const errorBox = document.getElementById('error-box');
+  const errorOutput = document.getElementById('error-output');
+  const loader = document.getElementById('loading-loader');
+  const loaderText = document.getElementById('loading-text-status');
   
-  errorBox.style.display='none';
+  if(errorBox) errorBox.style.display = 'none';
+  const activeProvider = getProvider(walletType);
   
-  if(typeof window.ethereum==='undefined'){
-    errorOutput.innerText="Error: MetaMask is not installed!";
-    errorBox.style.display='block';
+  if (!activeProvider) {
+    if(errorOutput && errorBox) {
+      errorOutput.innerText = `Selected wallet (${walletType}) is not available!`;
+      errorBox.style.display = 'block';
+    }
     return;
   }
-  try{
-    btn.style.display='none';
-    desc.style.display='none';
-    loader.style.display='flex';
-    loaderText.innerText=isManualClick?"Connecting wallet...":"Auto-login...";
+  
+  try {
+    if(authButtonsGroup) authButtonsGroup.style.display = 'none';
+    if(desc) desc.style.display = 'none';
+    if(loader) loader.style.display = 'flex';
+    if(loaderText) loaderText.innerText = isManualClick ? "Connecting wallet..." : "Auto-login...";
     
-    let metamaskProvider=window.ethereum;
-    if(window.ethereum.providers&&window.ethereum.providers.length){
-      metamaskProvider=window.ethereum.providers.find(p=>p.isMetaMask)||window.ethereum;
+    let userAddress = savedAddress;
+    let signature = savedSignature;
+    
+    if (!userAddress) {
+      const accounts = await activeProvider.request({ method: 'eth_requestAccounts' });
+      userAddress = accounts[0];
     }
     
-    let userAddress=savedAddress;
-    if(!userAddress){
-      const accounts=await metamaskProvider.request({method:'eth_requestAccounts'});
-      userAddress=accounts[0];
-      localStorage.setItem('web3_user_address',userAddress);
-    }
-    
-    loaderText.innerText="Checking network...";
-    try{
-      await metamaskProvider.request({method:'wallet_switchEthereumChain',params:[{chainId:POLYGON_CHAIN_ID}]});
-    }catch(switchError){
-      if(switchError.code===4902){
-        await metamaskProvider.request({method:'wallet_addEthereumChain',params:[{chainId:POLYGON_CHAIN_ID,chainName:'Polygon Mainnet',nativeCurrency:{name:'POL',symbol:'POL',decimals:18},rpcUrls:['https://ankr.com'],blockExplorerUrls:['https://polygonscan.com']}]});
-      }else{
-        throw new Error("Please switch your network to Polygon Mainnet.");
+    if(loaderText) loaderText.innerText = "Checking network...";
+    try {
+      await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: POLYGON_CHAIN_ID }] });
+    } catch(switchError) {
+      if (switchError.code === 4902) {
+        await activeProvider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: POLYGON_CHAIN_ID,
+            chainName: 'Polygon Mainnet',
+            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+            rpcUrls: ['https://polygon.llamarpc.com', 'https://polygon.meowrpc.com'],
+            blockExplorerUrls: ['https://polygonscan.com']
+          }]
+        });
+      } else {
+        throw new Error("Please switch your network to Polygon Mainnet inside your wallet.");
       }
     }
+
+    if (!signature) {
+      if(loaderText) loaderText.innerText = "Sign message in wallet...";
+      
+      const from = userAddress;
+      const msg = `0x${Array.from(new TextEncoder().encode(SIGN_MESSAGE)).map(b => b.toString(16).padStart(2, '0')).join('')}`;
+      
+      signature = await activeProvider.request({
+        method: 'personal_sign',
+        params: [msg, from],
+      });
+      
+      localStorage.setItem('web3_user_address', userAddress);
+      localStorage.setItem('web3_user_signature', signature);
+      localStorage.setItem('web3_wallet_type', walletType);
+    }
     
-    loaderText.innerText="Fetching balance...";
-    const paddedAddress=userAddress.substring(2).toLowerCase().padStart(64,'0');
-    const dataParam="0x70a08231"+paddedAddress;
-    const balanceHex=await metamaskProvider.request({method:'eth_call',params:[{to:TOKEN_CONTRACT_ADDRESS,data:dataParam},'latest']});
+    if(loaderText) loaderText.innerText = "Synchronizing gateway...";
+    await fetchGatewayData(userAddress, signature, SIGN_MESSAGE);
     
-    if(!balanceHex||balanceHex==='0x'){throw new Error("Failed to read token balance.")}
-    const balanceBigInt=BigInt(balanceHex);
-    const humanBalance=Number(balanceBigInt/100000000000000000n)/10;
-    
-    loaderText.innerText="Synchronizing gateway...";
-    
-    await fetchGatewayData(humanBalance);
-    
-    loader.style.display='none';
-    logoutBtn.style.display='block';
-  }catch(err){
+    if(loader) loader.style.display = 'none';
+    if(logoutBtn) logoutBtn.style.display = 'block';
+  } catch(err) {
     console.error(err);
-    loader.style.display='none';
-    errorOutput.innerText=err.message;
-    errorBox.style.display='block';
-    localStorage.removeItem('web3_user_address');
-    btn.style.display='block';
-    desc.style.display='block';
-    logoutBtn.style.display='none';
-    btn.innerText="Connect with Metamask";
-    fetchGatewayData(0); 
+    if(loader) loader.style.display = 'none';
+    
+    logout();
+    
+    if(errorOutput && errorBox && err.message) {
+      errorOutput.innerText = err.message;
+      errorBox.style.display = 'block';
+    }
+    
+    fetchGatewayData(null, null, null); 
   }
 }
 
-function logout(){
+function logout() {
   localStorage.removeItem('web3_user_address');
-  const btn=document.getElementById('connect-btn');
-  const desc=document.getElementById('gateway-desc');
-  document.getElementById('logout-btn').style.display='none';
-  document.getElementById('error-box').style.display='none';
-  btn.style.display='block';
-  btn.innerText="Connect with Metamask";
-  desc.style.display='block';
-  fetchGatewayData(0);
+  localStorage.removeItem('web3_user_signature');
+  localStorage.removeItem('web3_wallet_type');
+  const authButtonsGroup = document.getElementById('auth-buttons-group');
+  const desc = document.getElementById('gateway-desc');
+  const logoutBtn = document.getElementById('logout-btn');
+  const errorBox = document.getElementById('error-box');
+
+  if(logoutBtn) logoutBtn.style.display = 'none';
+  if(errorBox) errorBox.style.display = 'none';
+  if(authButtonsGroup) authButtonsGroup.style.display = 'flex';
+  if(desc) desc.style.display = 'block';
+  
+  fetchGatewayData(null, null, null);
 }
 </script>

@@ -12,7 +12,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
 
 <style>
-
   /* Переопределение z-index для canvas в галерее */
   .galleria-container canvas {
       z-index: 100 !important;
@@ -75,15 +74,14 @@
   }
 
   /* Увеличиваем только главные кнопки на панели (Home, Secretfiles) */
-.menu-single .page-link {
-    font-size: 1.2em !important;
-}
+  .menu-single .page-link {
+      font-size: 1.2em !important;
+  }
 
-/* Увеличиваем имена авторов на панели */
-.dropdown-btn {
-    font-size: 1.2em !important;
-}
-
+  /* Увеличиваем имена авторов на панели */
+  .dropdown-btn {
+      font-size: 1.2em !important;
+  }
 
   .site-footer {
     background-color: #0d1b2a;
@@ -204,7 +202,7 @@
       gap: 15px;
     }
 
-    /* Одиночные кнопки (home, secretfiles) */
+    /* Одиночные кнопки (home, secretfiles, kowasugi) */
     .nav-trigger:checked ~ .trigger .menu-single {
       width: 100%;
       display: flex;
@@ -418,72 +416,71 @@
     }
 
     /* Выпадающий список на десктопе */
-/* 1. Делаем контейнер выпадашки компактным под ряд иконок */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    left: 0;
-    top: 100%;
-    min-width: auto !important; /* Убираем фиксированную ширину 180px */
-    width: max-content; /* Контейнер сожмется под размер кнопок */
-    background-color: #0d1b2a;
-    border: 1px solid #007cba;
-    border-radius: 0 0 4px 4px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
-    z-index: 100;
-    margin-top: 0;
-    padding: 6px;
-    /* Выстраиваем иконки в одну строчку (в ряд) */
-    flex-direction: row !important; 
-    gap: 6px !important;
-}
+    /* 1. Делаем контейнер выпадашки компактным под ряд иконок */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 100%;
+        min-width: auto !important; /* Убираем фиксированную ширину 180px */
+        width: max-content; /* Контейнер сожмется под размер кнопок */
+        background-color: #0d1b2a;
+        border: 1px solid #007cba;
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+        z-index: 100;
+        margin-top: 0;
+        padding: 6px;
+        /* Выстраиваем иконки в одну строчку (в ряд) */
+        flex-direction: row !important; 
+        gap: 6px !important;
+    }
 
-/* Включаем flex-ряд при наведении на меню автора */
-.menu-dropdown:hover .dropdown-content {
-    display: flex !important;
-}
+    /* Включаем flex-ряд при наведении на меню автора */
+    .menu-dropdown:hover .dropdown-content {
+        display: flex !important;
+    }
 
-/* 2. Скрываем текст подписей и превращаем ссылки в квадратные кнопки */
-.dropdown-content a.page-link {
-    font-size: 0 !important; /* Полностью скрывает текст внутри ссылки */
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 40px !important; /* Задаем фиксированную ширину кнопки */
-    height: 40px !important; /* Задаем фиксированную высоту кнопки */
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 6px !important;
-    transition: all 0.3s !important;
-}
+    /* 2. Скрываем текст подписей и превращаем ссылки в квадратные кнопки */
+    .dropdown-content a.page-link {
+        font-size: 0 !important; /* Полностью скрывает текст внутри ссылки */
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 40px !important; /* Задаем фиксированную ширину кнопки */
+        height: 40px !important; /* Задаем фиксированную высоту кнопки */
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 6px !important;
+        transition: all 0.3s !important;
+    }
 
-/* Эффект подсветки при наведении на иконку соцсети */
-.dropdown-content a.page-link:hover {
-    background: #007cba !important;
-    border-color: #fff !important;
-}
+    /* Эффект подсветки при наведении на иконку соцсети */
+    .dropdown-content a.page-link:hover {
+        background: #007cba !important;
+        border-color: #fff !important;
+    }
 
-/* 3. Возвращаем нормальный видимый размер самим иконкам внутри кнопок */
-.dropdown-content a.page-link i,
-.dropdown-content a.page-link .rarible-icon,
-.dropdown-content a.page-link .boosty-icon {
-    font-size: 20px !important; /* Размер для Bootstrap-icons */
-    width: 20px !important;     /* Размер для SVG (Boosty/Rarible) */
-    height: 20px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #fff !important;
-}
+    /* 3. Возвращаем нормальный видимый размер самим иконкам внутри кнопок */
+    .dropdown-content a.page-link i,
+    .dropdown-content a.page-link .rarible-icon,
+    .dropdown-content a.page-link .boosty-icon {
+        font-size: 20px !important; /* Размер для Bootstrap-icons */
+        width: 20px !important;     /* Размер для SVG (Boosty/Rarible) */
+        height: 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #fff !important;
+    }
 
-/* Фикс для SVG картинок, чтобы они растягивались внутри своих контейнеров */
-.dropdown-content a.page-link svg {
-    width: 100% !important;
-    height: 100% !important;
-}
-
+    /* Фикс для SVG картинок, чтобы они растягивались внутри своих контейнеров */
+    .dropdown-content a.page-link svg {
+        width: 100% !important;
+        height: 100% !important;
+    }
 
     .menu-dropdown:hover .dropdown-content {
       display: block;
@@ -502,7 +499,7 @@
       align-items: stretch;
     }
     
-    /* ФИКС: Кнопка Home и Secretfiles растянуты на весь бар */
+    /* ФИКС: Кнопки Home, Secretfiles и kowasugi растянуты на весь бар */
     .page-link {
       display: inline-flex !important;
       align-items: center;
@@ -559,68 +556,75 @@
     
     <input type="checkbox" id="nav-trigger" class="nav-trigger" />
 
-<div class="trigger">
-  {% comment %} 1. Собираем уникальный список авторов {% endcomment %}
-  {% assign authors_str = "" %}
-  {% for item in site.nav %}
-    {% assign parts = item.title | split: ' ' %}
-    {% if parts[1] %}
-      {% unless authors_str contains parts[1] %}
-        {% assign authors_str = authors_str | append: parts[1] | append: "," %}
-      {% endunless %}
-    {% endif %}
-  {% endfor %}
-  {% assign authors = authors_str | split: "," %}
-
-  <div class="menu-grid">
-    <div class="menu-main-row">
-      
-      {% comment %} 2. Одиночные кнопки без авторов (home, secretfiles) {% endcomment %}
+    <div class="trigger">
+      {% comment %} 1. Собираем уникальный список авторов {% endcomment %}
+      {% assign authors_str = "" %}
       {% for item in site.nav %}
         {% assign parts = item.title | split: ' ' %}
-        {% unless parts[1] %}
-          <div class="menu-single">
-            <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
-              <i class="bi bi-{% case parts[0] %}{% when 'home' %}house-door{% when 'secretfiles' %}lock{% else %}{{ parts[0] }}{% endcase %}"></i>
-              {{ parts[0] }}
-            </a>
-          </div>
-        {% endunless %}
-      {% endfor %}
-
-      {% comment %} 3. Гибридная структура {% endcomment %}
-      {% for author in authors %}
-        {% if author != "" %}
-          <div class="menu-dropdown">
-            <div class="dropdown-btn">{{ author }}</div>
-            
-            <div class="dropdown-content">
-              
-              {% comment %} Поиск ссылок конкретного автора {% endcomment %}
-              {% for item in site.nav %}
-                {% assign parts = item.title | split: ' ' %}
-                {% if parts[1] == author %}
-                  <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
-                    {% if parts[0] == 'rarible' %}
-                      <i class="rarible-icon">{% include Rarible.svg %}</i>
-                    {% elsif parts[0] == 'boosty' %}
-                      <i class="boosty-icon">{% include boosty.svg %}</i>
-                    {% else %}
-                      <i class="bi bi-{{ parts[0] }}"></i>
-                    {% endif %}
-                    {{ parts[0] | capitalize }}
-                  </a>
-                {% endif %}
-              {% endfor %}
-
-            </div>
-          </div>
+        {% if parts[1] %}
+          {% unless authors_str contains parts[1] %}
+            {% assign authors_str = authors_str | append: parts[1] | append: "," %}
+          {% endunless %}
         {% endif %}
       {% endfor %}
+      {% assign authors = authors_str | split: "," %}
 
+      <div class="menu-grid">
+        <div class="menu-main-row">
+          
+          {% comment %} 2. Одиночные кнопки без авторов (home, secretfiles) {% endcomment %}
+          {% for item in site.nav %}
+            {% assign parts = item.title | split: ' ' %}
+            {% unless parts[1] %}
+              <div class="menu-single">
+                <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+                  <i class="bi bi-{% case parts[0] %}{% when 'home' %}house-door{% when 'secretfiles' %}lock{% else %}{{ parts[0] }}{% endcase %}"></i>
+                  {{ parts[0] }}
+                </a>
+              </div>
+            {% endunless %}
+          {% endfor %}
+
+          {% comment %} Добавленный кастомный пункт меню kowasugi {% endcomment %}
+          <div class="menu-single">
+            <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-currency-exchange"></i>
+              kowasugi
+            </a>
+          </div>
+
+          {% comment %} 3. Гибридная структура {% endcomment %}
+          {% for author in authors %}
+            {% if author != "" %}
+              <div class="menu-dropdown">
+                <div class="dropdown-btn">{{ author }}</div>
+                
+                <div class="dropdown-content">
+                  
+                  {% comment %} Поиск ссылок конкретного автора {% endcomment %}
+                  {% for item in site.nav %}
+                    {% assign parts = item.title | split: ' ' %}
+                    {% if parts[1] == author %}
+                      <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+                        {% if parts[0] == 'rarible' %}
+                          <i class="rarible-icon">{% include Rarible.svg %}</i>
+                        {% elsif parts[0] == 'boosty' %}
+                          <i class="boosty-icon">{% include boosty.svg %}</i>
+                        {% else %}
+                          <i class="bi bi-{{ parts[0] }}"></i>
+                        {% endif %}
+                        {{ parts[0] | capitalize }}
+                      </a>
+                    {% endif %}
+                  {% endfor %}
+
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</nav>
-
+  </nav>
 </header>
