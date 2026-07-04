@@ -80,6 +80,11 @@ nav:
     url: https://rarible.com/user/0xaf6419b7594a4960eded23d8adc965c9f03607e3
 
 
-#plugins:
-#  - jekyll-seo-tag
+plugins:
+  - jekyll-seo-tag
 #  - jekyll-sitemap
+
+title: Run Rabiit Junk
+description: Sphere and Hare comic creators' site
+url: "https://runrabb1tjunk.github.io"
+image: assets/default-share.jpg
