@@ -84,7 +84,7 @@ plugins:
   - jekyll-seo-tag
 #  - jekyll-sitemap
 
-title: Run Rabiit Junk
+title: Run Rabbit Junk
 description: Sphere and Hare comic creators' site
 url: "https://runrabb1tjunk.github.io"
 image: assets/default-share.jpg
