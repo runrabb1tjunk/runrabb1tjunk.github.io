@@ -1,531 +1,819 @@
 <div class="web3-gate-wrapper">
-  <style>
-    .web3-gate-wrapper {
-      width: 100%;
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 10px;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Amatic SC", Amatic SC;
-    }
-    .gateway-card {
-      background: #0d1b2a;
-      border: 1px solid #007cba;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      box-sizing: border-box;
-    }
-    .gateway-card h1 {
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #007cba;
-      font-size: 2.5rem;
-    }
-    .gateway-card p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 25px;
-      max-width: 450px;
-    }
-    
-    .wallet-buttons-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      max-width: 320px;
-      margin-bottom: 15px;
-    }
-    .gateway-card .btn {
-      color: white;
-      border: none;
-      padding: 14px 20px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      border-radius: 4px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color .2s, transform .1s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-family: inherit;
-    }
-    
-    .btn-metamask { background-color: #e17726; }
-    .btn-metamask:hover { background-color: #cd6517; }
-    .btn-trust { background-color: #3375bb; }
-    .btn-trust:hover { background-color: #225a95; }
-    .btn-phantom { background-color: #ab9ff3; }
-    .btn-phantom:hover { background-color: #8f80e9; }
-    
-    .gateway-card .btn:active { transform: scale(0.98); }
-    .gateway-card .btn:disabled {
-      background-color: #334155 !important;
-      color: #64748b;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-    
-    .gateway-card .logout-btn {
-      display: none;
-      background: transparent;
-      color: #999;
-      border: 1px solid #007cba;
-      padding: 8px 16px;
-      font-size: 0.85rem;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: all .2s;
-      font-family: inherit;
-    }
-    .gateway-card .logout-btn:hover {
-      color: white;
-      background-color: #007cba;
-    }
-    .gateway-card .loading-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 150px;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .gateway-card .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #007cba;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
-    }
-    .gateway-card .loading-text {
-      color: #007cba;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .gateway-card .box {
-      display: block;
-      width: 100%;
-      padding: 20px;
-      border-radius: 6px;
-      margin-top: 20px;
-      box-sizing: border-box;
-      text-align: left;
-    }
-    .gateway-card .box b {
-      font-size: 1.6rem !important;
-      display: inline-block;
-      margin-bottom: 10px;
-    }
-    .gateway-card #tier-0-box { background-color: rgba(255,255,255,0.05); border: 2px dashed #94a3b8; }
-    .gateway-card #tier-1333-box { background-color: rgba(6,95,70,0.2); border: 2px dashed #34d399; }
-    .gateway-card #tier-4444-box { background-color: rgba(30,58,138,0.3); border: 2px dashed #3b82f6; }
-    
-    .gateway-card .error-box {
-      display: none;
-      color: #ff4d4d;
-      padding: 15px;
-      background: #ffe6e6;
-      border-left: 4px solid #ff4d4d;
-      border-radius: 4px;
-      margin-top: 20px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .gateway-card .error-box b { color: #b30000; }
-    
-    /* Контейнер для списков ссылок */
-    .gateway-card .links-container { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px; 
-      margin-top: 15px; 
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
 
-    /* Разделитель между языковыми блоками ссылок */
-    .gateway-card .lang-divider {
-      border-top: 1px dashed rgba(255,255,255,0.15);
-      margin: 8px 0;
-      width: 100%;
-    }
-    
-    .gateway-card .open-btn {
-      display: block;
-      background-color: #34d399;
-      color: #0d1b2a;
-      padding: 12px;
-      text-decoration: none;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 1.4rem;
-      transition: opacity .2s;
-      font-family: inherit;
-    }
-    .gateway-card #tier-0-box .open-btn { background-color: #94a3b8; color: #0d1b2a; }
-    .gateway-card #tier-4444-box .open-btn { background-color: #3b82f6; color: white; }
-    .gateway-card .open-btn:hover { opacity: 0.9; }
-    
-    .gateway-card .locked-item {
-      display: block;
-      background-color: rgba(255,255,255,0.07);
-      color: #8892b0;
-      padding: 12px;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 1.4rem;
-      border: 1px dashed rgba(255,255,255,0.1);
-      cursor: not-allowed;
-    }
+.web3-gate-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: "Amatic SC", Amatic SC, -apple-system, BlinkMacSystemFont;
+}
+.gateway-card {
+    background: #0d1b2a;
+    border: 1px solid #007cba;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+}
+.gateway-card h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #007cba;
+    font-size: 2.5rem;
+}
+.gateway-card p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 25px;
+    max-width: 450px;
+}
+.wallet-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 15px;
+}
+.gateway-card .btn {
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color .2s, transform .1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: inherit;
+}
+.btn-metamask { background-color: #e17726; }
+.btn-metamask:hover { background-color: #cd6517; }
+.btn-trust { background-color: #3375bb; }
+.btn-trust:hover { background-color: #225a95; }
+.btn-phantom { background-color: #ab9ff3; }
+.btn-phantom:hover { background-color: #8f80e9; }
 
-    .gateway-card #gateway-desc {
-      font-size:1.5rem;
-    }
-  </style>
-  
-  <div class="gateway-card">
+.gateway-card .btn:active { transform: scale(0.98); }
+.gateway-card .btn:disabled {
+    background-color: #334155 !important;
+    color: #64748b;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+.gateway-card .logout-btn {
+    display: none;
+    background: transparent;
+    color: #999;
+    border: 1px solid #007cba;
+    padding: 8px 16px;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all .2s;
+    font-family: inherit;
+}
+.gateway-card .logout-btn:hover {
+    color: white;
+    background-color: #007cba;
+}
+.gateway-card .loading-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    text-align: center;
+    margin: 20px 0;
+}
+.gateway-card .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007cba;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+.gateway-card .loading-text {
+    color: #007cba;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Встроенный интерактивный граф */
+.graph-wrapper {
+    width: 100%;
+    height: 380px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid #007cba;
+    border-radius: 6px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+#cy {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.graph-header-label {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: #007cba;
+    font-size: 1.6rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Модальное меню выбора языка при тапе на узел сферы */
+.node-lang-menu {
+    display: none;
+    position: absolute;
+    background: #0d1b2a;
+    border: 1px solid #34d399;
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    flex-direction: column;
+    gap: 8px;
+    min-width: 160px;
+}
+.node-lang-menu a {
+    display: block;
+    background: #007cba;
+    color: #fff;
+    padding: 6px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.3rem;
+    border-radius: 3px;
+    transition: opacity 0.2s;
+}
+.node-lang-menu a:hover {
+    opacity: 0.9;
+}
+.node-lang-menu .close-menu-btn {
+    background: #ff4d4d;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    border: none;
+    padding: 4px;
+    border-radius: 3px;
+    font-family: inherit;
+}
+
+.gateway-card .box {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    text-align: left;
+}
+.gateway-card .box b {
+    font-size: 1.8rem !important;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.gateway-card #tier-0-box { background-color: rgba(255,255,255,0.05); border: 2px dashed #94a3b8; }
+.gateway-card #tier-1333-box { background-color: rgba(6,95,70,0.2); border: 2px dashed #34d399; }
+.gateway-card #tier-4444-box { background-color: rgba(30,58,138,0.3); border: 2px dashed #3b82f6; }
+
+.gateway-card .error-box {
+    display: none;
+    color: #ff4d4d;
+    padding: 15px;
+    background: #ffe6e6;
+    border-left: 4px solid #ff4d4d;
+    border-radius: 4px;
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.gateway-card .error-box b { color: #b30000; font-size: 1.4rem; }
+
+.gateway-card .links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+.gateway-card .lang-divider {
+    border-top: 1px dashed rgba(255,255,255,0.15);
+    margin: 8px 0;
+    width: 100%;
+}
+.gateway-card .open-btn {
+    display: block;
+    background-color: #34d399;
+    color: #0d1b2a;
+    padding: 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.6rem;
+    transition: opacity .2s;
+    font-family: inherit;
+}
+.gateway-card #tier-0-box .open-btn { background-color: #94a3b8; color: #0d1b2a; }
+.gateway-card #tier-4444-box .open-btn { background-color: #3b82f6; color: white; }
+.gateway-card .open-btn:hover { opacity: 0.9; }
+.gateway-card .locked-item {
+    display: block;
+    background-color: rgba(255,255,255,0.07);
+    color: #8892b0;
+    padding: 12px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.6rem;
+    border: 1px dashed rgba(255,255,255,0.1);
+    cursor: not-allowed;
+}
+.gateway-card #gateway-desc {
+    font-size: 1.5rem;
+}
+</style>
+
+<div class="gateway-card">
     <h1>Web3 Access Verification</h1>
     <p id="gateway-desc">Verify your token balance via your preferred Web3 wallet to unlock tier-restricted content.</p>
     
     <div class="wallet-buttons-container" id="auth-buttons-group">
-      <button class="btn btn-metamask" id="connect-metamask" onclick="verifyAndSendBalance(true, null, null, 'metamask')">MetaMask</button>
-      <button class="btn btn-trust" id="connect-trust" onclick="verifyAndSendBalance(true, null, null, 'trust')">Trust Wallet</button>
-      <button class="btn btn-phantom" id="connect-phantom" onclick="verifyAndSendBalance(true, null, null, 'phantom')">Phantom</button>
+        <button class="btn btn-metamask" id="connect-metamask" onclick="verifyAndSendBalance(true, null, null, 'metamask')">MetaMask</button>
+        <button class="btn btn-trust" id="connect-trust" onclick="verifyAndSendBalance(true, null, null, 'trust')">Trust Wallet</button>
+        <button class="btn btn-phantom" id="connect-phantom" onclick="verifyAndSendBalance(true, null, null, 'phantom')">Phantom</button>
     </div>
-    
+
     <div class="loading-container" id="loading-loader">
-      <div class="loading-spinner"></div>
-      <div class="loading-text" id="loading-text-status">Connecting...</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text-status">Connecting...</div>
+    </div>
+
+    <!-- Интерактивный граф -->
+    <div class="graph-wrapper" id="graph-viewport">
+        <div class="graph-header-label">Interactive Sphere Path</div>
+        <div id="cy"></div>
+        
+        <!-- Контекстное меню выбора языка -->
+        <div id="node-menu" class="node-lang-menu">
+            <div style="color: #007cba; font-size:1.2rem; text-align:center; font-weight:bold; margin-bottom:5px;">Select Language</div>
+            <div id="node-links-container" style="display:flex; flex-direction:column; gap:5px;"></div>
+            <button class="close-menu-btn" onclick="closeNodeMenu()">Cancel</button>
+        </div>
     </div>
 
     <div id="tier-0-box" class="box">
-      <b style="color:#94a3b8;">Free Tier Access ✓</b>
-      <div id="links-list-0" class="links-container"></div>
+        <b style="color:#94a3b8;">Free Tier Access</b>
+        <div id="links-list-0" class="links-container"></div>
     </div>
-    
+
     <div id="tier-1333-box" class="box">
-      <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
-      <div id="links-list-1333" class="links-container"></div>
+        <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
+        <div id="links-list-1333" class="links-container"></div>
     </div>
-    
+
     <div id="tier-4444-box" class="box">
-      <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
-      <div id="links-list-4444" class="links-container"></div>
+        <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
+        <div id="links-list-4444" class="links-container"></div>
     </div>
-    
+
     <div id="error-box" class="error-box">
-      <b>Connection Issue:</b>
-      <div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
+        <b>Connection Issue:</b>
+        <div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
     </div>
-    
+
     <button class="logout-btn" id="logout-btn" onclick="logout()">Disconnect Wallet</button>
-  </div>
 </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.33.2/cytoscape.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@4.0.0/dist/cytoscape-dagre.min.js"></script>
 
 <script>
 const WORKER_URL = "https://late-violet-5384.fgfg57468.workers.dev";
 const POLYGON_CHAIN_ID = "0x89";
 const SIGN_MESSAGE = "Sign this message to verify ownership of this wallet for Web3 Gate.";
 
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
+let currentGatewayData = {
+    tier0: [],
+    tier1333: [],
+    tier4444: []
+};
+
+function initGateway() {
     checkInstalledWallets();
     const savedAddress = localStorage.getItem('web3_user_address');
     const savedSignature = localStorage.getItem('web3_user_signature');
     const savedWalletType = localStorage.getItem('web3_wallet_type');
     
     if (savedAddress && savedSignature && savedWalletType) {
-      verifyAndSendBalance(false, savedAddress, savedSignature, savedWalletType);
+        verifyAndSendBalance(false, savedAddress, savedSignature, savedWalletType);
     } else {
-      fetchGatewayData(null, null, null);
+        fetchGatewayData(null, null, null);
     }
-  }, 250);
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGateway);
+} else {
+    initGateway();
+}
 
 function checkInstalledWallets() {
-  const isAnyEth = typeof window.ethereum !== 'undefined';
-  const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
-  const hasPhantom = typeof window.phantom?.ethereum !== 'undefined';
-  
-  let hasTrust = false;
-  if (isAnyEth) {
-    if (window.ethereum.isTrust) hasTrust = true;
-    else if (window.ethereum.providers?.length) {
-      hasTrust = window.ethereum.providers.some(p => p.isTrust);
+    const isAnyEth = typeof window.ethereum !== 'undefined';
+    const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
+    const hasPhantom = typeof window.phantom?.ethereum !== 'undefined';
+    let hasTrust = false;
+    if (isAnyEth) {
+        if (window.ethereum.isTrust) hasTrust = true;
+        else if (window.ethereum.providers?.length) {
+            hasTrust = window.ethereum.providers.some(p => p.isTrust);
+        }
     }
-  }
-
-  if (!hasMetaMask && !isAnyEth) {
-    const mmBtn = document.getElementById('connect-metamask');
-    if(mmBtn) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Not Installed)"; }
-  }
-  if (!hasTrust) {
-    const twBtn = document.getElementById('connect-trust');
-    if(twBtn) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Not Installed)"; }
-  }
-  if (!hasPhantom) {
-    const phBtn = document.getElementById('connect-phantom');
-    if(phBtn) { phBtn.disabled = true; phBtn.innerText = "Phantom (Not Installed)"; }
-  }
+    if (!hasMetaMask && !isAnyEth) {
+        const mmBtn = document.getElementById('connect-metamask');
+        if(mmBtn) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Not Installed)"; }
+    }
+    if (!hasTrust) {
+        const twBtn = document.getElementById('connect-trust');
+        if(twBtn) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Not Installed)"; }
+    }
+    if (!hasPhantom) {
+        const phBtn = document.getElementById('connect-phantom');
+        if(phBtn) { phBtn.disabled = true; phBtn.innerText = "Phantom (Not Installed)"; }
+    }
 }
 
 function getProvider(walletType) {
-  if (walletType === 'phantom') return window.phantom?.ethereum || null;
-  if (typeof window.ethereum === 'undefined') return null;
-  
-  if (window.ethereum.providers && window.ethereum.providers.length) {
-    if (walletType === 'metamask') {
-      return window.ethereum.providers.find(p => p.isMetaMask && !p.isTrust) || window.ethereum.providers[0];
+    if (walletType === 'phantom') return window.phantom?.ethereum || null;
+    if (typeof window.ethereum === 'undefined') return null;
+    if (window.ethereum.providers && window.ethereum.providers.length) {
+        if (walletType === 'metamask') {
+            return window.ethereum.providers.find(p => p.isMetaMask && !p.isTrust) || window.ethereum.providers[0];
+        }
     }
     if (walletType === 'trust') {
-      return window.ethereum.providers.find(p => p.isTrust) || window.ethereum.providers[0];
+        return window.ethereum.providers.find(p => p.isTrust) || window.ethereum.providers[0];
     }
-  }
-  
-  if (walletType === 'trust' && window.ethereum.isTrust) return window.ethereum;
-  return window.ethereum;
+    if (walletType === 'trust' && window.ethereum.isTrust) return window.ethereum;
+    return window.ethereum;
 }
 
-// Хелпер, определяющий наличие русских букв в названии файла/ссылки
 function isRussianText(text) {
-  if (!text) return false;
-  return /[а-яё]/i.test(text);
+    if (!text) return false;
+    return /[а-яё]/i.test(text);
 }
 
-// Вспомогательная функция для сборки кнопок внутри одного тира с разделением на EN и RU сверху вниз
-function populateTierContainer(container, items, isTierBox = false) {
-  if (!Array.isArray(items) || items.length === 0) return;
+function populateTierContainer(container, items) {
+    if (!Array.isArray(items) || items.length === 0) return;
+    const enItems = [];
+    const ruItems = [];
 
-  const enItems = [];
-  const ruItems = [];
+    items.forEach(item => {
+        const name = item.name || item.title || "";
+        if (isRussianText(name)) {
+            ruItems.push(item);
+        } else {
+            enItems.push(item);
+        }
+    });
 
-  // Разносим элементы по языковым массивам
-  items.forEach(item => {
-    const name = item.name || item.title || "";
-    if (isRussianText(name)) {
-      ruItems.push(item);
-    } else {
-      enItems.push(item);
+    function createItemElement(item) {
+        if (item.url) {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.target = "_blank";
+            a.className = "open-btn";
+            a.innerText = item.name || item.title || "Link";
+            return a;
+        } else {
+            const div = document.createElement('div');
+            div.className = "locked-item";
+            div.innerText = item.name || item.title || "Locked Content";
+            return div;
+        }
     }
-  });
 
-  // Функция создания DOM-элемента кнопки/плашки
-  function createItemElement(item) {
-    if (item.url) {
-      const a = document.createElement('a');
-      a.href = item.url;
-      a.target = "_blank";
-      a.className = "open-btn";
-      a.innerText = item.name || item.title || "Link";
-      return a;
-    } else {
-      const div = document.createElement('div');
-      div.className = "locked-item";
-      div.innerText = `🔒 ${item.name || item.title || "Locked Content"}`;
-      return div;
+    enItems.forEach(item => {
+        container.appendChild(createItemElement(item));
+    });
+
+    if (enItems.length > 0 && ruItems.length > 0) {
+        const divider = document.createElement('div');
+        divider.className = "lang-divider";
+        container.appendChild(divider);
     }
-  }
 
-  // Добавляем сначала ВСЕ английские файлы (сверху)
-  enItems.forEach(item => {
-    container.appendChild(createItemElement(item));
-  });
-
-  // Если есть и английские, и русские элементы — бахаем красивую линию-разделитель между группами
-  if (enItems.length > 0 && ruItems.length > 0) {
-    const divider = document.createElement('div');
-    divider.className = "lang-divider";
-    container.appendChild(divider);
-  }
-
-  // Добавляем ВСЕ русские файлы (снизу)
-  ruItems.forEach(item => {
-    container.appendChild(createItemElement(item));
-  });
+    ruItems.forEach(item => {
+        container.appendChild(createItemElement(item));
+    });
 }
 
 function renderUI(data) {
-  const list0 = document.getElementById('links-list-0');
-  const list1333 = document.getElementById('links-list-1333');
-  const list4444 = document.getElementById('links-list-4444');
-  const title1333 = document.getElementById('title-1333');
-  const title4444 = document.getElementById('title-4444');
+    const list0 = document.getElementById('links-list-0');
+    const list1333 = document.getElementById('links-list-1333');
+    const list4444 = document.getElementById('links-list-4444');
+    const title1333 = document.getElementById('title-1333');
+    const title4444 = document.getElementById('title-4444');
+    
+    if(!list0 || !list1333 || !list4444) return;
+    list0.innerHTML = ""; list1333.innerHTML = ""; list4444.innerHTML = "";
+    
+    const fallbackData = data || {};
+    currentGatewayData.tier0 = fallbackData.tier0 || fallbackData.tier_0 || fallbackData.free || [];
+    currentGatewayData.tier1333 = fallbackData.tier1333 || fallbackData.tier_1333 || [];
+    currentGatewayData.tier4444 = fallbackData.tier4444 || fallbackData.tier_4444 || [];
 
-  if(!list0 || !list1333 || !list4444) return;
+    if (title1333) {
+        const hasAccess = currentGatewayData.tier1333.some(i => i.url != null && i.url !== undefined);
+        title1333.innerText = hasAccess ? "Access Granted for Tier 1333+" : "Tier 1333+ (Locked)";
+    }
+    if (title4444) {
+        const hasAccess = currentGatewayData.tier4444.some(i => i.url != null && i.url !== undefined);
+        title4444.innerText = hasAccess ? "Access Granted for Tier 4444+" : "Tier 4444+ (Locked)";
+    }
 
-  list0.innerHTML = ''; list1333.innerHTML = ''; list4444.innerHTML = '';
+    populateTierContainer(list0, currentGatewayData.tier0);
+    populateTierContainer(list1333, currentGatewayData.tier1333);
+    populateTierContainer(list4444, currentGatewayData.tier4444);
 
-  if (!data || typeof data !== 'object') return;
-
-  const t0 = data.tier0 || data.tier_0 || data.free || [];
-  const t1333 = data.tier1333 || data.tier_1333 || [];
-  const t4444 = data.tier4444 || data.tier_4444 || [];
-
-  // Заголовки для закрытых/открытых тиров
-  if (title1333) {
-    const hasAccess = t1333.some(i => i.url !== null && i.url !== undefined);
-    title1333.innerText = hasAccess ? "Access Granted for Tier 1333+ ✓" : "Tier 1333+ (Locked 🔒)";
-  }
-  if (title4444) {
-    const hasAccess = t4444.some(i => i.url !== null && i.url !== undefined);
-    title4444.innerText = hasAccess ? "Access Granted for Tier 4444+ ✓" : "Tier 4444+ (Locked 🔒)";
-  }
-
-  // Рендерим списки с нашей новой сортировкой по языкам (сверху EN, снизу RU)
-  populateTierContainer(list0, t0);
-  populateTierContainer(list1333, t1333);
-  populateTierContainer(list4444, t4444);
+    buildGraph();
 }
 
 async function fetchGatewayData(userAddress, signature, message) {
-  const errorBox = document.getElementById('error-box');
-  if (errorBox) errorBox.style.display = 'none';
-
-  try {
-    const response = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address: userAddress, signature: signature, message: message })
-    });
-    
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || "Worker responded with error status");
+    const errorBox = document.getElementById('error-box');
+    if (errorBox) errorBox.style.display = 'none';
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ address: userAddress, signature: signature, message: message })
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || "Worker responded with error status");
+        }
+        const data = await response.json();
+        renderUI(data);
+    } catch(e) {
+        console.error("Network or parse issue:", e);
+        const errorOutput = document.getElementById('error-output');
+        if (errorBox && errorOutput) {
+            errorOutput.innerText = e.message || "Could not sync data with server.";
+            errorBox.style.display = 'block';
+        }
+        renderUI(null);
     }
-    
-    const data = await response.json();
-    renderUI(data);
-  } catch(e) {
-    console.error("Network or parse issue:", e);
-    const errorOutput = document.getElementById('error-output');
-    if (errorBox && errorOutput) {
-      errorOutput.innerText = e.message || "Could not sync data with server.";
-      errorBox.style.display = 'block';
-    }
-  }
 }
 
 async function verifyAndSendBalance(isManualClick, savedAddress = null, savedSignature = null, walletType = 'metamask') {
-  const authButtonsGroup = document.getElementById('auth-buttons-group');
-  const logoutBtn = document.getElementById('logout-btn');
-  const desc = document.getElementById('gateway-desc');
-  const errorBox = document.getElementById('error-box');
-  const errorOutput = document.getElementById('error-output');
-  const loader = document.getElementById('loading-loader');
-  const loaderText = document.getElementById('loading-text-status');
-  
-  if(errorBox) errorBox.style.display = 'none';
-  const activeProvider = getProvider(walletType);
-  
-  if (!activeProvider) {
-    if(errorOutput && errorBox) {
-      errorOutput.innerText = `Selected wallet (${walletType}) is not available!`;
-      errorBox.style.display = 'block';
+    const authButtonsGroup = document.getElementById('auth-buttons-group');
+    const logoutBtn = document.getElementById('logout-btn');
+    const desc = document.getElementById('gateway-desc');
+    const errorBox = document.getElementById('error-box');
+    const errorOutput = document.getElementById('error-output');
+    const loader = document.getElementById('loading-loader');
+    const loaderText = document.getElementById('loading-text-status');
+    if(errorBox) errorBox.style.display = 'none';
+    const activeProvider = getProvider(walletType);
+    if (!activeProvider) {
+        if(errorOutput && errorBox) {
+            errorOutput.innerText = `Selected wallet (${walletType}) is not available!`;
+            errorBox.style.display = 'block';
+        }
+        return;
     }
-    return;
-  }
-  
-  try {
-    if(authButtonsGroup) authButtonsGroup.style.display = 'none';
-    if(desc) desc.style.display = 'none';
-    if(loader) loader.style.display = 'flex';
-    if(loaderText) loaderText.innerText = isManualClick ? "Connecting wallet..." : "Auto-login...";
-    
-    let userAddress = savedAddress;
-    let signature = savedSignature;
-    
-    if (!userAddress) {
-      const accounts = await activeProvider.request({ method: 'eth_requestAccounts' });
-      userAddress = accounts[0];
-    }
-    
-    if(loaderText) loaderText.innerText = "Checking network...";
     try {
-      await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: POLYGON_CHAIN_ID }] });
-    } catch(switchError) {
-      if (switchError.code === 4902) {
-        await activeProvider.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: POLYGON_CHAIN_ID,
-            chainName: 'Polygon Mainnet',
-            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-            rpcUrls: ['https://polygon.llamarpc.com', 'https://polygon.meowrpc.com'],
-            blockExplorerUrls: ['https://polygonscan.com']
-          }]
-        });
-      } else {
-        throw new Error("Please switch your network to Polygon Mainnet inside your wallet.");
-      }
+        if(authButtonsGroup) authButtonsGroup.style.display = 'none';
+        if(desc) desc.style.display = 'none';
+        if(loader) loader.style.display = 'flex';
+        if(loaderText) loaderText.innerText = isManualClick ? "Connecting wallet..." : "Auto-login...";
+        let userAddress = savedAddress;
+        let signature = savedSignature;
+        if (!userAddress) {
+            const accounts = await activeProvider.request({ method: 'eth_requestAccounts' });
+            userAddress = accounts[0];
+        }
+        if(loaderText) loaderText.innerText = "Checking network...";
+        try {
+            await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: POLYGON_CHAIN_ID }] });
+        } catch(switchError) {
+            if (switchError.code === 4902) {
+                await activeProvider.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [{
+                        chainId: POLYGON_CHAIN_ID,
+                        chainName: 'Polygon Mainnet',
+                        nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18},
+                        rpcUrls: ['https://polygon.llamarpc.com', 'https://polygon.meowrpc.com'],
+                        blockExplorerUrls: ['https://polygonscan.com']
+                    }]
+                });
+            } else {
+                throw new Error("Please switch your network to Polygon Mainnet inside your wallet.");
+            }
+        }
+        if (!signature) {
+            if(loaderText) loaderText.innerText = "Sign message in wallet...";
+            const from = userAddress;
+            const msg = `0x${Array.from(new TextEncoder().encode(SIGN_MESSAGE)).map(b => b.toString(16).padStart(2, '0')).join("")}`;
+            signature = await activeProvider.request({
+                method: 'personal_sign',
+                params: [msg, from],
+            });
+        }
+        localStorage.setItem('web3_user_address', userAddress);
+        localStorage.setItem('web3_user_signature', signature);
+        localStorage.setItem('web3_wallet_type', walletType);
+        if(loaderText) loaderText.innerText = "Synchronizing gateway...";
+        await fetchGatewayData(userAddress, signature, SIGN_MESSAGE);
+        if(loader) loader.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+    } catch(err) {
+        console.error(err);
+        if(loader) loader.style.display = 'none';
+        logout();
+        if(errorOutput && errorBox && err.message) {
+            errorOutput.innerText = err.message;
+            errorBox.style.display = 'block';
+            fetchGatewayData(null, null, null);
+        }
     }
-
-    if (!signature) {
-      if(loaderText) loaderText.innerText = "Sign message in wallet...";
-      
-      const from = userAddress;
-      const msg = `0x${Array.from(new TextEncoder().encode(SIGN_MESSAGE)).map(b => b.toString(16).padStart(2, '0')).join('')}`;
-      
-      signature = await activeProvider.request({
-        method: 'personal_sign',
-        params: [msg, from],
-      });
-      
-      localStorage.setItem('web3_user_address', userAddress);
-      localStorage.setItem('web3_user_signature', signature);
-      localStorage.setItem('web3_wallet_type', walletType);
-    }
-    
-    if(loaderText) loaderText.innerText = "Synchronizing gateway...";
-    await fetchGatewayData(userAddress, signature, SIGN_MESSAGE);
-    
-    if(loader) loader.style.display = 'none';
-    if(logoutBtn) logoutBtn.style.display = 'block';
-  } catch(err) {
-    console.error(err);
-    if(loader) loader.style.display = 'none';
-    
-    logout();
-    
-    if(errorOutput && errorBox && err.message) {
-      errorOutput.innerText = err.message;
-      errorBox.style.display = 'block';
-    }
-    
-    fetchGatewayData(null, null, null); 
-  }
 }
 
 function logout() {
-  localStorage.removeItem('web3_user_address');
-  localStorage.removeItem('web3_user_signature');
-  localStorage.removeItem('web3_wallet_type');
-  const authButtonsGroup = document.getElementById('auth-buttons-group');
-  const desc = document.getElementById('gateway-desc');
-  const logoutBtn = document.getElementById('logout-btn');
-  const errorBox = document.getElementById('error-box');
+    localStorage.removeItem('web3_user_address');
+    localStorage.removeItem('web3_user_signature');
+    localStorage.removeItem('web3_wallet_type');
+    const authButtonsGroup = document.getElementById('auth-buttons-group');
+    const desc = document.getElementById('gateway-desc');
+    const logoutBtn = document.getElementById('logout-btn');
+    const errorBox = document.getElementById('error-box');
+    if(logoutBtn) logoutBtn.style.display = 'none';
+    if(errorBox) errorBox.style.display = 'none';
+    if(authButtonsGroup) authButtonsGroup.style.display = 'flex';
+    if(desc) desc.style.display = 'block';
+    fetchGatewayData(null, null, null);
+}
 
-  if(logoutBtn) logoutBtn.style.display = 'none';
-  if(errorBox) errorBox.style.display = 'none';
-  if(authButtonsGroup) authButtonsGroup.style.display = 'flex';
-  if(desc) desc.style.display = 'block';
-  
-  fetchGatewayData(null, null, null);
+/* ================= Инициализация и рендеринг последовательного графа «Сфера» ================= */
+
+function closeNodeMenu() {
+    const menu = document.getElementById('node-menu');
+    if (menu) menu.style.display = 'none';
+}
+
+function buildGraph() {
+    closeNodeMenu();
+    const elements = [];
+
+    // Собираем все файлы со всех уровней доступа
+    const allFiles = [
+        ...currentGatewayData.tier0.map(f => ({...f, tier: 'Tier 0'})),
+        ...currentGatewayData.tier1333.map(f => ({...f, tier: 'Tier 1333'})),
+        ...currentGatewayData.tier4444.map(f => ({...f, tier: 'Tier 4444'}))
+    ];
+
+    // Структурируем данные под новые узлы графа
+    const graphNodesData = {
+        'shore_1': { label: 'Shore 1: Walk', en: null, ru: null, tier: 'Tier 0', imgIndex: "shore_1.jpg" },
+        'sphere_arrival': { label: 'Sphere: Arrival', en: null, ru: null, tier: 'Tier 0', imgIndex: "arrival.png" },
+        'sphere_1': { label: 'Sphere 1: Without sun', en: null, ru: null, tier: 'Tier 1333', imgIndex: "withoutsun_1.jpg" },
+        'sphere_2': { label: 'Sphere 2: Without sun', en: null, ru: null, tier: 'Tier 1333', imgIndex: "withoutsun2.jpg" },
+        'sphere_3': { label: 'Sphere 3: Without sun', en: null, ru: null, tier: 'Tier 4444', imgIndex: "withoutsun3.jpg" },
+        'sphere_4': { label: 'Sphere 4: Without sun', en: null, ru: null, tier: 'Tier 4444', imgIndex: "withoutsun4.JPG" },
+        'shore_2': { label: 'Shore 2: Breach', en: null, ru: null, tier: 'Tier 0', imgIndex: "shore_2.jpg" }
+    };
+
+    // Распределяем файлы из воркера по соответствующим узлам
+    allFiles.forEach(file => {
+        const name = file.name;
+        
+        // Shore 1 / Берег 1
+        if (/Shore First\. Walk/i.test(name)) { graphNodesData['shore_1'].en = file; }
+        else if (/Берег Первый\. Прогулка/i.test(name)) { graphNodesData['shore_1'].ru = file; }
+        
+        // Sphere Arrival / Прибытие
+        else if (/Sphere\. Arrival/i.test(name)) { graphNodesData['sphere_arrival'].en = file; }
+        else if (/Сфера\. Прибытие/i.test(name)) { graphNodesData['sphere_arrival'].ru = file; }
+        
+        // Шаги Сферы
+        else if (/Sphere 1/i.test(name)) { graphNodesData['sphere_1'].en = file; }
+        else if (/Сфера 1/i.test(name)) { graphNodesData['sphere_1'].ru = file; }
+        
+        else if (/Sphere 2/i.test(name)) { graphNodesData['sphere_2'].en = file; }
+        else if (/Сфера 2/i.test(name)) { graphNodesData['sphere_2'].ru = file; }
+        
+        else if (/Sphere 3/i.test(name)) { graphNodesData['sphere_3'].en = file; }
+        else if (/Сфера 3/i.test(name)) { graphNodesData['sphere_3'].ru = file; }
+        
+        else if (/Sphere 4/i.test(name)) { graphNodesData['sphere_4'].en = file; }
+        else if (/Сфера 4/i.test(name)) { graphNodesData['sphere_4'].ru = file; }
+        
+        // Shore 2 / Берег 2
+        else if (/Shore Second\. Breach/i.test(name)) { graphNodesData['shore_2'].en = file; }
+        else if (/Берег Второй\. Прорыв/i.test(name)) { graphNodesData['shore_2'].ru = file; }
+    });
+
+    // Генерируем элементы для Cytoscape
+    Object.keys(graphNodesData).forEach(id => {
+        const nodeInfo = graphNodesData[id];
+        const hasEn = !!nodeInfo.en;
+        const hasRu = !!nodeInfo.ru;
+        
+        // Если файлы заблокированы на сервере (url равен null или отсутствует)
+        const isLocked = (hasEn && !nodeInfo.en.url) || (hasRu && !nodeInfo.ru.url) || (!hasEn && !hasRu);
+
+        // Формируем список доступных языковых ссылок
+        const nodeLinks = [];
+        if (hasEn && nodeInfo.en.url) nodeLinks.push({ label: 'English Ver.', url: nodeInfo.en.url });
+        if (hasRu && nodeInfo.ru.url) nodeLinks.push({ label: 'Русская версия', url: nodeInfo.ru.url });
+
+        elements.push({
+            data: {
+                id: id,
+                label: `[${nodeInfo.tier}] ${nodeInfo.label}`,
+                isLocked: isLocked,
+                links: nodeLinks,
+                img: `https://black-obliged-cricket-162.mypinata.cloud/ipfs/bafybeicxups533madtff5yhhcya2ogmhtpfwxd4ve3kmqgf62464iljani/${nodeInfo.imgIndex}`
+            }
+        });
+    });
+
+    // Описываем связи согласно схеме:
+    // 1. Берег первый -> Сфера 1
+    // 2. Сфера прибытие -> Сфера 1
+    // 3. Сфера 1 -> Сфера 2 -> Сфера 3 -> Сфера 4
+    // 4. Сфера 4 -> Берег второй
+    const edges = [
+        { source: 'shore_1', target: 'sphere_1' },
+        { source: 'sphere_arrival', target: 'sphere_1' },
+        { source: 'sphere_1', target: 'sphere_2' },
+        { source: 'sphere_2', target: 'sphere_3' },
+        { source: 'sphere_3', target: 'sphere_4' },
+        { source: 'sphere_4', target: 'shore_2' }
+    ];
+
+    edges.forEach((edge, index) => {
+        elements.push({
+            data: {
+                id: `edge_${index}`,
+                source: edge.source,
+                target: edge.target
+            }
+        });
+    });
+
+    const cy = cytoscape({
+        container: document.getElementById('cy'),
+        zoomingEnabled: true,
+        userZoomingEnabled: true,
+        elements: elements,
+        style: [
+            {
+                selector: 'node',
+                style: {
+                    'width': '85px',
+                    'height': '85px',
+                    'shape': 'round-rectangle',
+                    'background-image': 'data(img)',
+                    'background-fit': 'cover',
+                    'border-width': '3px',
+                    'border-color': function(ele){ return ele.data('isLocked') ? '#ff4d4d' : '#34d399'; },
+                    'border-style': function(ele){ return ele.data('isLocked') ? 'dashed' : 'solid'; },
+                    'label': 'data(label)',
+                    'font-family': '"Amatic SC", Amatic SC, sans-serif',
+                    'font-size': '15px',
+                    'font-weight': 'bold',
+                    'text-valign': 'bottom',
+                    'text-margin-y': '8px',
+                    'color': '#ffffff',
+                    'text-background-opacity': 0.85,
+                    'text-background-color': '#0d1b2a',
+                    'text-background-padding': '4px',
+                    'text-background-shape': 'roundrectangle'
+                }
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'width': 3,
+                    'line-color': '#007cba',
+                    'curve-style': 'bezier',
+                    'target-arrow-shape': 'triangle',
+                    'target-arrow-color': '#007cba'
+                }
+            }
+        ],
+        layout: {
+            name: 'dagre',
+            rankDir: 'LR',
+            nodeSep: 45,
+            rankSep: 90,
+            animate: false
+        }
+    });
+
+    // Изменение 1: Увеличение масштаба в 3 раза и автоматическая центровка на самых левых блоках
+    cy.ready(function() {
+        cy.fit(); // Сначала вписываем в экран для базового расчета
+        const currentZoom = cy.zoom(); 
+        cy.zoom(currentZoom * 3); // Умножаем на 3
+
+        const nodes = cy.nodes();
+        if (nodes.length > 0) {
+            // Ищем минимальную координату X
+            let minX = Infinity;
+            nodes.forEach(node => {
+                const posX = node.position('x');
+                if (posX < minX) {
+                    minX = posX;
+                }
+            });
+            // Фильтруем узлы, находящиеся на крайней левой вертикали
+            const leftmostNodes = nodes.filter(node => Math.abs(node.position('x') - minX) < 10);
+            
+            // Центрируем камеру строго по этим левым узлам
+            cy.center(leftmostNodes);
+        }
+    });
+
+    // Логика клика на узел
+    cy.on('tap', 'node', function(evt) {
+        const node = evt.target;
+        const isLocked = node.data('isLocked');
+        const links = node.data('links') || [];
+
+        if (isLocked) {
+            alert("This step is locked! Connect a Web3 wallet with the correct token balance.");
+            closeNodeMenu();
+            return;
+        }
+
+        if (links.length === 0) {
+            alert("No available links found.");
+            return;
+        }
+
+        // Если ссылка одна — открываем сразу
+        if (links.length === 1) {
+            window.open(links[0].url, '_blank');
+            return;
+        }
+
+        // Рендерим меню выбора языка
+        const container = document.getElementById('node-links-container');
+        container.innerHTML = '';
+        
+        links.forEach(link => {
+            const a = document.createElement('a');
+            a.href = link.url;
+            a.target = '_blank';
+            a.innerText = link.label;
+            a.onclick = () => setTimeout(closeNodeMenu, 100);
+            container.appendChild(a);
+        });
+
+        // Изменение 2: Вывод языкового меню ровно по центру вьюпорта Cytoscape
+        const menu = document.getElementById('node-menu');
+        menu.style.display = 'flex';
+        menu.style.left = '50%';
+        menu.style.top = '50%';
+        menu.style.transform = 'translate(-50%, -50%)';
+    });
+
+    cy.on('mouseover', 'node', function() {
+        document.getElementById('cy').style.cursor = 'pointer';
+    });
+    cy.on('mouseout', 'node', function() {
+        document.getElementById('cy').style.cursor = 'default';
+    });
 }
 </script>
