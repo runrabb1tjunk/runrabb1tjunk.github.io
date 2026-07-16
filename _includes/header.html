@@ -5,639 +5,1083 @@
 <meta property="og:title" content="Run Rabbit Junk">
 <meta property="og:description" content="Sphere and Hare comic creators' site">
 <meta property="og:image" content="https://runrabb1tjunk.github.io/assets/default-share.jpg">
-
 <!-- Мета-теги для Твиттера -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:url" content="https://runrabb1tjunk.github.io/">
 <meta name="twitter:title" content="Run Rabbit Junk">
 <meta name="twitter:description" content="Sphere and Hare comic creators' site">
 <meta name="twitter:image" content="https://runrabb1tjunk.github.io/assets/default-share.jpg">
-
 <link rel="icon" type="image/png" href="./assets/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
 <link rel="shortcut icon" href="./assets/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="runrabb1tjunk" />
 <link rel="manifest" href="./assets/site.webmanifest" />
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
 </head>
 <style>
-  /* Переопределение z-index для canvas в галерее */
-  .galleria-container canvas {
-      z-index: 100 !important;
-  }
+/* Переопределение z-index для canvas в галерее */
+.galleria-container canvas {
+z-index: 100 !important;
+}
+galleria-theme-azur canvas {
+z-index: 100 !important;
+}
+html {
+overflow-x: hidden;
+width: 100%;
+}
+body {
+font: 400 1.4em "Amatic SC";
+color: #000;
+background-color: transparent;
+-webkit-text-size-adjust: 100%;
+-webkit-font-feature-settings: "kern" 0;
+-moz-font-feature-settings: "kern" 0;
+-o-font-feature-settings: "kern" 0;
+font-feature-settings: "kern" 0;
+font-kerning: normal;
+display: flex;
+min-height: 100vh;
+flex-direction: column;
+background-image: url('/assets/carrot.gif');
+background-repeat: repeat;
+background-size: auto;
+background-position: left top;
+background-attachment: fixed;
+margin: 0;
+padding: 0;
+position: relative;
+}
+.bi {padding: 0.1em;}
+a:hover {text-decoration: none;}
+a:visited {color: none;}
+.site-header {
+top: 0;
+width: 100%;
+z-index: 1000;
+background: #0d1b2a;
+box-shadow: none;
+border-top: none;
+border-bottom: none;
+}
+.site-header .page-link {
+color: #ffffff;
+}
+/* Увеличиваем только главные кнопки на панели (Home, Secretfiles) */
+.menu-single .page-link {
+font-size: 1.2em !important;
+}
+/* Увеличиваем имена авторов на панели */
+.dropdown-btn {
+font-size: 1.2em !important;
+}
+.site-footer {
+background-color: #0d1b2a;
+}
+.footer-heading { color: #faf; }
+.footer-col-wrapper { color: #ffffff; }
+.rarible-icon {
+display: inline-block;
+width: 1.4em;
+height: 1.4em;
+vertical-align: -0.125em;
+color: inherit;
+}
+.boosty-icon {
+display: inline-block;
+width: 1.4em;
+height: 1.4em;
+vertical-align: -0.125em;
+color: inherit;
+}
+/* --- МОДАЛЬНОЕ ОКНО И АВТОРИЗАЦИЯ / КАБИНЕТ --- */
+.auth-modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(13, 27, 42, 0.85);
+z-index: 2000;
+justify-content: center;
+align-items: center;
+padding: 20px;
+box-sizing: border-box;
+}
+.auth-modal.active {
+display: flex;
+}
+.auth-card {
+background: #0d1b2a;
+border: 2px solid #007cba;
+border-radius: 12px;
+width: 100%;
+max-width: 450px;
+padding: 30px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+position: relative;
+color: #fff;
+box-sizing: border-box;
+}
+.auth-close {
+position: absolute;
+top: 10px;
+right: 15px;
+background: none;
+border: none;
+color: #fff;
+font-size: 1.5em;
+cursor: pointer;
+}
+.auth-title {
+font-size: 2em;
+text-align: center;
+margin-bottom: 20px;
+text-transform: uppercase;
+letter-spacing: 1px;
+border-bottom: 1px dashed #007cba;
+padding-bottom: 10px;
+}
+.auth-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+.auth-input-group {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+.auth-input-group label {
+color: #007cba;
+}
+.auth-input-group input {
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 6px;
+padding: 10px;
+color: #fff;
+font-family: "Bad Script", sans-serif;
+outline: none;
+}
+.auth-input-group input:focus {
+border-color: #007cba;
+box-shadow: 0 0 5px rgba(0, 124, 186, 0.5);
+}
+.btn-submit {
+background: #007cba;
+color: #fff;
+border: none;
+border-radius: 6px;
+padding: 12px;
+font-size: 1.3em;
+cursor: pointer;
+font-family: inherit;
+font-weight: bold;
+text-transform: uppercase;
+width: 100%;
+transition: background 0.2s ease;
+margin-top: 10px;
+}
+.btn-submit:hover { background: #005a87; }
+.btn-flat {
+background: transparent;
+color: #007cba;
+border: 1px solid #007cba;
+border-radius: 6px;
+padding: 12px;
+font-size: 1.3em;
+cursor: pointer;
+font-family: inherit;
+font-weight: bold;
+text-transform: uppercase;
+width: 100%;
+margin-top: 10px;
+}
+/* Кнопки выбора Web3 кошелька */
+.web3-wallet-selectors {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin-top: 15px;
+}
+.btn-web3 {
+color: #fff;
+border: none;
+border-radius: 6px;
+padding: 10px;
+font-size: 1.1em;
+cursor: pointer;
+font-family: inherit;
+font-weight: bold;
+text-transform: uppercase;
+width: 100%;
+transition: opacity 0.2s;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.btn-web3:hover { opacity: 0.9; }
+.btn-web3:disabled { background-color: #334155 !important; color: #64748b; cursor: not-allowed; }
+.btn-metamask { background-color: #f6851b; }
+.btn-trust { background-color: #3375bb; }
+.btn-phantom { background-color: #ab9ff3; }
 
-  /* Или более специфично для темы azur */
-  .galleria-theme-azur canvas {
-      z-index: 100 !important;
-  }
-  
-  html {
-    overflow-x: hidden;
-    width: 100%;
-  }
+.status-msg {
+font-size: 13px;
+margin-top: 10px;
+color: #888;
+min-height: 15px;
+text-align: center;
+font-family: "Bad Script", sans-serif;
+}
+/* Стили кабинета */
+.info-item {
+margin: 15px 0;
+font-size: 1.1em;
+}
+.info-label { color: #007cba; }
+.info-value { font-weight: bold; }
+.wallet-addr {
+font-size: 12px;
+color: #888;
+word-break: break-all;
+font-family: monospace;
+}
+.divider {
+border-top: 1px dashed #007cba;
+margin: 20px 0;
+}
+.history-title {
+font-size: 1.2em;
+text-transform: uppercase;
+margin-bottom: 15px;
+color: #007cba;
+}
+.history-list {
+max-height: 180px;
+overflow-y: auto;
+font-size: 13px;
+line-height: 1.6;
+padding-right: 5px;
+font-family: "Bad Script", sans-serif;
+}
+.history-list::-webkit-scrollbar { width: 6px; }
+.history-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.history-list::-webkit-scrollbar-thumb { background: #007cba; border-radius: 3px; }
+.history-item {
+margin-bottom: 8px;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+padding-bottom: 4px;
+}
+.tx-block { color: #666; }
+.tx-time { color: #888; }
+.tx-type-in { color: #00ff66; font-weight: bold; }
+.tx-type-out { color: #ff3333; font-weight: bold; }
+.tx-amount { color: #00ffff; }
+.tx-balance-after { color: #aaa; }
+.hidden { display: none !important; }
+.mobile-login-trigger { display: none; }
 
-  body {
-    font: 400 1.4em "Amatic SC";
-    color: #000;
-    background-color: transparent;
-    -webkit-text-size-adjust: 100%;
-    -webkit-font-feature-settings: "kern" 0;
-    -moz-font-feature-settings: "kern" 0;
-    -o-font-feature-settings: "kern" 0;
-    font-feature-settings: "kern" 0;
-    font-kerning: normal;
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
+/* --- Стили для мобильных --- */
+@media (max-width: 767px), (max-height: 500px) {
+.site-header { visibility: hidden; }
+.mobile-login-trigger {
+display: flex;
+position: fixed;
+top: 15px;
+left: 15px;
+z-index: 1010;
+background: #0d1b2a;
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 8px;
+width: 50px;
+height: 50px;
+box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+align-items: center;
+justify-content: center;
+cursor: pointer;
+color: #fff;
+font-size: xx-large;
+}
+.menu-toggle {
+visibility: visible;
+position: fixed;
+top: 15px;
+right: 15px;
+z-index: 1010;
+background: #0d1b2a;
+border: none;
+border-radius: 8px;
+width: 50px;
+height: 50px;
+box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: all 0.3s ease;
+-webkit-tap-highlight-color: transparent;
+}
+.site-nav label[for="nav-trigger"] {
+display: flex;
+z-index: 1010;
+position: fixed;
+top: 15px;
+right: 15px;
+}
+.menu-toggle .bi {
+font-size: xx-large;
+color: #fff;
+-webkit-tap-highlight-color: transparent;
+}
+.menu-toggle:hover {
+background: #1a2a3a;
+transform: scale(1.05);
+}
+.site-nav {
+visibility: visible;
+padding: 0px;
+background-color: transparent;
+border: none;
+}
+.nav-trigger { display: none; -webkit-tap-highlight-color: transparent; }
+.nav-trigger:checked ~.trigger {
+display: flex;
+flex-direction: column;
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background: rgba(13, 27, 42, 0.97);
+box-shadow: none;
+padding: 60px 20px 40px;
+overflow-y: auto;
+overflow-x: hidden;
+-webkit-tap-highlight-color: transparent;
+align-items: center;
+justify-content: flex-start;
+z-index: 1005;
+}
+.nav-trigger:not(:checked) ~.trigger { display: none; }
+.menu-grid {
+display: flex;
+flex-direction: column;
+width: 100%;
+max-width: 280px;
+gap: 15px;
+}
+.menu-main-row {
+display: flex;
+flex-direction: column;
+width: 100%;
+gap: 15px;
+}
+.menu-single.desktop-only-login { display: none !important; }
+.nav-trigger:checked~.trigger .menu-single {
+width: 100%;
+display: flex;
+justify-content: center;
+}
+.nav-trigger:checked ~.trigger .menu-single .page-link {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+padding: 12px;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 6px;
+color: #fff !important;
+text-decoration: none;
+font-size: 1.3em;
+width: 100%;
+}
+.nav-trigger:checked ~.trigger .menu-single .page-link i {
+font-size: 1.3em;
+width: auto;
+height: auto;
+background: transparent;
+}
+/* Блок автора на мобилке */
+.nav-trigger:checked ~.trigger .menu-dropdown {
+display: flex !important;
+flex-direction: column !important;
+align-items: center !important;
+width: 100% !important;
+background: transparent !important;
+border: none !important;
+padding: 0 !important;
+margin: 5px 0 !important;
+position: static !important;
+}
+/* Имя автора */
+.nav-trigger:checked ~.trigger .dropdown-btn {
+display: block !important;
+color: #ffffff !important;
+font-size: 1.6em !important;
+font-weight: bold !important;
+text-align: center !important;
+padding: 0 !important;
+margin-bottom: 10px !important;
+text-transform: uppercase !important;
+letter-spacing: 1px !important;
+background: transparent !important;
+border: none !important;
+width: 100% !important;
+pointer-events: none !important;
+}
+.nav-trigger:checked~.trigger .dropdown-btn::after { display: none !important; }
+/* Контейнер соцсетей автора */
+.nav-trigger:checked ~.trigger .dropdown-content {
+display: flex !important;
+position: static !important;
+flex-direction: row !important;
+flex-wrap: nowrap !important;
+justify-content: center !important;
+gap: 10px !important;
+width: 100% !important;
+background: transparent !important;
+border: none !important;
+box-shadow: none !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+/* Кнопки соцсетей на мобилках */
+.nav-trigger:checked ~.trigger .dropdown-content .page-link {
+font-size: 0 !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+flex: 1 1 auto !important;
+width: 48px !important;
+height: 48px !important;
+max-width: 48px !important;
+aspect-ratio: 1/1 !important;
+padding: 0 !important;
+margin: 0 !important;
+background: rgba(255, 255, 255, 0.08) !important;
+border: 1px solid rgba(255, 255, 255, 0.2) !important;
+border-radius: 6px !important;
+transition: all 0.3s !important;
+}
+.nav-trigger:checked ~.trigger .dropdown-content .page-link:hover {
+background: rgba(255, 255, 255, 0.2) !important;
+}
+/* Иконки внутри адаптивных кнопок */
+.nav-trigger:checked ~.trigger .dropdown-content .page-link i,
+.nav-trigger:checked ~.trigger .dropdown-content .page-link .rarible-icon,
+.nav-trigger:checked ~.trigger .dropdown-content .page-link .boosty-icon {
+font-size: 22px !important;
+width: auto !important;
+height: auto !important;
+max-width: 50% !important;
+max-height: 50% !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+color: #fff !important;
+background: transparent !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+.nav-trigger:checked ~.trigger .dropdown-content .page-link svg {
+width: 100% !important;
+height: 100% !important;
+}
+}
+@media (max-height: 500px) and (orientation: landscape) {
+.nav-trigger:checked ~ .trigger {
+padding: 40px 20px 20px;
+}
+.menu-grid { max-width: 400px; }
+}
 
-    background-image: url('/assets/carrot.gif');
-    background-repeat: repeat;
-    background-size: auto;
-    background-position: left top;
-    background-attachment: fixed;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    overflow-x: hidden;
-    width: 100%;
-    position: relative;
-  }
-
-  .bi {padding: 0.1em;}
-
-  a:hover {text-decoration: none;}
-  a:visited {color: none;}
-
-  .site-header {
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    background: #0d1b2a;
-    box-shadow: none;
-    border-top: none;
-    border-bottom: none;
-  }
-
-  .site-header .page-link {
-    color: #ffffff;
-  }
-
-  /* Увеличиваем только главные кнопки на панели (Home, Secretfiles) */
-  .menu-single .page-link {
-      font-size: 1.2em !important;
-  }
-
-  /* Увеличиваем имена авторов на панели */
-  .dropdown-btn {
-      font-size: 1.2em !important;
-  }
-
-  .site-footer {
-    background-color: #0d1b2a;
-  }
-  .footer-heading { color: #faf; }
-  .footer-col-wrapper { color: #ffffff; }
-
-  .rarible-icon {
-    display: inline-block;
-    width: 1.4em;
-    height: 1.4em;
-    vertical-align: -0.125em;
-    color: inherit;
-  }
-
-  .boosty-icon {
-    display: inline-block;
-    width: 1.4em;
-    height: 1.4em;
-    vertical-align: -0.125em;
-    color: inherit;
-  }
-
-  /* --- Стили для мобильных (вертикальная и горизонтальная ориентация) --- */
-  @media (max-width: 767px), (max-height: 500px) {
-    .site-header {
-      visibility: hidden;
-    }
-    
-    .menu-toggle {
-      visibility: visible;
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      z-index: 1010;
-      background: #0d1b2a;
-      border: none;
-      border-radius: 8px;
-      width: 50px;
-      height: 50px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .site-nav label[for="nav-trigger"] { 
-      display: flex;
-      z-index: 1010;
-      position: fixed;
-      top: 15px;
-      right: 15px;
-    }
-
-    .menu-toggle .bi {
-      font-size: xx-large;
-      color: #fff;
-      -webkit-tap-highlight-color: transparent;
-      display: inline-flex;
-      pointer-events: none;
-    }
-    
-    .menu-toggle:hover {
-      background: #1a2a3a;
-      transform: scale(1.05);
-    }
-    
-    .site-nav {
-      visibility: visible;
-      padding: 0px;
-      background-color: transparent;
-      border: none;
-    }
-    
-    .nav-trigger {
-      display: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .nav-trigger:checked ~ .trigger {
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(13, 27, 42, 0.97);
-      box-shadow: none;
-      padding: 60px 20px 40px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-      align-items: center;
-      justify-content: flex-start;
-      z-index: 1005;
-    }
-    
-    .nav-trigger:not(:checked) ~ .trigger {
-      display: none;
-    }
-
-    .menu-grid {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 280px;
-      gap: 15px;
-    }
-
-    .menu-main-row {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 15px;
-    }
-
-    /* Одиночные кнопки (home, secretfiles, kowasugi) */
-    .nav-trigger:checked ~ .trigger .menu-single {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .nav-trigger:checked ~ .trigger .menu-single .page-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 6px;
-      color: #fff !important;
-      text-decoration: none;
-      font-size: 1.3em;
-      width: 100%;
-    }
-
-    .nav-trigger:checked ~ .trigger .menu-single .page-link i {
-      font-size: 1.3em;
-      width: auto;
-      height: auto;
-      background: transparent;
-    }
-
-    /* Блок автора на мобилке */
-    .nav-trigger:checked ~ .trigger .menu-dropdown {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      width: 100% !important;
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-      margin: 5px 0 !important;
-      position: static !important;
-    }
-
-    /* Имя автора */
-    .nav-trigger:checked ~ .trigger .dropdown-btn {
-      display: block !important;
-      color: #ffffff !important;
-      font-size: 1.6em !important;
-      font-weight: bold !important;
-      text-align: center !important;
-      padding: 0 !important;
-      margin-bottom: 10px !important;
-      text-transform: uppercase !important;
-      letter-spacing: 1px !important;
-      background: transparent !important;
-      border: none !important;
-      width: 100% !important;
-      pointer-events: none !important;
-    }
-    
-    .nav-trigger:checked ~ .trigger .dropdown-btn::after {
-      display: none !important;
-    }
-
-    /* Контейнер соцсетей автора */
-    .nav-trigger:checked ~ .trigger .dropdown-content {
-      display: flex !important;
-      position: static !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      justify-content: center !important;
-      gap: 10px !important;
-      width: 100% !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    /* Кнопки соцсетей на мобилках */
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link {
-      font-size: 0 !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      flex: 1 1 auto !important;
-      width: 48px !important;
-      height: 48px !important;
-      max-width: 48px !important;
-      aspect-ratio: 1 / 1 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      background: rgba(255, 255, 255, 0.08) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-radius: 6px !important;
-      transition: all 0.3s !important;
-    }
-
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link:hover {
-      background: rgba(255, 255, 255, 0.2) !important;
-    }
-
-    /* Иконки внутри адаптивных кнопок */
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link i,
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link .rarible-icon,
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link .boosty-icon {
-      font-size: 22px !important;
-      width: auto !important;
-      height: auto !important;
-      max-width: 50% !important;
-      max-height: 50% !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      color: #fff !important;
-      background: transparent !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-
-    .nav-trigger:checked ~ .trigger .dropdown-content .page-link svg {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    @media (max-height: 500px) and (orientation: landscape) {
-      .nav-trigger:checked ~ .trigger {
-        padding: 40px 20px 20px;
-      }
-      .menu-grid {
-        max-width: 400px;
-      }
-    }
-  }
-
-  /* --- Стили для десктопов (Полное растягивание кнопок на весь бар) --- */
-  @media (min-width: 768px) and (min-height: 501px) {
-    .menu-toggle {
-      display: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .site-nav {
-      display: flex;
-      justify-content: center; 
-      align-items: stretch; /* Заставляем внутренние элементы тянуться во всю высоту навбара */
-      padding: 0; /* Убираем падинги, чтобы кнопки встали встык */
-      float: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .nav-trigger {
-      display: none;
-    }
-
-    .trigger {
-      display: flex !important;
-      position: static !important;
-      width: auto !important;
-      height: auto !important;
-      background: transparent !important;
-      padding: 0 !important;
-      overflow: visible !important;
-      align-items: stretch;
-    }
-
-    .menu-grid {
-      display: flex !important;
-      flex-direction: row !important;
-      gap: 0 !important; /* Убираем зазоры между кнопками для монолитного эффекта */
-      width: auto !important;
-      max-width: none !important;
-      align-items: stretch;
-    }
-
-    .menu-main-row {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      gap: 0 !important;
-      align-items: stretch !important;
-    }
-
-    .menu-dropdown {
-      position: relative;
-      display: inline-flex;
-      align-items: stretch;
-    }
-
-    /* ФИКС: Кнопка автора теперь растянута на весь бар, как и Home */
-    .dropdown-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 20px; /* Вертикальный паддинг убираем, высоту берем от навбара */
-      background: #0d1b2a;
-      border: none;
-      color: #fff;
-      border-radius: 0; /* Плиточный дизайн без скруглений сверху-снизу */
-      cursor: pointer;
-      font-size: 16px;
-      font-family: inherit;
-      font-weight: 500;
-      transition: background 0.3s;
-      height: 100%;
-      box-sizing: border-box;
-    }
-
-    .dropdown-btn::after {
-      content: ' ▼';
-      font-size: 11px;
-      color: #007cba;
-    }
-
-    /* Выпадающий список на десктопе */
-    /* 1. Делаем контейнер выпадашки компактным под ряд иконок */
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        left: 0;
-        top: 100%;
-        min-width: auto !important; /* Убираем фиксированную ширину 180px */
-        width: max-content; /* Контейнер сожмется под размер кнопок */
-        background-color: #0d1b2a;
-        border: 1px solid #007cba;
-        border-radius: 0 0 4px 4px;
-        box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
-        z-index: 100;
-        margin-top: 0;
-        padding: 6px;
-        /* Выстраиваем иконки в одну строчку (в ряд) */
-        flex-direction: row !important; 
-        gap: 6px !important;
-    }
-
-    /* Включаем flex-ряд при наведении на меню автора */
-    .menu-dropdown:hover .dropdown-content {
-        display: flex !important;
-    }
-
-    /* 2. Скрываем текст подписей и превращаем ссылки в квадратные кнопки */
-    .dropdown-content a.page-link {
-        font-size: 0 !important; /* Полностью скрывает текст внутри ссылки */
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 40px !important; /* Задаем фиксированную ширину кнопки */
-        height: 40px !important; /* Задаем фиксированную высоту кнопки */
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 6px !important;
-        transition: all 0.3s !important;
-    }
-
-    /* Эффект подсветки при наведении на иконку соцсети */
-    .dropdown-content a.page-link:hover {
-        background: #007cba !important;
-        border-color: #fff !important;
-    }
-
-    /* 3. Возвращаем нормальный видимый размер самим иконкам внутри кнопок */
-    .dropdown-content a.page-link i,
-    .dropdown-content a.page-link .rarible-icon,
-    .dropdown-content a.page-link .boosty-icon {
-        font-size: 20px !important; /* Размер для Bootstrap-icons */
-        width: 20px !important;     /* Размер для SVG (Boosty/Rarible) */
-        height: 20px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #fff !important;
-    }
-
-    /* Фикс для SVG картинок, чтобы они растягивались внутри своих контейнеров */
-    .dropdown-content a.page-link svg {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    .menu-dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .menu-dropdown:hover .dropdown-btn {
-      background: #007cba;
-    }
-
-    .menu-dropdown:hover .dropdown-btn::after {
-      color: #fff;
-    }
-
-    .menu-single {
-      display: inline-flex;
-      align-items: stretch;
-    }
-    
-    /* ФИКС: Кнопки Home, Secretfiles и kowasugi растянуты на весь бар */
-    .page-link {
-      display: inline-flex !important;
-      align-items: center;
-      gap: 6px;
-      width: auto !important;
-      max-width: none !important;
-      padding: 0 20px !important;
-      margin: 0 !important;
-      background: #0d1b2a !important;
-      border-radius: 0 !important; /* Убираем скругления */
-      font-size: 16px !important;
-      color: #fff !important;
-      text-decoration: none;
-      transition: background 0.3s;
-      height: 100% !important;
-      box-sizing: border-box;
-    }
-
-    .page-link:hover {
-      background: #007cba !important;
-    }
-
-    .page-link i {
-      width: auto !important;
-      height: auto !important;
-      background: transparent !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      font-size: inherit !important;
-    }
-
-    .page-link .rarible-icon,
-    .page-link .boosty-icon {
-      width: 16px !important;
-      height: 16px !important;
-      padding: 0 !important;
-      background: transparent !important;
-      border-radius: 0 !important;
-    }
-  }
-
-  main {
-    margin-top: 0px;
-  }
+/* --- Стили для десктопов --- */
+@media (min-width: 768px) and (min-height: 501px) {
+.menu-toggle { display: none; -webkit-tap-highlight-color: transparent; }
+.site-nav {
+display: flex;
+justify-content: center;
+align-items: stretch;
+padding: 0;
+float: none;
+-webkit-tap-highlight-color: transparent;
+}
+.nav-trigger { display: none; }
+.trigger {
+display: flex !important;
+position: static !important;
+width: auto !important;
+height: auto !important;
+background: transparent !important;
+padding: 0 !important;
+overflow: visible !important;
+align-items: stretch;
+}
+.menu-grid {
+display: flex !important;
+flex-direction: row !important;
+gap: 0 !important;
+width: auto !important;
+max-width: none !important;
+align-items: stretch;
+}
+.menu-main-row {
+display: flex !important;
+flex-wrap: wrap !important;
+gap: 0 !important;
+align-items: stretch !important;
+}
+.menu-dropdown {
+position: relative;
+display: inline-flex;
+align-items: stretch;
+}
+.dropdown-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 0 20px;
+background: #0d1b2a;
+border: none;
+color: #fff;
+border-radius: 0;
+cursor: pointer;
+font-size: 16px;
+font-family: inherit;
+font-weight: 500;
+transition: background 0.3s;
+height: 100%;
+box-sizing: border-box;
+}
+.dropdown-btn::after {
+font-size: 11px;
+color: #007cba;
+margin-left: 5px;
+}
+.dropdown-content {
+display: none;
+position: absolute;
+left: 0;
+top: 100%;
+min-width: auto !important;
+width: max-content;
+background-color: #0d1b2a;
+border: 1px solid #007cba;
+border-radius: 0 0 4px 4px;
+box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+z-index: 100;
+margin-top: 0;
+padding: 6px;
+flex-direction: row !important;
+gap: 6px !important;
+}
+.menu-dropdown:hover .dropdown-content { display: flex !important; }
+.dropdown-content a.page-link {
+font-size: 0 !important;
+padding: 0 !important;
+margin: 0 !important;
+width: 40px !important;
+height: 40px !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+background: rgba(255, 255, 255, 0.08) !important;
+border: 1px solid rgba(255, 255, 255, 0.2) !important;
+border-radius: 6px !important;
+transition: all 0.3s !important;
+}
+.dropdown-content a.page-link:hover {
+background: #007cba !important;
+border-color: #fff !important;
+}
+.dropdown-content a.page-link i,
+.dropdown-content a.page-link .rarible-icon,
+.dropdown-content a.page-link .boosty-icon {
+font-size: 20px !important;
+width: 20px !important;
+height: 20px !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+color: #fff !important;
+}
+.dropdown-content a.page-link svg {
+width: 100% !important;
+height: 100% !important;
+}
+.menu-dropdown:hover .dropdown-btn { background: #007cba; }
+.menu-dropdown:hover .dropdown-btn::after { color: #fff; }
+.menu-single {
+display: inline-flex;
+align-items: stretch;
+}
+.page-link {
+display: inline-flex !important;
+align-items: center;
+gap: 6px;
+width: auto !important;
+max-width: none !important;
+padding: 0 20px !important;
+margin: 0 !important;
+background: #0d1b2a !important;
+border-radius: 0 !important;
+font-size: 16px !important;
+color: #fff !important;
+text-decoration: none;
+transition: background 0.3s;
+height: 100% !important;
+box-sizing: border-box;
+cursor: pointer;
+}
+.page-link:hover { background: #007cba !important; }
+.page-link i {
+width: auto !important;
+height: auto !important;
+background: transparent !important;
+border-radius: 0 !important;
+padding: 0 !important;
+font-size: inherit !important;
+}
+.page-link.rarible-icon,
+.page-link .boosty-icon {
+width: 16px !important;
+height: 16px !important;
+padding: 0 !important;
+background: transparent !important;
+border-radius: 0 !important;
+}
+}
+main { margin-top: 0px; }
 </style>
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
+<!-- Мобильная плавающая кнопка входа -->
+<div class="mobile-login-trigger" id="mobileAuthBtn">
+<i class="bi bi-box-arrow-in-right"></i>
+</div>
 <header class="site-header" role="banner">
-  <nav class="site-nav">
-    <label for="nav-trigger" class="menu-toggle">
-      <i class="bi bi-list"></i>
-    </label>
-    
-    <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-
-    <div class="trigger">
-      {% comment %} 1. Собираем уникальный список авторов {% endcomment %}
-      {% assign authors_str = "" %}
-      {% for item in site.nav %}
-        {% assign parts = item.title | split: ' ' %}
-        {% if parts[1] %}
-          {% unless authors_str contains parts[1] %}
-            {% assign authors_str = authors_str | append: parts[1] | append: "," %}
-          {% endunless %}
-        {% endif %}
-      {% endfor %}
-      {% assign authors = authors_str | split: "," %}
-
-      <div class="menu-grid">
-        <div class="menu-main-row">
-          
-          {% comment %} 2. Одиночные кнопки без авторов (home, secretfiles) {% endcomment %}
-          {% for item in site.nav %}
-            {% assign parts = item.title | split: ' ' %}
-            {% unless parts[1] %}
-              <div class="menu-single">
-                <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
-                  <i class="bi bi-{% case parts[0] %}{% when 'home' %}house-door{% when 'secretfiles' %}lock{% else %}{{ parts[0] }}{% endcase %}"></i>
-                  {{ parts[0] }}
-                </a>
-              </div>
-            {% endunless %}
-          {% endfor %}
-
-          {% comment %} Добавленный кастомный пункт меню kowasugi {% endcomment %}
-          <div class="menu-single">
-            <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
-              <i class="bi bi-currency-exchange"></i>
-              kowasugi
-            </a>
-          </div>
-
-          {% comment %} 3. Гибридная структура {% endcomment %}
-          {% for author in authors %}
-            {% if author != "" %}
-              <div class="menu-dropdown">
-                <div class="dropdown-btn">{{ author }}</div>
-                
-                <div class="dropdown-content">
-                  
-                  {% comment %} Поиск ссылок конкретного автора {% endcomment %}
-                  {% for item in site.nav %}
-                    {% assign parts = item.title | split: ' ' %}
-                    {% if parts[1] == author %}
-                      <a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
-                        {% if parts[0] == 'rarible' %}
-                          <i class="rarible-icon">{% include Rarible.svg %}</i>
-                        {% elsif parts[0] == 'boosty' %}
-                          <i class="boosty-icon">{% include boosty.svg %}</i>
-                        {% else %}
-                          <i class="bi bi-{{ parts[0] }}"></i>
-                        {% endif %}
-                        {{ parts[0] | capitalize }}
-                      </a>
-                    {% endif %}
-                  {% endfor %}
-
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
-
-        </div>
-      </div>
-    </div>
-  </nav>
+<nav class="site-nav">
+<label for="nav-trigger" class="menu-toggle">
+<i class="bi bi-list"></i>
+</label>
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<div class="trigger">
+{% assign authors_str = "" %}
+{% for item in site.nav %}
+{% assign parts = item.title | split: ' '%}
+{% if parts[1] %}
+{% unless authors_str contains parts[1] %}
+{% assign authors_str = authors_str | append: parts[1] | append: "," %}
+{% endunless %}
+{% endif %}
+{% endfor %}
+{% assign authors = authors_str | split: "," %}
+<div class="menu-grid">
+<div class="menu-main-row">
+{% for item in site.nav %}
+{% assign parts = item.title | split: ' '%}
+{% unless parts[1] %}
+<div class="menu-single">
+<a class="page-link" href="{{ item.url}}" title="{{ item.title}}" data-service="{{ parts[0] }}">
+<i class="bi bi-{% case parts[0] %} {% when 'home' %} house-door {% when 'secretfiles' %}lock {% else %} {{ parts[0] }}{% endcase %}"></i>
+{{ parts[0]}}
+</a>
+</div>
+{% endunless %}
+{% endfor %}
+<div class="menu-single">
+<a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
+<i class="bi bi-currency-exchange"></i>
+kowasugi
+</a>
+</div>
+<!-- Десктопная кнопка Log In на панели -->
+<div class="menu-single desktop-only-login">
+<a class="page-link" id="desktopAuthBtn">
+<i class="bi bi-box-arrow-in-right"></i>Log In
+</a>
+</div>
+{% for author in authors %}
+{% if author != "" %}
+<div class="menu-dropdown">
+<div class="dropdown-btn">{{ author }}</div>
+<div class="dropdown-content">
+{% for item in site.nav %}
+{% assign parts = item.title | split: ' '%}
+{% if parts[1] == author %}
+<a class="page-link" href="{{ item.url}}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+{% if parts[0] == 'rarible' %}
+<i class="rarible-icon"> {% include Rarible.svg %}</i>
+{% elsif parts[0] == 'boosty' %}
+<i class="boosty-icon">{% include boosty.svg %}</i>
+{% else %}
+<i class="bi bi-{{ parts[0] }}"></i>
+{% endif %}
+{{ parts[0] | capitalize }}
+</a>
+{% endif %}
+{% endfor %}
+</div>
+</div>
+{% endif %}
+{% endfor %}
+</div>
+</div>
+</div>
+</nav>
 </header>
+<!-- СОВМЕЩЕННАЯ МОДАЛКА (ВХОД / РЕГИСТРАЦИЯ / КАБИНЕТ) -->
+<div class="auth-modal" id="authModal">
+<div class="auth-card">
+<button class="auth-close" id="closeAuthBtn">&times;</button>
+<div class="auth-title" id="modalTitle">Вход в систему</div>
+<!-- СЕКЦИЯ АВТЕНТИФИКАЦИИ -->
+<div id="auth-section">
+<form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
+<div class="auth-input-group">
+<label for="username">Логин</label>
+<input type="text" id="username" required placeholder="Введите ваш логин">
+</div>
+<div class="auth-input-group">
+<label for="password">Пароль</label>
+<input type="password" id="password" required placeholder="******">
+</div>
+<button type="submit" class="btn-submit" id="submitBtn">Войти</button>
+</form>
+<button class="btn-flat" id="switchBtn" onclick="toggleAuthMode()">Регистрация</button>
+<div id="auth-status" class="status-msg"></div>
+</div>
+<!-- СЕКЦИЯ ЛИЧНОГО КАБИНЕТА -->
+<div id="cabinet-section" class="hidden">
+<div class="info-item">
+<span class="info-label">Привет, </span>
+<span class="info-value" id="ui-username">username</span>
+</div>
+<div class="info-item">
+<span class="info-label">Привязан кошелек: </span> <br>
+<span class="wallet-addr" id="ui-wallet">Загрузка...</span>
+</div>
+<!-- Селекторы кошельков (MetaMask, Trust, Phantom) -->
+<div id="web3-connect-group" class="web3-wallet-selectors hidden">
+<button class="btn-web3 btn-metamask" id="btn-mm" onclick="connectWallet('metamask')">MetaMask</button>
+<button class="btn-web3 btn-trust" id="btn-tw" onclick="connectWallet('trust')">Trust Wallet</button>
+<button class="btn-web3 btn-phantom" id="btn-ph" onclick="connectWallet('phantom')">Phantom</button>
+</div>
+<div class="divider"></div>
+<div class="info-item">
+<span class="info-label">Баланс токенов:</span>
+<span class="info-value" id="ui-balance" style="color: #00ffff;">0.00</span>
+</div>
+<div class="info-item">
+<span class="info-label">Накоплено баллов:</span>
+<span class="info-value" id="ui-points" style="color: #ffff00;">0.00</span>
+</div>
+<div class="divider"></div>
+<div class="history-title">История активности токена:</div>
+<div class="history-list" id="ui-history"></div>
+<button class="btn-submit" id="update-btn" onclick="updateData()">Обновить баланс и баллы</button>
+<button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()">Выйти из системы</button>
+<div id="cabinet-status" class="status-msg"></div>
+</div>
+</div>
+</div>
+<script>
+const WORKER_URL = "https://nameless-snow-f3b7.fgfg57468.workers.dev";
+const modal = document.getElementById('authModal');
+const desktopBtn = document.getElementById('desktopAuthBtn');
+const mobileBtn = document.getElementById('mobileAuthBtn');
+const closeBtn = document.getElementById('closeAuthBtn');
+let isRegisterMode = false;
+let currentUser = null;
+let currentPass = null;
+let linkedWallet = null;
+
+// Инициализация десктопной и мобильной авторизации на базе сессий
+document.addEventListener("DOMContentLoaded", () => {
+    const savedUser = localStorage.getItem('app_currentUser');
+    const savedPass = localStorage.getItem('app_currentPass');
+    if (savedUser && savedPass) {
+        currentUser = savedUser;
+        currentPass = savedPass;
+        linkedWallet = localStorage.getItem('app_linkedWallet');
+        dispatchAuthEvent(true, currentUser, linkedWallet);
+    }
+    checkInstalledWallets();
+});
+
+if (desktopBtn) {
+    desktopBtn.addEventListener('click', (e) => { e.preventDefault(); openModalForm(); });
+}
+if (mobileBtn) {
+    mobileBtn.addEventListener('click', () => { openModalForm(); });
+}
+closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+function openModalForm() {
+    if (currentUser) {
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("cabinet-section").classList.remove("hidden");
+        document.getElementById("modalTitle").innerText = "Личный кабинет";
+        document.getElementById("ui-username").innerText = currentUser;
+        if (linkedWallet) {
+            document.getElementById("ui-wallet").innerText = linkedWallet;
+            document.getElementById("web3-connect-group").classList.add("hidden");
+            updateData();
+        } else {
+            document.getElementById("ui-wallet").innerText = "Кошелек не привязан.";
+            document.getElementById("web3-connect-group").classList.remove("hidden");
+        }
+    } else {
+        resetAuthForm(false);
+    }
+    modal.classList.add('active');
+}
+
+function toggleAuthMode() {
+    resetAuthForm(!isRegisterMode);
+}
+
+function resetAuthForm(toRegister) {
+    isRegisterMode = toRegister;
+    const title = document.getElementById('modalTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const switchBtn = document.getElementById('switchBtn');
+    document.getElementById("auth-status").innerText = "";
+    if (isRegisterMode) {
+        title.innerText = "Регистрация";
+        submitBtn.innerText = "Создать аккаунт";
+        switchBtn.innerText = "Уже есть аккаунт? Войти";
+    } else {
+        title.innerText = "Вход в систему";
+        submitBtn.innerText = "Войти";
+        switchBtn.innerText = "Регистрация";
+    }
+}
+
+// Отправка кастомного JS-события для других скриптов на странице
+function dispatchAuthEvent(isLoggedIn, username, wallet) {
+    const event = new CustomEvent("user_auth_status", {
+        detail: { isLoggedIn, username, wallet }
+    });
+    window.dispatchEvent(event);
+}
+
+async function handleAuthSubmit(event) {
+    event.preventDefault();
+    const uInput = document.getElementById("username").value.trim();
+    const pInput = document.getElementById("password").value.trim();
+    const statusDiv = document.getElementById("auth-status");
+    const submitBtn = document.getElementById('submitBtn');
+    if (!uInput || !pInput) {
+        statusDiv.innerText = "Ошибка: Введите логин и пароль";
+        return;
+    }
+    statusDiv.innerText = "Подключение...";
+    submitBtn.disabled = true;
+    try {
+        const endpoint = isRegisterMode ? "/api/register" : "/api/login";
+        const response = await fetch(`${WORKER_URL}${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: uInput, password: pInput })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            statusDiv.innerText = `Ошибка: ${data.error || "Неизвестная ошибка"}`;
+            return;
+        }
+        if (isRegisterMode) {
+            statusDiv.innerText = "Регистрация успешна! Теперь вы можете войти.";
+            resetAuthForm(false);
+            return;
+        }
+        currentUser = data.user.username;
+        currentPass = pInput;
+        linkedWallet = data.user.wallet;
+        
+        localStorage.setItem('app_currentUser', currentUser);
+        localStorage.setItem('app_currentPass', currentPass);
+        if (linkedWallet) localStorage.setItem('app_linkedWallet', linkedWallet);
+
+        dispatchAuthEvent(true, currentUser, linkedWallet);
+
+        document.getElementById("ui-username").innerText = currentUser;
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("cabinet-section").classList.remove("hidden");
+        document.getElementById("modalTitle").innerText = "Личный кабинет";
+        if (linkedWallet) {
+            document.getElementById("ui-wallet").innerText = linkedWallet;
+            document.getElementById("web3-connect-group").classList.add("hidden");
+            updateData();
+        } else {
+            document.getElementById("ui-wallet").innerText = "Кошелек не привязан.";
+            document.getElementById("web3-connect-group").classList.remove("hidden");
+            document.getElementById("cabinet-status").innerText = "Подключите кошелек для старта начислений.";
+        }
+    } catch (err) {
+        statusDiv.innerText = `Ошибка соединения: ${err.message}`;
+    } finally {
+        submitBtn.disabled = false;
+    }
+}
+
+// Проверка установленных кошельков (для блокировки кнопок)
+function checkInstalledWallets() {
+    const isAnyEth = typeof window.ethereum !== 'undefined';
+    const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
+    const hasPhantom = typeof window.phantom?.ethereum !== 'undefined';
+    let hasTrust = false;
+    if (isAnyEth) {
+        if (window.ethereum.isTrust) hasTrust = true;
+        else if (window.ethereum.providers?.length) {
+            hasTrust = window.ethereum.providers.some(p => p.isTrust);
+        }
+    }
+    const mmBtn = document.getElementById('btn-mm');
+    if (mmBtn && !hasMetaMask && !isAnyEth) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Не установлен)"; }
+    const twBtn = document.getElementById('btn-tw');
+    if (twBtn && !hasTrust) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Не установлен)"; }
+    const phBtn = document.getElementById('btn-ph');
+    if (phBtn && !hasPhantom) { phBtn.disabled = true; phBtn.innerText = "Phantom (Не установлен)"; }
+}
+
+function getProvider(walletType) {
+    if (walletType === 'phantom') return window.phantom?.ethereum || null;
+    if (typeof window.ethereum === 'undefined') return null;
+    if (window.ethereum.providers && window.ethereum.providers.length) {
+        if (walletType === 'metamask') {
+            return window.ethereum.providers.find(p => p.isMetaMask && !p.isTrust) || window.ethereum.providers[0];
+        }
+        if (walletType === 'trust') {
+            return window.ethereum.providers.find(p => p.isTrust) || window.ethereum.providers[0];
+        }
+    }
+    if (walletType === 'trust' && window.ethereum.isTrust) return window.ethereum;
+    return window.ethereum;
+}
+
+// Новое гибкое Web3 подключение (MetaMask, Trust, Phantom)
+async function connectWallet(walletType) {
+    const statusDiv = document.getElementById("cabinet-status");
+    const activeProvider = getProvider(walletType);
+    if (!activeProvider) {
+        statusDiv.innerText = `Ошибка: ${walletType} не доступен!`;
+        return;
+    }
+    statusDiv.innerText = "Запрос адреса из кошелька...";
+    try {
+        const accounts = await activeProvider.request({ method: "eth_requestAccounts" });
+        const walletAddress = accounts[0].toLowerCase();
+        const message = `Авторизация кошелька ${walletAddress} для аккаунта ${currentUser}`;
+        statusDiv.innerText = "Ожидание подписи...";
+        const signature = await activeProvider.request({
+            method: "personal_sign",
+            params: [message, walletAddress]
+        });
+        statusDiv.innerText = "Отправка подтверждения на сервер...";
+        const response = await fetch(`${WORKER_URL}/api/link-wallet`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: currentUser,
+                password: currentPass,
+                walletAddress: walletAddress,
+                signature: signature,
+                message: message
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            statusDiv.innerText = `Ошибка верификации: ${data.error}`;
+            return;
+        }
+        linkedWallet = data.walletAddress;
+        localStorage.setItem('app_linkedWallet', linkedWallet);
+        dispatchAuthEvent(true, currentUser, linkedWallet);
+
+        document.getElementById("ui-wallet").innerText = linkedWallet;
+        document.getElementById("web3-connect-group").classList.add("hidden");
+        renderHistory(data);
+        statusDiv.innerText = "Кошелек успешно верифицирован и привязан!";
+    } catch (err) {
+        statusDiv.innerText = `Ошибка Web3: ${err.message}`;
+    }
+}
+
+async function updateData() {
+    if (!linkedWallet) return;
+    const statusDiv = document.getElementById("cabinet-status");
+    const updateBtn = document.getElementById("update-btn");
+    statusDiv.innerText = "Синхронизация данных...";
+    updateBtn.disabled = true;
+    try {
+        const response = await fetch(`${WORKER_URL}/api/link-wallet`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: currentUser,
+                password: currentPass,
+                walletAddress: linkedWallet
+            })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            renderHistory(data);
+            statusDiv.innerText = "Данные обновлены!";
+            setTimeout(() => { if (statusDiv.innerText === "Данные обновлены!") statusDiv.innerText = ""; }, 3000);
+        } else {
+            statusDiv.innerText = `Ошибка: ${data.error}`;
+        }
+    } catch (err) {
+        statusDiv.innerText = `Ошибка обновления: ${err.message}`;
+    } finally {
+        updateBtn.disabled = false;
+    }
+}
+
+function handleLogout() {
+    localStorage.clear();
+    currentUser = null;
+    currentPass = null;
+    linkedWallet = null;
+    dispatchAuthEvent(false, null, null);
+    document.getElementById("cabinet-section").classList.add("hidden");
+    document.getElementById("auth-section").classList.remove("hidden");
+    resetAuthForm(false);
+    modal.classList.remove('active');
+}
+
+function renderHistory(data) {
+    document.getElementById("ui-balance").innerText = parseFloat(data.balance).toFixed(2);
+    document.getElementById("ui-points").innerText = parseFloat(data.points).toFixed(2);
+    const historyContainer = document.getElementById("ui-history");
+    historyContainer.innerHTML = "";
+    if (data.history && data.history.length > 0) {
+        data.history.forEach(tx => {
+            const isReceived = tx.type === "IN";
+            const typeText = isReceived ? "[ПОЛУЧЕНО]" : "[ОТПРАВЛЕНО]";
+            const typeClass = isReceived ? "tx-type-in" : "tx-type-out";
+            const item = document.createElement("div");
+            item.className = "history-item";
+            item.innerHTML = `
+                <span class="tx-block">Блок ${tx.block}</span>
+                <span class="tx-time">(${tx.time})</span>:
+                <span class="${typeClass}">${typeText}</span>
+                <span class="tx-amount">${tx.amount}</span>
+                <span class="tx-balance-after">(БАЛАНС: ${tx.balanceAfter})</span>
+            `;
+            historyContainer.appendChild(item);
+        });
+    } else {
+        historyContainer.innerHTML = '<div style="color: #666; text-align: center;">История транзакций пуста</div>';
+    }
+}
+</script>
