@@ -9,29 +9,42 @@
     <link rel="stylesheet" href="/uploads/galleria-1.6.1/twelve/galleria.twelve.css">
     <link rel="stylesheet" href="/uploads/galleria-1.6.1/azur/galleria.azur.css">
 <style>
+    /* Глобальный сброс для предотвращения горизонтальной прокрутки */
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
     /* Основные стили */
     .gallery-wrapper {
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
         display: block;
+        box-sizing: border-box;
+        overflow: hidden; /* Срезаем любые элементы Galleria, выходящие за границы */
     }
 
     .galleria-container { 
-        width: 100% !important; /* Форсируем заполнение по ширине */
+        width: 100% !important;
         max-width: 800px;
         height: 500px; 
         margin: 20px auto;
         display: block; 
     }
 
-    /* Изначально контейнер прозрачный, чтобы не торчал пустой баннер при загрузке */
+    /* Изначально контейнер прозрачный */
     .mastodon-posts-container {
         background-color: transparent;
         border-radius: 8px;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        box-sizing: border-box;
     }
     
-    /* Этот класс добавится скриптом только ПОСЛЕ загрузки данных */
     .mastodon-posts-container.has-content {
         background-color: #0d1b2a;
     }
@@ -43,8 +56,12 @@
         flex-direction: column;
         align-items: center;
         position: relative;
-        background-color: transparent; /* Управляется родительским контейнером */
+        background-color: transparent;
         border-radius: 8px; 
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 800px;
+        overflow: hidden;
     }
     
     .hidden { display: none; }
@@ -55,16 +72,18 @@
         white-space: pre-wrap;
         font-family: inherit;
         line-height: 1.4;
-        text-align: justify;
+        text-align: left; /* Justify ломает ширину при узких экранах */
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
-        padding: none;
+        padding: 0;
         box-sizing: border-box;
         color: #fff;
+        word-break: break-word; /* Перенос длинных слов/ссылок */
+        overflow-wrap: break-word;
     }
     
-    /* Загрузка — полноэкранный оверлей с затемнением */
+    /* Загрузка — полноэкранный оверлей */
     .loading-container {
         position: fixed;
         top: 0;
@@ -97,6 +116,9 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
+        box-sizing: border-box;
+        width: 100%;
+        overflow-x: hidden;
     }
     
     .no-images {
@@ -108,7 +130,6 @@
         max-width: 800px;
     }
     
-    /* Заголовки */
     .post-group h3 {
         text-align: center;
         margin-top: 0;
@@ -116,14 +137,15 @@
         width: 100%;
         max-width: 800px;
         color: #007cba;
+        word-break: break-word;
     }
     
-    /* Список постов */
     .posts-index {
         background: #0d1b2a;
         padding: 20px;
         margin-bottom: 30px;
         border-radius: 8px; 
+        box-sizing: border-box;
     }
     
     .posts-index h2 {
@@ -162,6 +184,7 @@
         display: block;
         font-weight: 500;
         cursor: pointer;
+        word-break: break-word;
     }
     
     .post-link:hover {
@@ -174,7 +197,6 @@
         margin-top: 5px;
     }
     
-    /* Кнопка возврата */
     .back-to-index {
         position: absolute;
         top: 15px;
@@ -202,7 +224,22 @@
     /* Медиа-запрос для мобильных устройств */
     @media (max-width: 768px) {
         .galleria-container {
-            height: 400px;
+            height: 320px !important;
+            margin: 10px auto;
+        }
+
+        .main-container {
+            padding: 10px;
+        }
+
+        .post-group {
+            padding: 15px 10px;
+            margin: 15px 0;
+        }
+
+        .back-to-index {
+            top: 10px;
+            right: 10px;
         }
     }
 
@@ -249,14 +286,13 @@
         };
 
         function formatDate(dateString) {
-         const date = new Date(dateString);
-         return date.toLocaleDateString('en-US', {
-         year: 'numeric',
-         month: 'long',
-         day: 'numeric'
-         });
-         }
-
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
 
         function scrollToElement(elementId) {
             const element = document.getElementById(elementId);
@@ -279,21 +315,21 @@
             return captions.sort((a, b) => a.number - b.number);
         }
 
-function cleanHtmlPreservingFormatting(html) {
-    if (!html) return '';
-    return html
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<\/p>/gi, '\n\n')
-        .replace(/<\/div>/gi, '\n')
-        .replace(/<[^>]*>/g, '')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&amp;;/g, "'")  // Проверка на двойное экранирование &amp;;
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&;/g, "'");     // Стандартная проверка
-}
+        function cleanHtmlPreservingFormatting(html) {
+            if (!html) return '';
+            return html
+                .replace(/<br\s*\/?>/gi, '\n')
+                .replace(/<\/p>/gi, '\n\n')
+                .replace(/<\/div>/gi, '\n')
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;;/g, "'")
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&;/g, "'");
+        }
 
         function cleanExcessiveNewlines(text) {
             if (!text) return '';
@@ -311,57 +347,52 @@ function cleanHtmlPreservingFormatting(html) {
             return await response.json();
         }
 
-       function processMastodonPosts(posts) {
-    // Создаем один раз инструмент для безопасного декодирования HTML-сущностей
-    const docParser = new DOMParser();
+        function processMastodonPosts(posts) {
+            const docParser = new DOMParser();
 
-    return posts.map(post => {
-        if (!post.content) return post;
+            return posts.map(post => {
+                if (!post.content) return post;
 
-        // Шаг 1: Декодируем HTML-сущности прямо в сыром контенте, 
-        // чтобы превратить &rsquo; и &#39; в реальные апострофы '
-        let rawContent = post.content;
-        try {
-            const decodedDoc = docParser.parseFromString(rawContent, 'text/html');
-            rawContent = decodedDoc.body.innerHTML;
-        } catch (e) {
-            console.error("Ошибка предварительного декодирования:", e);
+                let rawContent = post.content;
+                try {
+                    const decodedDoc = docParser.parseFromString(rawContent, 'text/html');
+                    rawContent = decodedDoc.body.innerHTML;
+                } catch (e) {
+                    console.error("Ошибка предварительного декодирования:", e);
+                }
+
+                const hashtags = post.tags ? post.tags.map(tag => tag.name.toLowerCase()) : [];
+                const images = post.media_attachments 
+                    ? post.media_attachments.filter(media => media.type === 'image').map(media => media.url)
+                    : [];
+
+                let cleanText = cleanHtmlPreservingFormatting(rawContent);
+                let titleFromStars = '';
+                const starMatch = cleanText.match(/\*([^*]+)\*/);
+                if (starMatch) {
+                    titleFromStars = starMatch[1].trim();
+                    cleanText = cleanText.replace(/\*[^*]+\*/, '');
+                }
+
+                const numberedCaptions = parseNumberedCaptions(cleanText);
+                let finalText = cleanText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '');
+                finalText = cleanExcessiveNewlines(finalText).trim();
+
+                if (titleFromStars) titleFromStars = titleFromStars.replace(/&[^;]*;/g, "'");
+                finalText = finalText.replace(/&[^;]*;/g, "'");
+
+                return {
+                    id: post.id,
+                    datetime: post.created_at,
+                    text: finalText,
+                    hashtags,
+                    images,
+                    timestamp: new Date(post.created_at).getTime(),
+                    titleFromStars,
+                    numberedCaptions
+                };
+            });
         }
-
-        // Дальше идет ваш стандартный парсинг, но уже с чистым текстом
-        const hashtags = post.tags ? post.tags.map(tag => tag.name.toLowerCase()) : [];
-        const images = post.media_attachments 
-            ? post.media_attachments.filter(media => media.type === 'image').map(media => media.url)
-            : [];
-
-        let cleanText = cleanHtmlPreservingFormatting(rawContent);
-        let titleFromStars = '';
-        const starMatch = cleanText.match(/\*([^*]+)\*/);
-        if (starMatch) {
-            titleFromStars = starMatch[1].trim();
-            cleanText = cleanText.replace(/\*[^*]+\*/, '');
-        }
-
-        const numberedCaptions = parseNumberedCaptions(cleanText);
-        let finalText = cleanText.replace(/#[\w\u0410-\u044F\u0401\u0451]+/gi, '');
-        finalText = cleanExcessiveNewlines(finalText).trim();
-
-        // Финальный "щит" на случай, если где-то уже проскочил битый кусок
-        if (titleFromStars) titleFromStars = titleFromStars.replace(/&[^;]*;/g, "'");
-        finalText = finalText.replace(/&[^;]*;/g, "'");
-
-        return {
-            id: post.id,
-            datetime: post.created_at,
-            text: finalText,
-            hashtags,
-            images,
-            timestamp: new Date(post.created_at).getTime(),
-            titleFromStars,
-            numberedCaptions
-        };
-    });
-}
 
         function groupPostsByHashtags(posts) {
             const groups = {};
@@ -443,19 +474,20 @@ function cleanHtmlPreservingFormatting(html) {
             
             setTimeout(() => {
                 try {
-                    const theme = isMobileDevice() ? 'classic' : 'azur';
+                    const mobile = isMobileDevice();
+                    const theme = mobile ? 'classic' : 'azur';
+                    
                     Galleria.run(`#${containerId}`, { 
                         dataSource: galleriaData, 
                         responsive: true, 
                         theme: theme, 
-                        width: '100%', // Передаем ширину строкой, чтобы библиотека не замеряла нули
-                        height: 500,
+                        height: mobile ? 320 : 500, // Адаптивная высота под мобильные устройства
                         imageCrop: false, 
-                        autoplay: true, 
+                        autoplay: false, 
                         showInfo: false 
                     });
                 } catch (e) { console.error(e); }
-            }, 200); // Даем чуть больше времени на отрисовку DOM дерева
+            }, 200);
         }
 
         async function initMastodonParser(containerId, config = {}) {
