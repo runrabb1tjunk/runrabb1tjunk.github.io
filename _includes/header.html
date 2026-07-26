@@ -793,17 +793,43 @@ kowasugi
 <button class="btn-web3 btn-phantom" id="btn-ph" onclick="connectWallet('phantom')">Phantom</button>
 </div>
 <div class="divider"></div>
+
+<!-- 1. Kowasugi (Polygon) -->
 <div class="info-item">
-<span class="info-label">Баланс токенов:</span>
-<span class="info-value" id="ui-balance" style="color: #00ffff;">0.00</span>
+  <span class="info-label">Баланс KWSG:</span>
+  <span class="info-value" id="ui-balance" style="color: #00ffff;">0.00</span>
 </div>
 <div class="info-item">
-<span class="info-label">Накоплено баллов:</span>
-<span class="info-value" id="ui-points" style="color: #ffff00;">0.00</span>
+  <span class="info-label">Уровень KWSG:</span>
+  <span class="info-value" id="ui-tier" style="color: #00ff66;">0</span>
 </div>
+<div class="info-item">
+  <span class="info-label">Накоплено баллов:</span>
+  <span class="info-value" id="ui-points" style="color: #ffff00;">0.00</span>
+</div>
+
 <div class="divider"></div>
-<div class="history-title">История активности токена:</div>
-<div class="history-list" id="ui-history"></div>
+
+<!-- Обязательно проверьте наличие этих ID в вашем HTML! -->
+<div class="info-item">
+  <span class="info-label">Баланс WDIL:</span>
+  <span class="info-value" id="ui-wdil-balance" style="color: #00ffff;">0.00</span>
+</div>
+<div class="info-item">
+  <span class="info-label">Уровень WDIL:</span>
+  <span class="info-value" id="ui-wdil-tier" style="color: #00ff66;">0</span>
+</div>
+
+<div class="info-item">
+  <span class="info-label">Баланс WDILV:</span>
+  <span class="info-value" id="ui-wdilv-balance" style="color: #00ffff;">0.00</span>
+</div>
+<div class="info-item">
+  <span class="info-label">Уровень WDILV:</span>
+  <span class="info-value" id="ui-wdilv-tier" style="color: #00ff66;">0</span>
+</div>
+
+<div class="divider"></div>
 <button class="btn-submit" id="update-btn" onclick="updateData()">Обновить баланс и баллы</button>
 <button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()">Выйти из системы</button>
 <div id="cabinet-status" class="status-msg"></div>
@@ -1078,28 +1104,60 @@ function handleLogout() {
 }
 
 function renderHistory(data) {
-    document.getElementById("ui-balance").innerText = parseFloat(data.balance).toFixed(2);
-    document.getElementById("ui-points").innerText = parseFloat(data.points).toFixed(2);
+    console.log("Данные от воркера:", data); // <-- Добавьте эту строку для отладки
+
+    // 1. Kowasugi (Polygon)
+    const balElem = document.getElementById("ui-balance");
+    if (balElem) balElem.innerText = parseFloat(data.balance || 0).toFixed(2);
+
+    const ptsElem = document.getElementById("ui-points");
+    if (ptsElem) ptsElem.innerText = parseFloat(data.points || 0).toFixed(2);
+    
+    const tierElem = document.getElementById("ui-tier");
+    if (tierElem) tierElem.innerText = data.tier || 0;
+
+    // 2. WDIL & WDILV (Base)
+    if (data.baseTokens) {
+        if (data.baseTokens.wdil) {
+            const wdilBal = document.getElementById("ui-wdil-balance");
+            if (wdilBal) wdilBal.innerText = parseFloat(data.baseTokens.wdil.balance || 0).toFixed(2);
+
+            const wdilTier = document.getElementById("ui-wdil-tier");
+            if (wdilTier) wdilTier.innerText = data.baseTokens.wdil.tier || 0;
+        }
+        if (data.baseTokens.wdilv) {
+            const wdilvBal = document.getElementById("ui-wdilv-balance");
+            if (wdilvBal) wdilvBal.innerText = parseFloat(data.baseTokens.wdilv.balance || 0).toFixed(2);
+
+            const wdilvTier = document.getElementById("ui-wdilv-tier");
+            if (wdilvTier) wdilvTier.innerText = data.baseTokens.wdilv.tier || 0;
+        }
+    }
+    
+
+    // 3. Безопасная отрисовка истории транзакций (Kowasugi)
     const historyContainer = document.getElementById("ui-history");
-    historyContainer.innerHTML = "";
-    if (data.history && data.history.length > 0) {
-        data.history.forEach(tx => {
-            const isReceived = tx.type === "IN";
-            const typeText = isReceived ? "[ПОЛУЧЕНО]" : "[ОТПРАВЛЕНО]";
-            const typeClass = isReceived ? "tx-type-in" : "tx-type-out";
-            const item = document.createElement("div");
-            item.className = "history-item";
-            item.innerHTML = `
-                <span class="tx-block">Блок ${tx.block}</span>
-                <span class="tx-time">(${tx.time})</span>:
-                <span class="${typeClass}">${typeText}</span>
-                <span class="tx-amount">${tx.amount}</span>
-                <span class="tx-balance-after">(БАЛАНС: ${tx.balanceAfter})</span>
-            `;
-            historyContainer.appendChild(item);
-        });
-    } else {
-        historyContainer.innerHTML = '<div style="color: #666; text-align: center;">История транзакций пуста</div>';
+    if (historyContainer) {
+        historyContainer.innerHTML = "";
+        if (data.history && data.history.length > 0) {
+            data.history.forEach(tx => {
+                const isReceived = tx.type === "IN";
+                const typeText = isReceived ? "[ПОЛУЧЕНО]" : "[ОТПРАВЛЕНО]";
+                const typeClass = isReceived ? "tx-type-in" : "tx-type-out";
+                const item = document.createElement("div");
+                item.className = "history-item";
+                item.innerHTML = `
+                    <span class="tx-block">Блок ${tx.block}</span>
+                    <span class="tx-time">(${tx.time})</span>:
+                    <span class="${typeClass}">${typeText}</span>
+                    <span class="tx-amount">${tx.amount}</span>
+                    <span class="tx-balance-after">(БАЛАНС: ${tx.balanceAfter})</span>
+                `;
+                historyContainer.appendChild(item);
+            });
+        } else {
+            historyContainer.innerHTML = '<div style="color: #666; text-align: center;">История транзакций пуста</div>';
+        }
     }
 }
 </script>
