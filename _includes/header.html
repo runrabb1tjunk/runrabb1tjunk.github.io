@@ -970,6 +970,7 @@ function getProvider(walletType) {
 
 // Новое гибкое Web3 подключение (MetaMask, Trust, Phantom)
 async function connectWallet(walletType) {
+  localStorage.setItem('app_activeWalletType', walletType);
     const statusDiv = document.getElementById("cabinet-status");
     const activeProvider = getProvider(walletType);
     if (!activeProvider) {

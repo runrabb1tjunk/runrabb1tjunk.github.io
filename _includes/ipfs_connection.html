@@ -311,25 +311,34 @@ async function syncIPFSContent(walletAddress) {
     const loader = document.getElementById('loading-loader');
     if (loader) loader.style.display = 'flex';
     
-    // Пытаемся взять подпись для разблокировки IPFS из localStorage
     let signature = localStorage.getItem('web3_ipfs_signature');
     if (!signature) {
-        // Если подписи нет, запрашиваем у активного провайдера
         try {
+            // Берем активный провайдер
             const provider = window.ethereum || window.phantom?.ethereum;
-            if (!provider) throw new Error("Провайдер Web3 не обнаружен");
-            const from = walletAddress;
-            const msg = `0x${Array.from(new TextEncoder().encode(SIGN_MESSAGE)).map(b => b.toString(16).padStart(2, '0')).join("")}`;
+            if (!provider) throw new Error("Провайдер не найден");
+            
+            // ИСПРАВЛЕНИЕ ОШИБКИ 4100: сначала запрашиваем авторизацию у кошелька
+            const accounts = await provider.request({ method: 'eth_requestAccounts' });
+            const from = accounts[0] || walletAddress;
+
+            const msgHex = `0x${Array.from(new TextEncoder().encode(SIGN_MESSAGE)).map(b => b.toString(16).padStart(2, '0')).join("")}`;
+            
             signature = await provider.request({
                 method: 'personal_sign',
-                params: [msg, from],
+                params: [msgHex, from],
             });
+            
             localStorage.setItem('web3_ipfs_signature', signature);
         } catch (err) {
-            console.error("Ошибка подписи IPFS: ", err);
+            console.error("Ошибка подписи IPFS:", err);
             if (loader) loader.style.display = 'none';
-            document.getElementById('error-box').style.display = 'block';
-            document.getElementById('error-output').innerText = "Для просмотра файлов подтвердите владение адресом подписью.";
+            const errorBox = document.getElementById('error-box');
+            const errorOutput = document.getElementById('error-output');
+            if (errorBox && errorOutput) {
+                errorBox.style.display = 'block';
+                errorOutput.innerText = "Ошибка авторизации в кошельке.";
+            }
             fetchGatewayData(null, null, null);
             return;
         }
