@@ -1,4 +1,7 @@
 <head>
+<!-- Корректное адаптивное масштабирование на мобильных устройствах -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <!-- Социальные мета-теги (Превью) -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://runrabb1tjunk.github.io/">
@@ -22,6 +25,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
 </head>
 <style>
+/* Корректный расчет размеров для всех элементов */
+*, *::before, *::after {
+box-sizing: border-box;
+}
+
 /* Переопределение z-index для canvas в галерее */
 .galleria-container canvas {
 z-index: 100 !important;
@@ -32,6 +40,8 @@ z-index: 100 !important;
 html {
 overflow-x: hidden;
 width: 100%;
+margin: 0;
+padding: 0;
 }
 body {
 font: 400 1.4em "Amatic SC";
@@ -45,6 +55,9 @@ font-feature-settings: "kern" 0;
 font-kerning: normal;
 display: flex;
 min-height: 100vh;
+width: 100%;
+max-width: 100vw;
+overflow-x: hidden;
 flex-direction: column;
 background-image: url('/assets/carrot.gif');
 background-repeat: repeat;
@@ -103,8 +116,8 @@ display: none;
 position: fixed;
 top: 0;
 left: 0;
-width: 100%;
-height: 100%;
+width: 100vw;
+height: 100vh;
 background: rgba(13, 27, 42, 0.85);
 z-index: 2000;
 justify-content: center;
@@ -368,6 +381,7 @@ overflow-x: hidden;
 align-items: center;
 justify-content: flex-start;
 z-index: 1005;
+box-sizing: border-box;
 }
 .nav-trigger:not(:checked) ~.trigger { display: none; }
 .menu-grid {
@@ -402,6 +416,7 @@ color: #fff !important;
 text-decoration: none;
 font-size: 1.3em;
 width: 100%;
+box-sizing: border-box;
 }
 .nav-trigger:checked ~.trigger .menu-single .page-link i {
 font-size: 1.3em;
@@ -443,15 +458,17 @@ pointer-events: none !important;
 display: flex !important;
 position: static !important;
 flex-direction: row !important;
-flex-wrap: nowrap !important;
+flex-wrap: wrap !important;
 justify-content: center !important;
 gap: 10px !important;
 width: 100% !important;
+max-width: 100% !important;
 background: transparent !important;
 border: none !important;
 box-shadow: none !important;
 padding: 0 !important;
 margin: 0 !important;
+box-sizing: border-box !important;
 }
 /* Кнопки соцсетей на мобилках */
 .nav-trigger:checked ~.trigger .dropdown-content .page-link {
@@ -459,7 +476,7 @@ font-size: 0 !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
-flex: 1 1 auto !important;
+flex: 0 0 48px !important;
 width: 48px !important;
 height: 48px !important;
 max-width: 48px !important;
@@ -470,6 +487,7 @@ background: rgba(255, 255, 255, 0.08) !important;
 border: 1px solid rgba(255, 255, 255, 0.2) !important;
 border-radius: 6px !important;
 transition: all 0.3s !important;
+box-sizing: border-box !important;
 }
 .nav-trigger:checked ~.trigger .dropdown-content .page-link:hover {
 background: rgba(255, 255, 255, 0.2) !important;
@@ -970,7 +988,6 @@ function getProvider(walletType) {
 
 // Новое гибкое Web3 подключение (MetaMask, Trust, Phantom)
 async function connectWallet(walletType) {
-  localStorage.setItem('app_activeWalletType', walletType);
     const statusDiv = document.getElementById("cabinet-status");
     const activeProvider = getProvider(walletType);
     if (!activeProvider) {
