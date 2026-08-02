@@ -626,6 +626,12 @@ color: #ffffff !important;
 
 /* --- Desktop Styles --- */
 @media (min-width: 768px) and (min-height: 501px) {
+/* Disable scrolling in cabinet card for desktop */
+.auth-card {
+max-height: none !important;
+overflow-y: visible !important;
+}
+
 .menu-toggle { display: none; -webkit-tap-highlight-color: transparent; }
 .site-nav {
 display: flex;
