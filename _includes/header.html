@@ -65,7 +65,6 @@ position: relative;
 }
 
 /* --- TWO-LAYER BACKGROUND WITH OPACITY & BLUR --- */
-/* Layer 1: Base GIF Animation */
 body::before {
 content: "";
 position: fixed;
@@ -81,7 +80,6 @@ z-index: -2;
 pointer-events: none;
 }
 
-/* Layer 2: WebP Overlay (0.95 Opacity + Blur) */
 body::after {
 content: "";
 position: fixed;
@@ -104,7 +102,7 @@ pointer-events: none;
 a:hover {text-decoration: none;}
 a:visited {color: none;}
 
-/* --- BACKGROUND TEXTURE FOR PANELS AND MODALS (background.webp) --- */
+/* --- BACKGROUND TEXTURE FOR PANELS AND MODALS --- */
 .site-header {
 top: 0;
 width: 100%;
@@ -123,11 +121,9 @@ border-bottom: 1px solid rgba(255, 77, 77, 0.4);
 .site-header .page-link {
 color: #ffffff !important;
 }
-/* Increase size for main panel buttons (Home, Secretfiles) */
 .menu-single .page-link {
 font-size: 1.2em !important;
 }
-/* Increase size for author names on header */
 .dropdown-btn {
 font-size: 1.2em !important;
 }
@@ -141,20 +137,14 @@ backdrop-filter: blur(2px);
 }
 .footer-heading { color: #faf; }
 .footer-col-wrapper { color: #ffffff; }
-.rarible-icon {
+.rarible-icon, .boosty-icon {
 display: inline-block;
 width: 1.4em;
 height: 1.4em;
 vertical-align: -0.125em;
 color: inherit;
 }
-.boosty-icon {
-display: inline-block;
-width: 1.4em;
-height: 1.4em;
-vertical-align: -0.125em;
-color: inherit;
-}
+
 /* --- MODAL WINDOW & AUTH / CABINET --- */
 .auth-modal {
 display: none;
@@ -167,8 +157,9 @@ background: rgba(13, 27, 42, 0.85);
 z-index: 2000;
 justify-content: center;
 align-items: center;
-padding: 20px;
+padding: 15px;
 box-sizing: border-box;
+overflow-y: auto;
 }
 .auth-modal.active {
 display: flex;
@@ -184,12 +175,19 @@ border: 2px solid #ff4d4d;
 border-radius: 12px;
 width: 100%;
 max-width: 450px;
+max-height: 90vh;
+overflow-y: auto;
 padding: 30px;
 box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 position: relative;
 color: #fff;
 box-sizing: border-box;
+margin: auto;
 }
+.auth-card::-webkit-scrollbar { width: 6px; }
+.auth-card::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.auth-card::-webkit-scrollbar-thumb { background: #ff4d4d; border-radius: 3px; }
+
 .auth-close {
 position: absolute;
 top: 10px;
@@ -199,6 +197,7 @@ border: none;
 color: #fff;
 font-size: 1.5em;
 cursor: pointer;
+z-index: 10;
 }
 .auth-title {
 font-size: 2em;
@@ -234,6 +233,8 @@ padding: 10px;
 color: #fff;
 font-family: "Bad Script", sans-serif;
 outline: none;
+width: 100%;
+box-sizing: border-box;
 }
 .auth-input-group input:focus {
 border-color: #ff6666 !important;
@@ -253,6 +254,7 @@ background-repeat: repeat !important;
 background-size: auto !important;
 backdrop-filter: blur(2px) !important;
 -webkit-backdrop-filter: blur(2px) !important;
+box-sizing: border-box;
 }
 
 /* --- BUTTON STYLES & HOVERS --- */
@@ -270,6 +272,11 @@ font-family: inherit;
 font-weight: bold;
 text-transform: uppercase;
 width: 100%;
+box-sizing: border-box;
+display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
 transition: all 0.2s ease !important;
 margin-top: 10px;
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
@@ -286,12 +293,12 @@ filter: brightness(1.3) !important;
 transform: translateY(-1px);
 }
 
-/* Web3 Wallet selector buttons */
 .web3-wallet-selectors {
 display: flex;
 flex-direction: column;
 gap: 8px;
 margin-top: 15px;
+width: 100%;
 }
 .btn-web3 {
 padding: 10px;
@@ -300,6 +307,8 @@ display: flex;
 align-items: center;
 justify-content: center;
 gap: 8px;
+width: 100%;
+box-sizing: border-box;
 }
 
 .btn-web3:disabled {
@@ -321,7 +330,6 @@ min-height: 15px;
 text-align: center;
 font-family: "Bad Script", sans-serif;
 }
-/* Cabinet styles */
 .info-item {
 margin: 15px 0;
 font-size: 1.1em;
@@ -369,7 +377,7 @@ padding-bottom: 4px;
 .hidden { display: none !important; }
 .mobile-login-trigger { display: none; }
 
-/* --- Mobile Styles --- */
+/* --- Mobile Navigation & Menu Alignment Fix --- */
 @media (max-width: 767px), (max-height: 500px) {
 .site-header { visibility: hidden; }
 .mobile-login-trigger {
@@ -442,7 +450,7 @@ opacity: 0.95;
 backdrop-filter: blur(2px);
 -webkit-backdrop-filter: blur(2px);
 box-shadow: none;
-padding: 20px;
+padding: 20px 15px;
 overflow-y: auto;
 overflow-x: hidden;
 -webkit-tap-highlight-color: transparent;
@@ -452,46 +460,61 @@ z-index: 1005;
 box-sizing: border-box;
 }
 .nav-trigger:not(:checked) ~.trigger { display: none; }
+
+/* Fixed menu containers alignment */
 .menu-grid {
 display: flex;
 flex-direction: column;
 width: 100%;
-max-width: 280px;
+max-width: 300px;
 gap: 15px;
 align-items: center;
-margin: auto 0;
+margin: auto;
+box-sizing: border-box;
 }
 .menu-main-row {
 display: flex;
 flex-direction: column;
 width: 100%;
-gap: 15px;
+gap: 12px;
 align-items: center;
+box-sizing: border-box;
 }
 .menu-single.desktop-only-login { display: none !important; }
-.nav-trigger:checked~.trigger .menu-single {
+
+.nav-trigger:checked ~.trigger .menu-single {
 width: 100%;
 display: flex;
 justify-content: center;
-}
-.nav-trigger:checked ~.trigger .menu-single .page-link {
-display: flex;
 align-items: center;
-justify-content: center;
+box-sizing: border-box;
+margin: 0;
+}
+
+/* Normalized general menu buttons styling */
+.nav-trigger:checked ~.trigger .menu-single .page-link {
+display: flex !important;
+align-items: center !important;
+justify-content: center !important;
 gap: 10px;
-padding: 12px;
+padding: 12px 15px !important;
 background-color: rgba(183, 28, 28, 0.5) !important;
 border: 1px solid #ff4d4d !important;
-border-radius: 8px;
+border-radius: 8px !important;
 color: #ffffff !important;
 text-decoration: none;
-font-size: 1.3em;
-width: 100%;
-box-sizing: border-box;
+font-size: 1.3em !important;
+width: 100% !important;
+height: auto !important;
+min-height: 48px;
+box-sizing: border-box !important;
 font-weight: bold;
 box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+margin: 0 !important;
+text-align: center;
 }
+
 .nav-trigger:checked ~.trigger .menu-single .page-link:hover {
 background-color: rgba(229, 57, 53, 0.8) !important;
 border-color: #ff6666 !important;
@@ -500,12 +523,16 @@ filter: brightness(1.3) !important;
 }
 
 .nav-trigger:checked ~.trigger .menu-single .page-link i {
-font-size: 1.3em;
+font-size: 1.2em;
 width: auto;
 height: auto;
 background: transparent;
 color: #ffffff;
+margin: 0;
+display: inline-flex;
+align-items: center;
 }
+
 /* Mobile Author Block */
 .nav-trigger:checked ~.trigger .menu-dropdown {
 display: flex !important;
@@ -515,18 +542,20 @@ width: 100% !important;
 background: transparent !important;
 border: none !important;
 padding: 0 !important;
-margin: 5px 0 !important;
+margin: 10px 0 0 0 !important;
 position: static !important;
+box-sizing: border-box !important;
 }
-/* Author Name */
+
+/* Author Name Header */
 .nav-trigger:checked ~.trigger .dropdown-btn {
 display: block !important;
 color: #ffffff !important;
-font-size: 1.6em !important;
+font-size: 1.5em !important;
 font-weight: bold !important;
 text-align: center !important;
 padding: 0 !important;
-margin-bottom: 10px !important;
+margin-bottom: 8px !important;
 text-transform: uppercase !important;
 letter-spacing: 1px !important;
 background: transparent !important;
@@ -536,15 +565,18 @@ pointer-events: none !important;
 text-shadow: 0px 1px 3px rgba(0,0,0,0.8) !important;
 backdrop-filter: none !important;
 -webkit-backdrop-filter: none !important;
+box-shadow: none !important;
 }
 .nav-trigger:checked~.trigger .dropdown-btn::after { display: none !important; }
-/* Mobile Author Social Container */
+
+/* Mobile Author Social Buttons Layout */
 .nav-trigger:checked ~.trigger .dropdown-content {
 display: flex !important;
 position: static !important;
 flex-direction: row !important;
 flex-wrap: wrap !important;
 justify-content: center !important;
+align-items: center !important;
 gap: 10px !important;
 width: 100% !important;
 max-width: 100% !important;
@@ -555,7 +587,7 @@ padding: 0 !important;
 margin: 0 !important;
 box-sizing: border-box !important;
 }
-/* Mobile Social Buttons */
+
 .nav-trigger:checked ~.trigger .dropdown-content .page-link {
 font-size: 0 !important;
 display: inline-flex !important;
@@ -564,6 +596,7 @@ justify-content: center !important;
 flex: 0 0 48px !important;
 width: 48px !important;
 height: 48px !important;
+min-height: 48px !important;
 max-width: 48px !important;
 aspect-ratio: 1/1 !important;
 padding: 0 !important;
@@ -625,18 +658,20 @@ align-items: stretch;
 display: flex !important;
 flex-wrap: wrap !important;
 gap: 8px !important;
-align-items: stretch !important;
+align-items: center !important;
 }
 .menu-dropdown {
 position: relative;
 display: inline-flex;
-align-items: stretch;
+align-items: center;
+height: 100%;
 }
 .dropdown-btn {
 display: inline-flex;
 align-items: center;
+justify-content: center;
 gap: 6px;
-padding: 0 20px;
+padding: 10px 20px;
 background-color: rgba(183, 28, 28, 0.45) !important;
 border: 1px solid #ff4d4d !important;
 color: #ffffff !important;
@@ -646,9 +681,9 @@ font-size: 16px;
 font-family: inherit;
 font-weight: bold;
 transition: all 0.2s ease;
-height: 100%;
 box-sizing: border-box;
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+height: 100%;
 }
 .dropdown-btn:hover,
 .menu-dropdown:hover .dropdown-btn { 
@@ -723,15 +758,17 @@ height: 100% !important;
 
 .menu-single {
 display: inline-flex;
-align-items: stretch;
+align-items: center;
+height: 100%;
 }
 .page-link {
 display: inline-flex !important;
 align-items: center;
+justify-content: center;
 gap: 6px;
 width: auto !important;
 max-width: none !important;
-padding: 0 20px !important;
+padding: 10px 20px !important;
 margin: 0 !important;
 background-color: rgba(183, 28, 28, 0.45) !important;
 border: 1px solid #ff4d4d !important;
@@ -740,11 +777,11 @@ font-size: 16px !important;
 color: #ffffff !important;
 text-decoration: none;
 transition: all 0.2s ease;
-height: 100% !important;
 box-sizing: border-box;
 cursor: pointer;
 font-weight: bold;
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+height: 100% !important;
 }
 
 .page-link:hover { 
@@ -774,10 +811,12 @@ border-radius: 0 !important;
 main { margin-top: 0px; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
 <!-- Floating mobile login button -->
 <div class="mobile-login-trigger" id="mobileAuthBtn">
 <i class="bi bi-box-arrow-in-right"></i>
 </div>
+
 <header class="site-header" role="banner">
 <nav class="site-nav">
 <label for="nav-trigger" class="menu-toggle">
@@ -849,9 +888,10 @@ kowasugi
 </div>
 </nav>
 </header>
+
 <!-- COMBINED MODAL (LOGIN / REGISTER / CABINET) -->
 <div class="auth-modal" id="authModal">
-<div class="auth-card">
+<div class="auth-card" id="authCard">
 <button class="auth-close" id="closeAuthBtn">&times;</button>
 <div class="auth-title" id="modalTitle">System Login</div>
 <!-- AUTHENTICATION SECTION -->
@@ -932,6 +972,7 @@ kowasugi
 <script>
 const WORKER_URL = "https://nameless-snow-f3b7.fgfg57468.workers.dev";
 const modal = document.getElementById('authModal');
+const authCard = document.getElementById('authCard');
 const desktopBtn = document.getElementById('desktopAuthBtn');
 const mobileBtn = document.getElementById('mobileAuthBtn');
 const closeBtn = document.getElementById('closeAuthBtn');
@@ -940,7 +981,6 @@ let currentUser = null;
 let currentPass = null;
 let linkedWallet = null;
 
-// Initialize session-based authentication on Desktop and Mobile
 document.addEventListener("DOMContentLoaded", () => {
     const savedUser = localStorage.getItem('app_currentUser');
     const savedPass = localStorage.getItem('app_currentPass');
@@ -980,6 +1020,8 @@ function openModalForm() {
         resetAuthForm(false);
     }
     modal.classList.add('active');
+    if (authCard) authCard.scrollTop = 0;
+    if (modal) modal.scrollTop = 0;
 }
 
 function toggleAuthMode() {
@@ -1003,7 +1045,6 @@ function resetAuthForm(toRegister) {
     }
 }
 
-// Dispatch custom JS event for other scripts on the page
 function dispatchAuthEvent(isLoggedIn, username, wallet) {
     const event = new CustomEvent("user_auth_status", {
         detail: { isLoggedIn, username, wallet }
@@ -1063,6 +1104,8 @@ async function handleAuthSubmit(event) {
             document.getElementById("web3-connect-group").classList.remove("hidden");
             document.getElementById("cabinet-status").innerText = "Connect a wallet to start earning rewards.";
         }
+        if (authCard) authCard.scrollTop = 0;
+        if (modal) modal.scrollTop = 0;
     } catch (err) {
         statusDiv.innerText = `Connection error: ${err.message}`;
     } finally {
@@ -1070,7 +1113,6 @@ async function handleAuthSubmit(event) {
     }
 }
 
-// Check installed wallets (to disable unavailable buttons)
 function checkInstalledWallets() {
     const isAnyEth = typeof window.ethereum !== 'undefined';
     const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
@@ -1105,7 +1147,6 @@ function getProvider(walletType) {
     return window.ethereum;
 }
 
-// Flexible Web3 Connection (MetaMask, Trust, Phantom)
 async function connectWallet(walletType) {
     const statusDiv = document.getElementById("cabinet-status");
     const activeProvider = getProvider(walletType);
@@ -1199,7 +1240,6 @@ function handleLogout() {
 function renderHistory(data) {
     console.log("Data from worker:", data);
 
-    // 1. Kowasugi (Polygon)
     const balElem = document.getElementById("ui-balance");
     if (balElem) balElem.innerText = parseFloat(data.balance || 0).toFixed(2);
 
@@ -1209,7 +1249,6 @@ function renderHistory(data) {
     const tierElem = document.getElementById("ui-tier");
     if (tierElem) tierElem.innerText = data.tier || 0;
 
-    // 2. WDIL & WDILV (Base)
     if (data.baseTokens) {
         if (data.baseTokens.wdil) {
             const wdilBal = document.getElementById("ui-wdil-balance");
@@ -1227,7 +1266,6 @@ function renderHistory(data) {
         }
     }
 
-    // 3. Safe rendering of transaction history (Kowasugi)
     const historyContainer = document.getElementById("ui-history");
     if (historyContainer) {
         historyContainer.innerHTML = "";
