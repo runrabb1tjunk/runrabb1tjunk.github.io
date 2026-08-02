@@ -24,7 +24,7 @@
         margin: 0 auto;
         display: block;
         box-sizing: border-box;
-        overflow: hidden; /* Срезаем любые элементы Galleria, выходящие за границы */
+        overflow: hidden;
     }
 
     .galleria-container { 
@@ -46,7 +46,9 @@
     }
     
     .mastodon-posts-container.has-content {
-        background-color: #0d1b2a;
+        background-image: url('/assets/background.webp') !important;
+        background-repeat: repeat !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .post-group { 
@@ -72,14 +74,14 @@
         white-space: pre-wrap;
         font-family: inherit;
         line-height: 1.4;
-        text-align: left; /* Justify ломает ширину при узких экранах */
+        text-align: left;
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
         padding: 0;
         box-sizing: border-box;
         color: #fff;
-        word-break: break-word; /* Перенос длинных слов/ссылок */
+        word-break: break-word;
         overflow-wrap: break-word;
     }
     
@@ -141,7 +143,9 @@
     }
     
     .posts-index {
-        background: #0d1b2a;
+        background-image: url('/assets/background.webp') !important;
+        background-repeat: repeat !important;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 20px;
         margin-bottom: 30px;
         border-radius: 8px; 
@@ -197,13 +201,17 @@
         margin-top: 5px;
     }
     
+    /* Кнопка с живописной текстурой */
     .back-to-index {
         position: absolute;
         top: 15px;
         right: 15px;
-        background: #f8f9fa;
-        color: #333;
-        border: 2px solid #007cba;
+        background-image: url('/assets/button.webp') !important;
+        background-size: 300% 300% !important;
+        background-position: 5% 90% !important;
+        color: #0d1b2a !important;
+        font-weight: bold !important;
+        border: 1px solid rgba(0, 0, 0, 0.3);
         border-radius: 50%;
         width: 2em;
         height: 2em;
@@ -212,13 +220,12 @@
         align-items: center;
         justify-content: center;
         font-size: 18px;
-        transition: all 0.2s;
+        transition: filter 0.2s;
         z-index: 10;
     }
     
     .back-to-index:hover {
-        background: #007cba;
-        color: white;
+        filter: brightness(1.2);
     }
 
     /* Медиа-запрос для мобильных устройств */
@@ -481,7 +488,7 @@
                         dataSource: galleriaData, 
                         responsive: true, 
                         theme: theme, 
-                        height: mobile ? 320 : 500, // Адаптивная высота под мобильные устройства
+                        height: mobile ? 320 : 500,
                         imageCrop: false, 
                         autoplay: false, 
                         showInfo: false 

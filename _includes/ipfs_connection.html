@@ -1,262 +1,325 @@
 <div class="web3-gate-wrapper">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
+
+/* Global reset for horizontal scrolling prevention */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
 .web3-gate-wrapper {
-width: 100%;
-max-width: 600px;
-margin: 40px auto;
-padding: 10px;
-box-sizing: border-box;
-font-family: "Amatic SC", Amatic SC, -apple-system, BlinkMacSystemFont;
+    width: 100%;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: "Amatic SC", Amatic SC, -apple-system, BlinkMacSystemFont;
 }
+
 .gateway-card {
-background: #0d1b2a;
-border: 1px solid #007cba;
-border-radius: 8px;
-padding: 30px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-display: flex;
-flex-direction: column;
-align-items: center;
-position: relative;
-box-sizing: border-box;
+    background-image: url('/assets/background.webp') !important;
+    background-repeat: repeat !important;
+    border: 1px solid #007cba;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 800px;
 }
+
 .gateway-card h1 {
-text-align: center;
-margin-top: 0;
-margin-bottom: 20px;
-color: #007cba;
-font-size: 2.5rem;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #007cba;
+    font-size: 2.5rem;
 }
+
 .gateway-card p {
-font-size: 1.5rem;
-line-height: 1.6;
-color: #fff;
-text-align: center;
-margin-bottom: 25px;
-max-width: 450px;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 25px;
+    max-width: 600px;
 }
+
 .status-lock-notice {
-color: #ff4d4d;
-font-size: 1.6rem;
-text-align: center;
-font-weight: bold;
-margin-bottom: 20px;
+    color: #ff4d4d;
+    font-size: 1.6rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
+
 .status-unlock-notice {
-color: #34d399;
-font-size: 1.6rem;
-text-align: center;
-font-weight: bold;
-margin-bottom: 20px;
+    color: #34d399;
+    font-size: 1.6rem;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
+
 .loading-container {
-display: none;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-height: 150px;
-text-align: center;
-margin: 20px 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    text-align: center;
+    margin: 20px 0;
 }
+
 .loading-spinner {
-width: 40px;
-height: 40px;
-border: 3px solid #f3f3f3;
-border-top: 3px solid #007cba;
-border-radius: 50%;
-animation: spin 1s linear infinite;
-margin-bottom: 15px;
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007cba;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
 }
+
 .loading-text {
-color: #007cba;
-font-size: 1.4rem;
-font-weight: 500;
+    color: #007cba;
+    font-size: 1.4rem;
+    font-weight: 500;
 }
+
 @keyframes spin {
-0% { transform: rotate(0deg); }
-100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
-/* Встроенный интерактивный граф */
+
+/* Built-in interactive graph */
 .graph-wrapper {
-width: 100%;
-height: 380px;
-background-color: rgba(0, 0, 0, 0.3);
-border: 1px solid #007cba;
-border-radius: 6px;
-margin-top: 20px;
-margin-bottom: 20px;
-position: relative;
-overflow: hidden;
-box-sizing: border-box;
+    width: 100%;
+    height: 380px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid #007cba;
+    border-radius: 6px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
+
 #cy {
-width: 100%;
-height: 100%;
-display: block;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
+
 .graph-header-label {
-position: absolute;
-top: 10px;
-left: 15px;
-color: #007cba;
-font-size: 1.6rem;
-font-weight: bold;
-pointer-events: none;
-z-index: 10;
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: #007cba;
+    font-size: 1.6rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 10;
 }
-/* Модальное меню выбора языка при тапе на узел сферы */
+
+/* Language selection modal on node tap */
 .node-lang-menu {
-display: none;
-position: absolute;
-background: #0d1b2a;
-border: 1px solid #34d399;
-border-radius: 4px;
-padding: 10px;
-z-index: 1000;
-box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-flex-direction: column;
-gap: 8px;
-min-width: 160px;
+    display: none;
+    position: absolute;
+    background-image: url('/assets/background.webp') !important;
+    background-repeat: repeat !important;
+    border: 1px solid #34d399;
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    flex-direction: column;
+    gap: 8px;
+    min-width: 160px;
 }
+
 .node-lang-menu a {
-display: block;
-background: #007cba;
-color: #fff;
-padding: 6px 10px;
-text-align: center;
-text-decoration: none;
-font-size: 1.3rem;
-border-radius: 3px;
-transition: opacity 0.2s;
+    display: block;
+    background-image: url('/assets/button.webp') !important;
+    background-size: 250% 250% !important;
+    background-position: 85% 85% !important;
+    color: #0d1b2a !important;
+    font-weight: bold !important;
+    padding: 6px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.3rem;
+    border-radius: 3px;
+    transition: filter 0.2s;
 }
+
 .node-lang-menu a:hover {
-opacity: 0.9;
+    filter: brightness(1.1);
 }
+
 .node-lang-menu .close-menu-btn {
-background: #ff4d4d;
-color: white;
-cursor: pointer;
-font-size: 1.1rem;
-border: none;
-padding: 4px;
-border-radius: 3px;
-font-family: inherit;
+    background-image: url('/assets/button.webp') !important;
+    background-size: 300% 300% !important;
+    background-position: 5% 90% !important;
+    color: #0d1b2a !important;
+    font-weight: bold !important;
+    cursor: pointer;
+    font-size: 1.1rem;
+    border: 1px solid rgba(0,0,0,0.3);
+    padding: 4px;
+    border-radius: 3px;
+    font-family: inherit;
 }
+
 .gateway-card .box {
-display: block;
-width: 100%;
-padding: 20px;
-border-radius: 6px;
-margin-top: 20px;
-box-sizing: border-box;
-text-align: left;
+    display: block;
+    width: 100%;
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    text-align: left;
+    background-image: url('/assets/background.webp') !important;
+    background-repeat: repeat !important;
 }
+
 .gateway-card .box b {
-font-size: 1.8rem !important;
-display: inline-block;
-margin-bottom: 10px;
+    font-size: 1.8rem !important;
+    display: inline-block;
+    margin-bottom: 10px;
 }
-.gateway-card #tier-0-box { background-color: rgba(255,255,255,0.05); border: 2px dashed #94a3b8; }
-.gateway-card #tier-1333-box { background-color: rgba(6,95,70,0.2); border: 2px dashed #34d399; }
-.gateway-card #tier-4444-box { background-color: rgba(30,58,138,0.3); border: 2px dashed #3b82f6; }
+
+.gateway-card #tier-0-box { border: 2px dashed #94a3b8; }
+.gateway-card #tier-1333-box { border: 2px dashed #34d399; }
+.gateway-card #tier-4444-box { border: 2px dashed #3b82f6; }
 
 .gateway-card .error-box {
-display: none;
-color: #ff4d4d;
-padding: 15px;
-background: #ffe6e6;
-border-left: 4px solid #ff4d4d;
-border-radius: 4px;
-margin-top: 20px;
-width: 100%;
-box-sizing: border-box;
+    display: none;
+    color: #ff4d4d;
+    padding: 15px;
+    background: #ffe6e6;
+    border-left: 4px solid #ff4d4d;
+    border-radius: 4px;
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
+
 .gateway-card .error-box b { color: #b30000; font-size: 1.4rem; }
 .gateway-card .links-container {
-display: flex;
-flex-direction: column;
-gap: 12px;
-margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
 }
+
 .gateway-card .lang-divider {
-border-top: 1px dashed rgba(255,255,255,0.15);
-margin: 8px 0;
-width: 100%;
+    border-top: 1px dashed rgba(255,255,255,0.15);
+    margin: 8px 0;
+    width: 100%;
 }
+
+/* Open content button with painterly texture */
 .gateway-card .open-btn {
-display: block;
-background-color: #34d399;
-color: #0d1b2a;
-padding: 12px;
-text-decoration: none;
-border-radius: 4px;
-text-align: center;
-font-size: 1.6rem;
-transition: opacity .2s;
-font-family: inherit;
+    display: block;
+    background-image: url('/assets/button.webp') !important;
+    background-size: 250% 250% !important;
+    background-position: 85% 85% !important;
+    color: #0d1b2a !important;
+    padding: 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold !important;
+    transition: filter .2s;
+    font-family: inherit;
+    border: 1px solid rgba(0,0,0,0.3);
 }
-.gateway-card #tier-0-box .open-btn { background-color: #94a3b8; color: #0d1b2a; }
-.gateway-card #tier-4444-box .open-btn { background-color: #3b82f6; color: white; }
-.gateway-card .open-btn:hover { opacity: 0.9; }
+
+.gateway-card #tier-0-box .open-btn { background-position: 10% 15% !important; }
+.gateway-card #tier-4444-box .open-btn { background-position: 50% 40% !important; }
+.gateway-card .open-btn:hover { filter: brightness(1.1); }
+
 .gateway-card .locked-item {
-display: block;
-background-color: rgba(255,255,255,0.07);
-color: #8892b0;
-padding: 12px;
-border-radius: 4px;
-text-align: center;
-font-size: 1.6rem;
-border: 1px dashed rgba(255,255,255,0.1);
-cursor: not-allowed;
+    display: block;
+    background-color: rgba(255,255,255,0.07);
+    color: #8892b0;
+    padding: 12px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 1.6rem;
+    border: 1px dashed rgba(255,255,255,0.1);
+    cursor: not-allowed;
 }
+
 .gateway-card #gateway-desc {
-font-size: 1.5rem;
+    font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .gateway-card {
+        padding: 15px;
+    }
 }
 </style>
-<div class="gateway-card">
-<h1>Web3 Access Verification</h1>
-<div id="auth-notification" class="status-lock-notice">Пожалуйста, авторизуйтесь и привяжите кошелек в верхнем меню.</div>
-<p id="gateway-desc">Авторизуйтесь на сайте и подключите ваш кошелек. Доступ к скрытым материалам откроется автоматически на основе баланса токенов.</p>
 
-<div class="loading-container" id="loading-loader">
-<div class="loading-spinner"></div>
-<div class="loading-text" id="loading-text-status">Загрузка защищенных данных...</div>
+<div class="gateway-card">
+    <h1>Web3 Access Verification</h1>
+    <div id="auth-notification" class="status-lock-notice">Please log in and connect your wallet in the top menu.</div>
+    <p id="gateway-desc">Log in to the site and connect your wallet. Access to hidden materials will unlock automatically based on your token balance.</p>
+
+    <div class="loading-container" id="loading-loader">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text-status">Loading protected data...</div>
+    </div>
+
+    <!-- Interactive Graph -->
+    <div class="graph-wrapper" id="graph-viewport">
+        <div class="graph-header-label">Interactive Sphere Path</div>
+        <div id="cy"></div>
+        <!-- Contextual Language Menu -->
+        <div id="node-menu" class="node-lang-menu">
+            <div style="color: #007cba; font-size:1.2rem; text-align:center; font-weight:bold; margin-bottom:5px;">Select Language</div>
+            <div id="node-links-container" style="display: flex; flex-direction:column; gap:5px;"></div>
+            <button class="close-menu-btn" onclick="closeNodeMenu()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="tier-0-box" class="box">
+        <b style="color:#94a3b8;">Free Tier Access</b>
+        <div id="links-list-0" class="links-container"></div>
+    </div>
+
+    <div id="tier-1333-box" class="box">
+        <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
+        <div id="links-list-1333" class="links-container"></div>
+    </div>
+
+    <div id="tier-4444-box" class="box">
+        <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
+        <div id="links-list-4444" class="links-container"></div>
+    </div>
+
+    <div id="error-box" class="error-box">
+        <b>Connection Error:</b>
+        <div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
+    </div>
 </div>
-<!-- Интерактивный граф -->
-<div class="graph-wrapper" id="graph-viewport">
-<div class="graph-header-label">Interactive Sphere Path</div>
-<div id="cy"></div>
-<!-- Контекстное меню выбора языка -->
-<div id="node-menu" class="node-lang-menu">
-<div style="color: #007cba; font-size:1.2rem; text-align:center; font-weight:bold; margin-bottom:5px;">Select Language</div>
-<div id="node-links-container" style="display: flex; flex-direction:column; gap:5px;"></div>
-<button class="close-menu-btn" onclick="closeNodeMenu()">Cancel</button>
 </div>
-</div>
-<div id="tier-0-box" class="box">
-<b style="color:#94a3b8;">Free Tier Access</b>
-<div id="links-list-0" class="links-container"></div>
-</div>
-<div id="tier-1333-box" class="box">
-<b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
-<div id="links-list-1333" class="links-container"></div>
-</div>
-<div id="tier-4444-box" class="box">
-<b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
-<div id="links-list-4444" class="links-container"></div>
-</div>
-<div id="error-box" class="error-box">
-<b>Ошибка подключения:</b>
-<div id="error-output" style="margin-top:8px;font-size:0.95rem"></div>
-</div>
-</div>
-</div>
-<!-- Подключение Cytoscape и Dagre плагина с принудительной инициализацией -->
+
+<!-- Cytoscape & Dagre Plugin Connection -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.33.2/cytoscape.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@4.0.0/dist/cytoscape-dagre.min.js"></script>
 <script>
-// Важное исправление: Явно регистрируем layout 'dagre' для Cytoscape, чтобы холст не падал
 if (typeof cytoscapeDagre !== 'undefined' && typeof cytoscape !== 'undefined') {
     cytoscape.use(cytoscapeDagre);
 }
@@ -264,12 +327,12 @@ if (typeof cytoscapeDagre !== 'undefined' && typeof cytoscape !== 'undefined') {
 const GATEWAY_WORKER_URL = "https://late-violet-5384.fgfg57468.workers.dev";
 const SIGN_MESSAGE = "Sign this message to verify ownership of this wallet for Web3 Gate.";
 let currentGatewayData = {
-    tier0:[],
+    tier0: [],
     tier1333: [],
     tier4444: []
 };
 
-// Отслеживаем статус авторизации из родительского Header-файла
+// Track auth status from parent Header component
 window.addEventListener("user_auth_status", (e) => {
     const { isLoggedIn, username, wallet } = e.detail;
     const notification = document.getElementById("auth-notification");
@@ -277,21 +340,19 @@ window.addEventListener("user_auth_status", (e) => {
     
     if (isLoggedIn && wallet) {
         notification.className = "status-unlock-notice";
-        notification.innerText = `Подключен аккаунт: ${username} | Кошелек: ${wallet.substring(0,6)}...${wallet.substring(wallet.length-4)}`;
+        notification.innerText = `Connected Account: ${username} | Wallet: ${wallet.substring(0,6)}...${wallet.substring(wallet.length-4)}`;
         if (desc) desc.style.display = "none";
         
-        // Автоматически получаем подпись для IPFS воркера из хранилища (или запрашиваем при отсутствии)
         syncIPFSContent(wallet);
     } else {
         notification.className = "status-lock-notice";
-        notification.innerText = "Пожалуйста, авторизуйтесь и привяжите кошелек в верхнем меню.";
+        notification.innerText = "Please log in and connect your wallet in the top menu.";
         if (desc) desc.style.display = "block";
         fetchGatewayData(null, null, null);
     }
 });
 
 function initGateway() {
-    // При загрузке проверяем, есть ли уже сохраненная сессия
     const savedUser = localStorage.getItem('app_currentUser');
     const savedWallet = localStorage.getItem('app_linkedWallet');
     if (savedUser && savedWallet) {
@@ -314,11 +375,9 @@ async function syncIPFSContent(walletAddress) {
     let signature = localStorage.getItem('web3_ipfs_signature');
     if (!signature) {
         try {
-            // Берем активный провайдер
             const provider = window.ethereum || window.phantom?.ethereum;
-            if (!provider) throw new Error("Провайдер не найден");
+            if (!provider) throw new Error("Provider not found");
             
-            // ИСПРАВЛЕНИЕ ОШИБКИ 4100: сначала запрашиваем авторизацию у кошелька
             const accounts = await provider.request({ method: 'eth_requestAccounts' });
             const from = accounts[0] || walletAddress;
 
@@ -331,13 +390,13 @@ async function syncIPFSContent(walletAddress) {
             
             localStorage.setItem('web3_ipfs_signature', signature);
         } catch (err) {
-            console.error("Ошибка подписи IPFS:", err);
+            console.error("IPFS Signature error:", err);
             if (loader) loader.style.display = 'none';
             const errorBox = document.getElementById('error-box');
             const errorOutput = document.getElementById('error-output');
             if (errorBox && errorOutput) {
                 errorBox.style.display = 'block';
-                errorOutput.innerText = "Ошибка авторизации в кошельке.";
+                errorOutput.innerText = "Wallet authorization failed.";
             }
             fetchGatewayData(null, null, null);
             return;
@@ -410,11 +469,11 @@ function renderUI(data) {
     
     if (title1333) {
         const hasAccess = currentGatewayData.tier1333.some(i => i.url != null && i.url !== undefined);
-        title1333.innerText = hasAccess ? "Доступ разрешен для Tier 1333+" : "Tier 1333+ (Заблокировано)";
+        title1333.innerText = hasAccess ? "Tier 1333+ Access Granted" : "Tier 1333+ (Locked)";
     }
     if (title4444) {
         const hasAccess = currentGatewayData.tier4444.some(i => i.url != null && i.url !== undefined);
-        title4444.innerText = hasAccess ? "Доступ разрешен для Tier 4444+" : "Tier 4444+ (Заблокировано)";
+        title4444.innerText = hasAccess ? "Tier 4444+ Access Granted" : "Tier 4444+ (Locked)";
     }
     
     populateTierContainer(list0, currentGatewayData.tier0);
@@ -434,15 +493,15 @@ async function fetchGatewayData(userAddress, signature, message) {
         });
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.error || "Ошибка ответа воркера шлюза");
+            throw new Error(errData.error || "Gateway worker response error");
         }
         const data = await response.json();
         renderUI(data);
     } catch(e) {
-        console.error("Проблема сети или парсинга:", e);
+        console.error("Network or parsing error:", e);
         const errorOutput = document.getElementById('error-output');
         if (errorBox && errorOutput) {
-            errorOutput.innerText = e.message || "Не удалось синхронизировать данные с сервером.";
+            errorOutput.innerText = e.message || "Failed to synchronize data with server.";
             errorBox.style.display = 'block';
             renderUI(null);
         }
@@ -499,7 +558,7 @@ function buildGraph() {
         
         const nodeLinks = [];
         if (hasEn && nodeInfo.en.url) nodeLinks.push({ label: 'English Ver.', url: nodeInfo.en.url });
-        if (hasRu && nodeInfo.ru.url) nodeLinks.push({ label: 'Русская версия', url: nodeInfo.ru.url });
+        if (hasRu && nodeInfo.ru.url) nodeLinks.push({ label: 'Russian Ver.', url: nodeInfo.ru.url });
         
         elements.push({
             data: {
@@ -605,12 +664,12 @@ function buildGraph() {
         const links = node.data('links') || [];
         
         if (isLocked) {
-            alert("Эта глава заблокирована! Пожалуйста, проверьте баланс своего Web3 кошелька.");
+            alert("This chapter is locked! Please check your Web3 wallet balance.");
             closeNodeMenu();
             return;
         }
         if (links.length === 0) {
-            alert("Ссылки не найдены.");
+            alert("No links found.");
             return;
         }
         if (links.length === 1) {

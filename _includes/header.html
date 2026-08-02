@@ -1,14 +1,14 @@
 <head>
-<!-- Корректное адаптивное масштабирование на мобильных устройствах -->
+<!-- Correct responsive scaling for mobile devices -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Социальные мета-теги (Превью) -->
+<!-- Social Meta Tags (Preview) -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://runrabb1tjunk.github.io/">
 <meta property="og:title" content="Run Rabbit Junk">
 <meta property="og:description" content="Sphere and Hare comic creators' site">
 <meta property="og:image" content="https://runrabb1tjunk.github.io/assets/default-share.jpg">
-<!-- Мета-теги для Твиттера -->
+<!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:url" content="https://runrabb1tjunk.github.io/">
 <meta name="twitter:title" content="Run Rabbit Junk">
@@ -25,12 +25,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Marck+Script&display=swap" rel="stylesheet">
 </head>
 <style>
-/* Корректный расчет размеров для всех элементов */
+/* Correct box sizing for all elements */
 *, *::before, *::after {
 box-sizing: border-box;
 }
 
-/* Переопределение z-index для canvas в галерее */
+/* Overriding z-index for canvas in gallery */
 .galleria-container canvas {
 z-index: 100 !important;
 }
@@ -59,40 +59,85 @@ width: 100%;
 max-width: 100vw;
 overflow-x: hidden;
 flex-direction: column;
-background-image: url('/assets/carrot.gif');
-background-repeat: repeat;
-background-size: auto;
-background-position: left top;
-background-attachment: fixed;
 margin: 0;
 padding: 0;
 position: relative;
 }
+
+/* --- TWO-LAYER BACKGROUND WITH OPACITY & BLUR --- */
+/* Layer 1: Base GIF Animation */
+body::before {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-image: url('/assets/carrot.gif');
+background-repeat: repeat;
+background-size: auto;
+background-position: left top;
+z-index: -2;
+pointer-events: none;
+}
+
+/* Layer 2: WebP Overlay (0.95 Opacity + Blur) */
+body::after {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-image: url('/assets/background.webp');
+background-repeat: repeat;
+background-size: auto;
+background-position: left top;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
+z-index: -1;
+pointer-events: none;
+}
+
 .bi {padding: 0.1em;}
 a:hover {text-decoration: none;}
 a:visited {color: none;}
+
+/* --- BACKGROUND TEXTURE FOR PANELS AND MODALS (background.webp) --- */
 .site-header {
 top: 0;
 width: 100%;
 z-index: 1000;
-background: #0d1b2a;
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+background-size: auto !important;
+background-position: left top !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
 box-shadow: none;
 border-top: none;
-border-bottom: none;
+border-bottom: 1px solid rgba(255, 77, 77, 0.4);
 }
 .site-header .page-link {
-color: #ffffff;
+color: #ffffff !important;
 }
-/* Увеличиваем только главные кнопки на панели (Home, Secretfiles) */
+/* Increase size for main panel buttons (Home, Secretfiles) */
 .menu-single .page-link {
 font-size: 1.2em !important;
 }
-/* Увеличиваем имена авторов на панели */
+/* Increase size for author names on header */
 .dropdown-btn {
 font-size: 1.2em !important;
 }
 .site-footer {
-background-color: #0d1b2a;
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+background-size: auto !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
 }
 .footer-heading { color: #faf; }
 .footer-col-wrapper { color: #ffffff; }
@@ -110,7 +155,7 @@ height: 1.4em;
 vertical-align: -0.125em;
 color: inherit;
 }
-/* --- МОДАЛЬНОЕ ОКНО И АВТОРИЗАЦИЯ / КАБИНЕТ --- */
+/* --- MODAL WINDOW & AUTH / CABINET --- */
 .auth-modal {
 display: none;
 position: fixed;
@@ -129,8 +174,13 @@ box-sizing: border-box;
 display: flex;
 }
 .auth-card {
-background: #0d1b2a;
-border: 2px solid #007cba;
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+background-size: auto !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
+border: 2px solid #ff4d4d;
 border-radius: 12px;
 width: 100%;
 max-width: 450px;
@@ -156,7 +206,7 @@ text-align: center;
 margin-bottom: 20px;
 text-transform: uppercase;
 letter-spacing: 1px;
-border-bottom: 1px dashed #007cba;
+border-bottom: 1px dashed #ff4d4d;
 padding-bottom: 10px;
 }
 .auth-form {
@@ -170,11 +220,15 @@ flex-direction: column;
 gap: 5px;
 }
 .auth-input-group label {
-color: #007cba;
+color: #ff4d4d;
 }
 .auth-input-group input {
-background: rgba(255, 255, 255, 0.05);
-border: 1px solid rgba(255, 255, 255, 0.2);
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
+border: 1px solid #ff4d4d !important;
 border-radius: 6px;
 padding: 10px;
 color: #fff;
@@ -182,13 +236,32 @@ font-family: "Bad Script", sans-serif;
 outline: none;
 }
 .auth-input-group input:focus {
-border-color: #007cba;
-box-shadow: 0 0 5px rgba(0, 124, 186, 0.5);
+border-color: #ff6666 !important;
+box-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
 }
-.btn-submit {
-background: #007cba;
-color: #fff;
-border: none;
+
+/* --- COMMON BUTTON BACKGROUND WITH WEBP & BLUR --- */
+.btn-submit,
+.btn-flat,
+.btn-web3,
+.mobile-login-trigger,
+.menu-toggle,
+.dropdown-btn,
+.page-link {
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+background-size: auto !important;
+backdrop-filter: blur(2px) !important;
+-webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* --- BUTTON STYLES & HOVERS --- */
+.btn-submit,
+.btn-flat,
+.btn-web3 {
+background-color: rgba(183, 28, 28, 0.5) !important;
+color: #ffffff !important;
+border: 1px solid #ff4d4d !important;
 border-radius: 6px;
 padding: 12px;
 font-size: 1.3em;
@@ -197,25 +270,23 @@ font-family: inherit;
 font-weight: bold;
 text-transform: uppercase;
 width: 100%;
-transition: background 0.2s ease;
+transition: all 0.2s ease !important;
 margin-top: 10px;
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
-.btn-submit:hover { background: #005a87; }
-.btn-flat {
-background: transparent;
-color: #007cba;
-border: 1px solid #007cba;
-border-radius: 6px;
-padding: 12px;
-font-size: 1.3em;
-cursor: pointer;
-font-family: inherit;
-font-weight: bold;
-text-transform: uppercase;
-width: 100%;
-margin-top: 10px;
+
+.btn-submit:hover,
+.btn-flat:hover,
+.btn-web3:hover {
+background-color: rgba(229, 57, 53, 0.8) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+filter: brightness(1.3) !important;
+transform: translateY(-1px);
 }
-/* Кнопки выбора Web3 кошелька */
+
+/* Web3 Wallet selector buttons */
 .web3-wallet-selectors {
 display: flex;
 flex-direction: column;
@@ -223,27 +294,24 @@ gap: 8px;
 margin-top: 15px;
 }
 .btn-web3 {
-color: #fff;
-border: none;
-border-radius: 6px;
 padding: 10px;
 font-size: 1.1em;
-cursor: pointer;
-font-family: inherit;
-font-weight: bold;
-text-transform: uppercase;
-width: 100%;
-transition: opacity 0.2s;
 display: flex;
 align-items: center;
 justify-content: center;
 gap: 8px;
 }
-.btn-web3:hover { opacity: 0.9; }
-.btn-web3:disabled { background-color: #334155 !important; color: #64748b; cursor: not-allowed; }
-.btn-metamask { background-color: #f6851b; }
-.btn-trust { background-color: #3375bb; }
-.btn-phantom { background-color: #ab9ff3; }
+
+.btn-web3:disabled {
+background: #334155 !important;
+color: #64748b !important;
+border-color: #475569 !important;
+cursor: not-allowed;
+text-shadow: none;
+box-shadow: none;
+backdrop-filter: none !important;
+-webkit-backdrop-filter: none !important;
+}
 
 .status-msg {
 font-size: 13px;
@@ -253,12 +321,12 @@ min-height: 15px;
 text-align: center;
 font-family: "Bad Script", sans-serif;
 }
-/* Стили кабинета */
+/* Cabinet styles */
 .info-item {
 margin: 15px 0;
 font-size: 1.1em;
 }
-.info-label { color: #007cba; }
+.info-label { color: #ff4d4d; }
 .info-value { font-weight: bold; }
 .wallet-addr {
 font-size: 12px;
@@ -267,14 +335,14 @@ word-break: break-all;
 font-family: monospace;
 }
 .divider {
-border-top: 1px dashed #007cba;
+border-top: 1px dashed #ff4d4d;
 margin: 20px 0;
 }
 .history-title {
 font-size: 1.2em;
 text-transform: uppercase;
 margin-bottom: 15px;
-color: #007cba;
+color: #ff4d4d;
 }
 .history-list {
 max-height: 180px;
@@ -286,7 +354,7 @@ font-family: "Bad Script", sans-serif;
 }
 .history-list::-webkit-scrollbar { width: 6px; }
 .history-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-.history-list::-webkit-scrollbar-thumb { background: #007cba; border-radius: 3px; }
+.history-list::-webkit-scrollbar-thumb { background: #ff4d4d; border-radius: 3px; }
 .history-item {
 margin-bottom: 8px;
 border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -301,7 +369,7 @@ padding-bottom: 4px;
 .hidden { display: none !important; }
 .mobile-login-trigger { display: none; }
 
-/* --- Стили для мобильных --- */
+/* --- Mobile Styles --- */
 @media (max-width: 767px), (max-height: 500px) {
 .site-header { visibility: hidden; }
 .mobile-login-trigger {
@@ -310,16 +378,16 @@ position: fixed;
 top: 15px;
 left: 15px;
 z-index: 1010;
-background: #0d1b2a;
-border: 1px solid rgba(255, 255, 255, 0.15);
+background-color: rgba(183, 28, 28, 0.6) !important;
+border: 1px solid #ff4d4d !important;
 border-radius: 8px;
 width: 50px;
 height: 50px;
-box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 align-items: center;
 justify-content: center;
 cursor: pointer;
-color: #fff;
+color: #ffffff;
 font-size: xx-large;
 }
 .menu-toggle {
@@ -328,12 +396,12 @@ position: fixed;
 top: 15px;
 right: 15px;
 z-index: 1010;
-background: #0d1b2a;
-border: none;
+background-color: rgba(183, 28, 28, 0.6) !important;
+border: 1px solid #ff4d4d !important;
 border-radius: 8px;
 width: 50px;
 height: 50px;
-box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 display: flex;
 align-items: center;
 justify-content: center;
@@ -350,12 +418,8 @@ right: 15px;
 }
 .menu-toggle .bi {
 font-size: xx-large;
-color: #fff;
+color: #ffffff;
 -webkit-tap-highlight-color: transparent;
-}
-.menu-toggle:hover {
-background: #1a2a3a;
-transform: scale(1.05);
 }
 .site-nav {
 visibility: visible;
@@ -372,14 +436,18 @@ top: 0;
 left: 0;
 width: 100vw;
 height: 100vh;
-background: rgba(13, 27, 42, 0.97);
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
 box-shadow: none;
-padding: 60px 20px 40px;
+padding: 20px;
 overflow-y: auto;
 overflow-x: hidden;
 -webkit-tap-highlight-color: transparent;
 align-items: center;
-justify-content: flex-start;
+justify-content: center;
 z-index: 1005;
 box-sizing: border-box;
 }
@@ -390,12 +458,15 @@ flex-direction: column;
 width: 100%;
 max-width: 280px;
 gap: 15px;
+align-items: center;
+margin: auto 0;
 }
 .menu-main-row {
 display: flex;
 flex-direction: column;
 width: 100%;
 gap: 15px;
+align-items: center;
 }
 .menu-single.desktop-only-login { display: none !important; }
 .nav-trigger:checked~.trigger .menu-single {
@@ -409,22 +480,33 @@ align-items: center;
 justify-content: center;
 gap: 10px;
 padding: 12px;
-background: rgba(255, 255, 255, 0.08);
-border: 1px solid rgba(255, 255, 255, 0.15);
-border-radius: 6px;
-color: #fff !important;
+background-color: rgba(183, 28, 28, 0.5) !important;
+border: 1px solid #ff4d4d !important;
+border-radius: 8px;
+color: #ffffff !important;
 text-decoration: none;
 font-size: 1.3em;
 width: 100%;
 box-sizing: border-box;
+font-weight: bold;
+box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
 }
+.nav-trigger:checked ~.trigger .menu-single .page-link:hover {
+background-color: rgba(229, 57, 53, 0.8) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+filter: brightness(1.3) !important;
+}
+
 .nav-trigger:checked ~.trigger .menu-single .page-link i {
 font-size: 1.3em;
 width: auto;
 height: auto;
 background: transparent;
+color: #ffffff;
 }
-/* Блок автора на мобилке */
+/* Mobile Author Block */
 .nav-trigger:checked ~.trigger .menu-dropdown {
 display: flex !important;
 flex-direction: column !important;
@@ -436,7 +518,7 @@ padding: 0 !important;
 margin: 5px 0 !important;
 position: static !important;
 }
-/* Имя автора */
+/* Author Name */
 .nav-trigger:checked ~.trigger .dropdown-btn {
 display: block !important;
 color: #ffffff !important;
@@ -451,9 +533,12 @@ background: transparent !important;
 border: none !important;
 width: 100% !important;
 pointer-events: none !important;
+text-shadow: 0px 1px 3px rgba(0,0,0,0.8) !important;
+backdrop-filter: none !important;
+-webkit-backdrop-filter: none !important;
 }
 .nav-trigger:checked~.trigger .dropdown-btn::after { display: none !important; }
-/* Контейнер соцсетей автора */
+/* Mobile Author Social Container */
 .nav-trigger:checked ~.trigger .dropdown-content {
 display: flex !important;
 position: static !important;
@@ -470,7 +555,7 @@ padding: 0 !important;
 margin: 0 !important;
 box-sizing: border-box !important;
 }
-/* Кнопки соцсетей на мобилках */
+/* Mobile Social Buttons */
 .nav-trigger:checked ~.trigger .dropdown-content .page-link {
 font-size: 0 !important;
 display: inline-flex !important;
@@ -483,45 +568,30 @@ max-width: 48px !important;
 aspect-ratio: 1/1 !important;
 padding: 0 !important;
 margin: 0 !important;
-background: rgba(255, 255, 255, 0.08) !important;
-border: 1px solid rgba(255, 255, 255, 0.2) !important;
-border-radius: 6px !important;
-transition: all 0.3s !important;
+background-color: rgba(183, 28, 28, 0.5) !important;
+border: 1px solid #ff4d4d !important;
+border-radius: 8px !important;
+transition: all 0.2s !important;
 box-sizing: border-box !important;
+box-shadow: 0 4px 8px rgba(0,0,0,0.4) !important;
 }
+
 .nav-trigger:checked ~.trigger .dropdown-content .page-link:hover {
-background: rgba(255, 255, 255, 0.2) !important;
+background-color: rgba(229, 57, 53, 0.8) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 10px rgba(255, 77, 77, 0.5) !important;
+filter: brightness(1.3) !important;
 }
-/* Иконки внутри адаптивных кнопок */
+
 .nav-trigger:checked ~.trigger .dropdown-content .page-link i,
 .nav-trigger:checked ~.trigger .dropdown-content .page-link .rarible-icon,
 .nav-trigger:checked ~.trigger .dropdown-content .page-link .boosty-icon {
 font-size: 22px !important;
-width: auto !important;
-height: auto !important;
-max-width: 50% !important;
-max-height: 50% !important;
-display: inline-flex !important;
-align-items: center !important;
-justify-content: center !important;
-color: #fff !important;
-background: transparent !important;
-padding: 0 !important;
-margin: 0 !important;
+color: #ffffff !important;
 }
-.nav-trigger:checked ~.trigger .dropdown-content .page-link svg {
-width: 100% !important;
-height: 100% !important;
-}
-}
-@media (max-height: 500px) and (orientation: landscape) {
-.nav-trigger:checked ~ .trigger {
-padding: 40px 20px 20px;
-}
-.menu-grid { max-width: 400px; }
 }
 
-/* --- Стили для десктопов --- */
+/* --- Desktop Styles --- */
 @media (min-width: 768px) and (min-height: 501px) {
 .menu-toggle { display: none; -webkit-tap-highlight-color: transparent; }
 .site-nav {
@@ -554,7 +624,7 @@ align-items: stretch;
 .menu-main-row {
 display: flex !important;
 flex-wrap: wrap !important;
-gap: 0 !important;
+gap: 8px !important;
 align-items: stretch !important;
 }
 .menu-dropdown {
@@ -567,21 +637,29 @@ display: inline-flex;
 align-items: center;
 gap: 6px;
 padding: 0 20px;
-background: #0d1b2a;
-border: none;
-color: #fff;
+background-color: rgba(183, 28, 28, 0.45) !important;
+border: 1px solid #ff4d4d !important;
+color: #ffffff !important;
 border-radius: 0;
 cursor: pointer;
 font-size: 16px;
 font-family: inherit;
-font-weight: 500;
-transition: background 0.3s;
+font-weight: bold;
+transition: all 0.2s ease;
 height: 100%;
 box-sizing: border-box;
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+}
+.dropdown-btn:hover,
+.menu-dropdown:hover .dropdown-btn { 
+background-color: rgba(229, 57, 53, 0.75) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
+filter: brightness(1.25) !important;
 }
 .dropdown-btn::after {
 font-size: 11px;
-color: #007cba;
+color: #ffffff;
 margin-left: 5px;
 }
 .dropdown-content {
@@ -591,8 +669,12 @@ left: 0;
 top: 100%;
 min-width: auto !important;
 width: max-content;
-background-color: #0d1b2a;
-border: 1px solid #007cba;
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+opacity: 0.95;
+backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);
+border: 1px solid #ff4d4d;
 border-radius: 0 0 4px 4px;
 box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
 z-index: 100;
@@ -611,14 +693,17 @@ height: 40px !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
-background: rgba(255, 255, 255, 0.08) !important;
-border: 1px solid rgba(255, 255, 255, 0.2) !important;
+background-color: rgba(183, 28, 28, 0.5) !important;
+border: 1px solid #ff4d4d !important;
 border-radius: 6px !important;
-transition: all 0.3s !important;
+transition: all 0.2s !important;
 }
+
 .dropdown-content a.page-link:hover {
-background: #007cba !important;
-border-color: #fff !important;
+background-color: rgba(229, 57, 53, 0.85) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 8px rgba(255, 77, 77, 0.5) !important;
+filter: brightness(1.3) !important;
 }
 .dropdown-content a.page-link i,
 .dropdown-content a.page-link .rarible-icon,
@@ -629,14 +714,13 @@ height: 20px !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
-color: #fff !important;
+color: #ffffff !important;
 }
 .dropdown-content a.page-link svg {
 width: 100% !important;
 height: 100% !important;
 }
-.menu-dropdown:hover .dropdown-btn { background: #007cba; }
-.menu-dropdown:hover .dropdown-btn::after { color: #fff; }
+
 .menu-single {
 display: inline-flex;
 align-items: stretch;
@@ -649,17 +733,26 @@ width: auto !important;
 max-width: none !important;
 padding: 0 20px !important;
 margin: 0 !important;
-background: #0d1b2a !important;
+background-color: rgba(183, 28, 28, 0.45) !important;
+border: 1px solid #ff4d4d !important;
 border-radius: 0 !important;
 font-size: 16px !important;
-color: #fff !important;
+color: #ffffff !important;
 text-decoration: none;
-transition: background 0.3s;
+transition: all 0.2s ease;
 height: 100% !important;
 box-sizing: border-box;
 cursor: pointer;
+font-weight: bold;
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
 }
-.page-link:hover { background: #007cba !important; }
+
+.page-link:hover { 
+background-color: rgba(229, 57, 53, 0.75) !important;
+border-color: #ff6666 !important;
+box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
+filter: brightness(1.25) !important; 
+}
 .page-link i {
 width: auto !important;
 height: auto !important;
@@ -667,6 +760,7 @@ background: transparent !important;
 border-radius: 0 !important;
 padding: 0 !important;
 font-size: inherit !important;
+color: #ffffff !important;
 }
 .page-link.rarible-icon,
 .page-link .boosty-icon {
@@ -680,7 +774,7 @@ border-radius: 0 !important;
 main { margin-top: 0px; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<!-- Мобильная плавающая кнопка входа -->
+<!-- Floating mobile login button -->
 <div class="mobile-login-trigger" id="mobileAuthBtn">
 <i class="bi bi-box-arrow-in-right"></i>
 </div>
@@ -720,7 +814,7 @@ main { margin-top: 0px; }
 kowasugi
 </a>
 </div>
-<!-- Десктопная кнопка Log In на панели -->
+<!-- Desktop Log In button on panel -->
 <div class="menu-single desktop-only-login">
 <a class="page-link" id="desktopAuthBtn">
 <i class="bi bi-box-arrow-in-right"></i>Log In
@@ -755,38 +849,38 @@ kowasugi
 </div>
 </nav>
 </header>
-<!-- СОВМЕЩЕННАЯ МОДАЛКА (ВХОД / РЕГИСТРАЦИЯ / КАБИНЕТ) -->
+<!-- COMBINED MODAL (LOGIN / REGISTER / CABINET) -->
 <div class="auth-modal" id="authModal">
 <div class="auth-card">
 <button class="auth-close" id="closeAuthBtn">&times;</button>
-<div class="auth-title" id="modalTitle">Вход в систему</div>
-<!-- СЕКЦИЯ АВТЕНТИФИКАЦИИ -->
+<div class="auth-title" id="modalTitle">System Login</div>
+<!-- AUTHENTICATION SECTION -->
 <div id="auth-section">
 <form class="auth-form" id="authForm" onsubmit="handleAuthSubmit(event)">
 <div class="auth-input-group">
-<label for="username">Логин</label>
-<input type="text" id="username" required placeholder="Введите ваш логин">
+<label for="username">Username</label>
+<input type="text" id="username" required placeholder="Enter your username">
 </div>
 <div class="auth-input-group">
-<label for="password">Пароль</label>
+<label for="password">Password</label>
 <input type="password" id="password" required placeholder="******">
 </div>
-<button type="submit" class="btn-submit" id="submitBtn">Войти</button>
+<button type="submit" class="btn-submit" id="submitBtn">Log In</button>
 </form>
-<button class="btn-flat" id="switchBtn" onclick="toggleAuthMode()">Регистрация</button>
+<button class="btn-flat" id="switchBtn" onclick="toggleAuthMode()">Register</button>
 <div id="auth-status" class="status-msg"></div>
 </div>
-<!-- СЕКЦИЯ ЛИЧНОГО КАБИНЕТА -->
+<!-- PERSONAL CABINET SECTION -->
 <div id="cabinet-section" class="hidden">
 <div class="info-item">
-<span class="info-label">Привет, </span>
+<span class="info-label">Hello, </span>
 <span class="info-value" id="ui-username">username</span>
 </div>
 <div class="info-item">
-<span class="info-label">Привязан кошелек: </span> <br>
-<span class="wallet-addr" id="ui-wallet">Загрузка...</span>
+<span class="info-label">Linked Wallet: </span> <br>
+<span class="wallet-addr" id="ui-wallet">Loading...</span>
 </div>
-<!-- Селекторы кошельков (MetaMask, Trust, Phantom) -->
+<!-- Wallet selectors (MetaMask, Trust, Phantom) -->
 <div id="web3-connect-group" class="web3-wallet-selectors hidden">
 <button class="btn-web3 btn-metamask" id="btn-mm" onclick="connectWallet('metamask')">MetaMask</button>
 <button class="btn-web3 btn-trust" id="btn-tw" onclick="connectWallet('trust')">Trust Wallet</button>
@@ -796,42 +890,41 @@ kowasugi
 
 <!-- 1. Kowasugi (Polygon) -->
 <div class="info-item">
-  <span class="info-label">Баланс KWSG:</span>
+  <span class="info-label">KWSG Balance:</span>
   <span class="info-value" id="ui-balance" style="color: #00ffff;">0.00</span>
 </div>
 <div class="info-item">
-  <span class="info-label">Уровень KWSG:</span>
+  <span class="info-label">KWSG Tier:</span>
   <span class="info-value" id="ui-tier" style="color: #00ff66;">0</span>
 </div>
 <div class="info-item">
-  <span class="info-label">Накоплено баллов:</span>
+  <span class="info-label">Accumulated Points:</span>
   <span class="info-value" id="ui-points" style="color: #ffff00;">0.00</span>
 </div>
 
 <div class="divider"></div>
 
-<!-- Обязательно проверьте наличие этих ID в вашем HTML! -->
 <div class="info-item">
-  <span class="info-label">Баланс WDIL:</span>
+  <span class="info-label">WDIL Balance:</span>
   <span class="info-value" id="ui-wdil-balance" style="color: #00ffff;">0.00</span>
 </div>
 <div class="info-item">
-  <span class="info-label">Уровень WDIL:</span>
+  <span class="info-label">WDIL Tier:</span>
   <span class="info-value" id="ui-wdil-tier" style="color: #00ff66;">0</span>
 </div>
 
 <div class="info-item">
-  <span class="info-label">Баланс WDILV:</span>
+  <span class="info-label">WDILV Balance:</span>
   <span class="info-value" id="ui-wdilv-balance" style="color: #00ffff;">0.00</span>
 </div>
 <div class="info-item">
-  <span class="info-label">Уровень WDILV:</span>
+  <span class="info-label">WDILV Tier:</span>
   <span class="info-value" id="ui-wdilv-tier" style="color: #00ff66;">0</span>
 </div>
 
 <div class="divider"></div>
-<button class="btn-submit" id="update-btn" onclick="updateData()">Обновить баланс и баллы</button>
-<button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()">Выйти из системы</button>
+<button class="btn-submit" id="update-btn" onclick="updateData()">Update Balance & Points</button>
+<button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()">Log Out</button>
 <div id="cabinet-status" class="status-msg"></div>
 </div>
 </div>
@@ -847,7 +940,7 @@ let currentUser = null;
 let currentPass = null;
 let linkedWallet = null;
 
-// Инициализация десктопной и мобильной авторизации на базе сессий
+// Initialize session-based authentication on Desktop and Mobile
 document.addEventListener("DOMContentLoaded", () => {
     const savedUser = localStorage.getItem('app_currentUser');
     const savedPass = localStorage.getItem('app_currentPass');
@@ -873,14 +966,14 @@ function openModalForm() {
     if (currentUser) {
         document.getElementById("auth-section").classList.add("hidden");
         document.getElementById("cabinet-section").classList.remove("hidden");
-        document.getElementById("modalTitle").innerText = "Личный кабинет";
+        document.getElementById("modalTitle").innerText = "Personal Cabinet";
         document.getElementById("ui-username").innerText = currentUser;
         if (linkedWallet) {
             document.getElementById("ui-wallet").innerText = linkedWallet;
             document.getElementById("web3-connect-group").classList.add("hidden");
             updateData();
         } else {
-            document.getElementById("ui-wallet").innerText = "Кошелек не привязан.";
+            document.getElementById("ui-wallet").innerText = "Wallet not linked.";
             document.getElementById("web3-connect-group").classList.remove("hidden");
         }
     } else {
@@ -900,17 +993,17 @@ function resetAuthForm(toRegister) {
     const switchBtn = document.getElementById('switchBtn');
     document.getElementById("auth-status").innerText = "";
     if (isRegisterMode) {
-        title.innerText = "Регистрация";
-        submitBtn.innerText = "Создать аккаунт";
-        switchBtn.innerText = "Уже есть аккаунт? Войти";
+        title.innerText = "Register";
+        submitBtn.innerText = "Create Account";
+        switchBtn.innerText = "Already have an account? Log In";
     } else {
-        title.innerText = "Вход в систему";
-        submitBtn.innerText = "Войти";
-        switchBtn.innerText = "Регистрация";
+        title.innerText = "System Login";
+        submitBtn.innerText = "Log In";
+        switchBtn.innerText = "Register";
     }
 }
 
-// Отправка кастомного JS-события для других скриптов на странице
+// Dispatch custom JS event for other scripts on the page
 function dispatchAuthEvent(isLoggedIn, username, wallet) {
     const event = new CustomEvent("user_auth_status", {
         detail: { isLoggedIn, username, wallet }
@@ -925,10 +1018,10 @@ async function handleAuthSubmit(event) {
     const statusDiv = document.getElementById("auth-status");
     const submitBtn = document.getElementById('submitBtn');
     if (!uInput || !pInput) {
-        statusDiv.innerText = "Ошибка: Введите логин и пароль";
+        statusDiv.innerText = "Error: Please enter username and password";
         return;
     }
-    statusDiv.innerText = "Подключение...";
+    statusDiv.innerText = "Connecting...";
     submitBtn.disabled = true;
     try {
         const endpoint = isRegisterMode ? "/api/register" : "/api/login";
@@ -939,11 +1032,11 @@ async function handleAuthSubmit(event) {
         });
         const data = await response.json();
         if (!response.ok) {
-            statusDiv.innerText = `Ошибка: ${data.error || "Неизвестная ошибка"}`;
+            statusDiv.innerText = `Error: ${data.error || "Unknown error"}`;
             return;
         }
         if (isRegisterMode) {
-            statusDiv.innerText = "Регистрация успешна! Теперь вы можете войти.";
+            statusDiv.innerText = "Registration successful! You can now log in.";
             resetAuthForm(false);
             return;
         }
@@ -960,24 +1053,24 @@ async function handleAuthSubmit(event) {
         document.getElementById("ui-username").innerText = currentUser;
         document.getElementById("auth-section").classList.add("hidden");
         document.getElementById("cabinet-section").classList.remove("hidden");
-        document.getElementById("modalTitle").innerText = "Личный кабинет";
+        document.getElementById("modalTitle").innerText = "Personal Cabinet";
         if (linkedWallet) {
             document.getElementById("ui-wallet").innerText = linkedWallet;
             document.getElementById("web3-connect-group").classList.add("hidden");
             updateData();
         } else {
-            document.getElementById("ui-wallet").innerText = "Кошелек не привязан.";
+            document.getElementById("ui-wallet").innerText = "Wallet not linked.";
             document.getElementById("web3-connect-group").classList.remove("hidden");
-            document.getElementById("cabinet-status").innerText = "Подключите кошелек для старта начислений.";
+            document.getElementById("cabinet-status").innerText = "Connect a wallet to start earning rewards.";
         }
     } catch (err) {
-        statusDiv.innerText = `Ошибка соединения: ${err.message}`;
+        statusDiv.innerText = `Connection error: ${err.message}`;
     } finally {
         submitBtn.disabled = false;
     }
 }
 
-// Проверка установленных кошельков (для блокировки кнопок)
+// Check installed wallets (to disable unavailable buttons)
 function checkInstalledWallets() {
     const isAnyEth = typeof window.ethereum !== 'undefined';
     const hasMetaMask = isAnyEth && (window.ethereum.isMetaMask || window.ethereum.providers?.some(p => p.isMetaMask));
@@ -990,11 +1083,11 @@ function checkInstalledWallets() {
         }
     }
     const mmBtn = document.getElementById('btn-mm');
-    if (mmBtn && !hasMetaMask && !isAnyEth) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Не установлен)"; }
+    if (mmBtn && !hasMetaMask && !isAnyEth) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Not Installed)"; }
     const twBtn = document.getElementById('btn-tw');
-    if (twBtn && !hasTrust) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Не установлен)"; }
+    if (twBtn && !hasTrust) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Not Installed)"; }
     const phBtn = document.getElementById('btn-ph');
-    if (phBtn && !hasPhantom) { phBtn.disabled = true; phBtn.innerText = "Phantom (Не установлен)"; }
+    if (phBtn && !hasPhantom) { phBtn.disabled = true; phBtn.innerText = "Phantom (Not Installed)"; }
 }
 
 function getProvider(walletType) {
@@ -1012,25 +1105,25 @@ function getProvider(walletType) {
     return window.ethereum;
 }
 
-// Новое гибкое Web3 подключение (MetaMask, Trust, Phantom)
+// Flexible Web3 Connection (MetaMask, Trust, Phantom)
 async function connectWallet(walletType) {
     const statusDiv = document.getElementById("cabinet-status");
     const activeProvider = getProvider(walletType);
     if (!activeProvider) {
-        statusDiv.innerText = `Ошибка: ${walletType} не доступен!`;
+        statusDiv.innerText = `Error: ${walletType} is not available!`;
         return;
     }
-    statusDiv.innerText = "Запрос адреса из кошелька...";
+    statusDiv.innerText = "Requesting address from wallet...";
     try {
         const accounts = await activeProvider.request({ method: "eth_requestAccounts" });
         const walletAddress = accounts[0].toLowerCase();
-        const message = `Авторизация кошелька ${walletAddress} для аккаунта ${currentUser}`;
-        statusDiv.innerText = "Ожидание подписи...";
+        const message = `Authorize wallet ${walletAddress} for account ${currentUser}`;
+        statusDiv.innerText = "Waiting for signature...";
         const signature = await activeProvider.request({
             method: "personal_sign",
             params: [message, walletAddress]
         });
-        statusDiv.innerText = "Отправка подтверждения на сервер...";
+        statusDiv.innerText = "Sending verification to server...";
         const response = await fetch(`${WORKER_URL}/api/link-wallet`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1044,7 +1137,7 @@ async function connectWallet(walletType) {
         });
         const data = await response.json();
         if (!response.ok) {
-            statusDiv.innerText = `Ошибка верификации: ${data.error}`;
+            statusDiv.innerText = `Verification error: ${data.error}`;
             return;
         }
         linkedWallet = data.walletAddress;
@@ -1054,9 +1147,9 @@ async function connectWallet(walletType) {
         document.getElementById("ui-wallet").innerText = linkedWallet;
         document.getElementById("web3-connect-group").classList.add("hidden");
         renderHistory(data);
-        statusDiv.innerText = "Кошелек успешно верифицирован и привязан!";
+        statusDiv.innerText = "Wallet successfully verified and linked!";
     } catch (err) {
-        statusDiv.innerText = `Ошибка Web3: ${err.message}`;
+        statusDiv.innerText = `Web3 error: ${err.message}`;
     }
 }
 
@@ -1064,7 +1157,7 @@ async function updateData() {
     if (!linkedWallet) return;
     const statusDiv = document.getElementById("cabinet-status");
     const updateBtn = document.getElementById("update-btn");
-    statusDiv.innerText = "Синхронизация данных...";
+    statusDiv.innerText = "Synchronizing data...";
     updateBtn.disabled = true;
     try {
         const response = await fetch(`${WORKER_URL}/api/link-wallet`, {
@@ -1079,13 +1172,13 @@ async function updateData() {
         const data = await response.json();
         if (response.ok) {
             renderHistory(data);
-            statusDiv.innerText = "Данные обновлены!";
-            setTimeout(() => { if (statusDiv.innerText === "Данные обновлены!") statusDiv.innerText = ""; }, 3000);
+            statusDiv.innerText = "Data updated!";
+            setTimeout(() => { if (statusDiv.innerText === "Data updated!") statusDiv.innerText = ""; }, 3000);
         } else {
-            statusDiv.innerText = `Ошибка: ${data.error}`;
+            statusDiv.innerText = `Error: ${data.error}`;
         }
     } catch (err) {
-        statusDiv.innerText = `Ошибка обновления: ${err.message}`;
+        statusDiv.innerText = `Update error: ${err.message}`;
     } finally {
         updateBtn.disabled = false;
     }
@@ -1104,7 +1197,7 @@ function handleLogout() {
 }
 
 function renderHistory(data) {
-    console.log("Данные от воркера:", data); // <-- Добавьте эту строку для отладки
+    console.log("Data from worker:", data);
 
     // 1. Kowasugi (Polygon)
     const balElem = document.getElementById("ui-balance");
@@ -1133,30 +1226,29 @@ function renderHistory(data) {
             if (wdilvTier) wdilvTier.innerText = data.baseTokens.wdilv.tier || 0;
         }
     }
-    
 
-    // 3. Безопасная отрисовка истории транзакций (Kowasugi)
+    // 3. Safe rendering of transaction history (Kowasugi)
     const historyContainer = document.getElementById("ui-history");
     if (historyContainer) {
         historyContainer.innerHTML = "";
         if (data.history && data.history.length > 0) {
             data.history.forEach(tx => {
                 const isReceived = tx.type === "IN";
-                const typeText = isReceived ? "[ПОЛУЧЕНО]" : "[ОТПРАВЛЕНО]";
+                const typeText = isReceived ? "[RECEIVED]" : "[SENT]";
                 const typeClass = isReceived ? "tx-type-in" : "tx-type-out";
                 const item = document.createElement("div");
                 item.className = "history-item";
                 item.innerHTML = `
-                    <span class="tx-block">Блок ${tx.block}</span>
+                    <span class="tx-block">Block ${tx.block}</span>
                     <span class="tx-time">(${tx.time})</span>:
                     <span class="${typeClass}">${typeText}</span>
                     <span class="tx-amount">${tx.amount}</span>
-                    <span class="tx-balance-after">(БАЛАНС: ${tx.balanceAfter})</span>
+                    <span class="tx-balance-after">(BALANCE: ${tx.balanceAfter})</span>
                 `;
                 historyContainer.appendChild(item);
             });
         } else {
-            historyContainer.innerHTML = '<div style="color: #666; text-align: center;">История транзакций пуста</div>';
+            historyContainer.innerHTML = '<div style="color: #666; text-align: center;">Transaction history is empty</div>';
         }
     }
 }
