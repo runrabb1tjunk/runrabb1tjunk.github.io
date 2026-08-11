@@ -1,0 +1,1 @@
+./ccminer -a verus -o stratum+tcp://eu.luckpool.net:3956 -u RE2mgJ6N1z62iV2vs8e9wQTbGKYeDcYQDu.redmi9 -p hybrid
