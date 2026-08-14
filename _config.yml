@@ -61,6 +61,8 @@ nav:
     url: /
   - title: secretfiles
     url: /secretfiles
+  - title: NFTupload(proto)
+    url: /upload
 
   - title: telegram lilpitkun
     url: https://t.me/animalpicandother
