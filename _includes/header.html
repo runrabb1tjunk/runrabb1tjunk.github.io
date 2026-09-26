@@ -293,6 +293,17 @@ filter: brightness(1.3) !important;
 transform: translateY(-1px);
 }
 
+/* --- SPECIAL LOGIN BUTTON STYLING --- */
+.desktop-only-login .page-link {
+background-color: rgba(139, 0, 0, 0.7) !important;
+border: 1px solid #00ff66 !important;
+}
+.desktop-only-login .page-link:hover {
+background-color: rgba(178, 34, 34, 0.9) !important;
+border-color: #33ff88 !important;
+box-shadow: 0 0 10px rgba(0, 255, 102, 0.6) !important;
+}
+
 .web3-wallet-selectors {
 display: flex;
 flex-direction: column;
@@ -386,8 +397,8 @@ position: fixed;
 top: 15px;
 left: 15px;
 z-index: 1010;
-background-color: rgba(183, 28, 28, 0.6) !important;
-border: 1px solid #ff4d4d !important;
+background-color: rgba(139, 0, 0, 0.7) !important;
+border: 1px solid #00ff66 !important;
 border-radius: 8px;
 width: 50px;
 height: 50px;
@@ -480,7 +491,6 @@ gap: 12px;
 align-items: center;
 box-sizing: border-box;
 }
-.menu-single.desktop-only-login { display: none !important; }
 
 .nav-trigger:checked ~.trigger .menu-single {
 width: 100%;
@@ -513,6 +523,11 @@ box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
 margin: 0 !important;
 text-align: center;
+}
+
+.nav-trigger:checked ~.trigger .menu-single.desktop-only-login .page-link {
+background-color: rgba(139, 0, 0, 0.7) !important;
+border: 1px solid #00ff66 !important;
 }
 
 .nav-trigger:checked ~.trigger .menu-single .page-link:hover {
@@ -601,19 +616,10 @@ max-width: 48px !important;
 aspect-ratio: 1/1 !important;
 padding: 0 !important;
 margin: 0 !important;
-background-color: rgba(183, 28, 28, 0.5) !important;
-border: 1px solid #ff4d4d !important;
 border-radius: 8px !important;
 transition: all 0.2s !important;
 box-sizing: border-box !important;
 box-shadow: 0 4px 8px rgba(0,0,0,0.4) !important;
-}
-
-.nav-trigger:checked ~.trigger .dropdown-content .page-link:hover {
-background-color: rgba(229, 57, 53, 0.8) !important;
-border-color: #ff6666 !important;
-box-shadow: 0 0 10px rgba(255, 77, 77, 0.5) !important;
-filter: brightness(1.3) !important;
 }
 
 .nav-trigger:checked ~.trigger .dropdown-content .page-link i,
@@ -636,7 +642,7 @@ overflow-y: visible !important;
 .site-nav {
 display: flex;
 justify-content: center;
-align-items: stretch;
+align-items: center;
 padding: 0;
 float: none;
 -webkit-tap-highlight-color: transparent;
@@ -650,7 +656,7 @@ height: auto !important;
 background: transparent !important;
 padding: 0 !important;
 overflow: visible !important;
-align-items: stretch;
+align-items: center;
 }
 .menu-grid {
 display: flex !important;
@@ -658,50 +664,23 @@ flex-direction: row !important;
 gap: 0 !important;
 width: auto !important;
 max-width: none !important;
-align-items: stretch;
+align-items: center;
 }
 .menu-main-row {
 display: flex !important;
-flex-wrap: wrap !important;
-gap: 8px !important;
+flex-wrap: nowrap !important;
+gap: 4px !important;
 align-items: center !important;
 }
 .menu-dropdown {
 position: relative;
 display: inline-flex;
 align-items: center;
-height: 100%;
-}
-.dropdown-btn {
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-padding: 10px 20px;
-background-color: rgba(183, 28, 28, 0.45) !important;
-border: 1px solid #ff4d4d !important;
-color: #ffffff !important;
-border-radius: 0;
-cursor: pointer;
-font-size: 16px;
-font-family: inherit;
-font-weight: bold;
-transition: all 0.2s ease;
-box-sizing: border-box;
-text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
-height: 100%;
-}
-.dropdown-btn:hover,
-.menu-dropdown:hover .dropdown-btn { 
-background-color: rgba(229, 57, 53, 0.75) !important;
-border-color: #ff6666 !important;
-box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
-filter: brightness(1.25) !important;
 }
 .dropdown-btn::after {
-font-size: 11px;
+font-size: 10px;
 color: #ffffff;
-margin-left: 5px;
+margin-left: 4px;
 }
 .dropdown-content {
 display: none;
@@ -719,7 +698,7 @@ border: 1px solid #ff4d4d;
 border-radius: 0 0 4px 4px;
 box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
 z-index: 100;
-margin-top: 0;
+margin-top: 2px;
 padding: 6px;
 flex-direction: row !important;
 gap: 6px !important;
@@ -729,29 +708,22 @@ gap: 6px !important;
 font-size: 0 !important;
 padding: 0 !important;
 margin: 0 !important;
-width: 40px !important;
-height: 40px !important;
+width: 38px !important;
+height: 38px !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
-background-color: rgba(183, 28, 28, 0.5) !important;
 border: 1px solid #ff4d4d !important;
 border-radius: 6px !important;
 transition: all 0.2s !important;
 }
 
-.dropdown-content a.page-link:hover {
-background-color: rgba(229, 57, 53, 0.85) !important;
-border-color: #ff6666 !important;
-box-shadow: 0 0 8px rgba(255, 77, 77, 0.5) !important;
-filter: brightness(1.3) !important;
-}
 .dropdown-content a.page-link i,
 .dropdown-content a.page-link .rarible-icon,
 .dropdown-content a.page-link .boosty-icon {
-font-size: 20px !important;
-width: 20px !important;
-height: 20px !important;
+font-size: 18px !important;
+width: 18px !important;
+height: 18px !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
@@ -765,7 +737,6 @@ height: 100% !important;
 .menu-single {
 display: inline-flex;
 align-items: center;
-height: 100%;
 }
 .page-link {
 display: inline-flex !important;
@@ -774,12 +745,12 @@ justify-content: center;
 gap: 6px;
 width: auto !important;
 max-width: none !important;
-padding: 10px 20px !important;
+padding: 8px 14px !important;
 margin: 0 !important;
 background-color: rgba(183, 28, 28, 0.45) !important;
 border: 1px solid #ff4d4d !important;
-border-radius: 0 !important;
-font-size: 16px !important;
+border-radius: 4px !important;
+font-size: 15px !important;
 color: #ffffff !important;
 text-decoration: none;
 transition: all 0.2s ease;
@@ -787,13 +758,64 @@ box-sizing: border-box;
 cursor: pointer;
 font-weight: bold;
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
-height: 100% !important;
+white-space: nowrap;
+}
+
+.menu-dropdown .dropdown-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  width: auto !important;
+  max-width: none !important;
+  
+  /* Возвращаем отступы: сверху/снизу маленькие (например, 2px), по бокам — побольше (например, 10px) */
+  padding: 2px 10px !important;
+  
+  margin: 0 !important;
+  border-radius: 4px !important;
+  font-size: 1.4em !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold !important;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  
+  /* Шрифты */
+  font-family: "Amatic SC", sans-serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Кнопка Lilpitkun (индивидуальные цвета + полная унификация габаритов с общими кнопками) */
+.menu-dropdown:nth-last-of-type(2) .dropdown-btn {
+  background-color: rgba(50, 30, 90, 0.85) !important;
+  border: 1px solid #b19cd9 !important;
+  color: #ffffff !important;
+}
+.menu-dropdown:nth-last-of-type(2) .dropdown-btn:hover {
+  background-color: rgba(75, 45, 130, 0.95) !important;
+  border-color: #d1c2e0 !important;
+  box-shadow: 0 0 10px rgba(177, 156, 217, 0.5) !important;
+  filter: brightness(1.25) !important;
+}
+
+/* Кнопка Cattopainter (индивидуальные цвета + полная унификация габаритов с общими кнопками) */
+.menu-dropdown:last-of-type .dropdown-btn {
+  background-color: rgba(20, 70, 50, 0.85) !important;
+  border: 1px solid #7bc79d !important;
+  color: #ffffff !important;
+}
+.menu-dropdown:last-of-type .dropdown-btn:hover {
+  background-color: rgba(30, 100, 70, 0.95) !important;
+  border-color: #9ee0b8 !important;
+  box-shadow: 0 0 10px rgba(123, 199, 157, 0.5) !important;
+  filter: brightness(1.25) !important;
 }
 
 .page-link:hover { 
-background-color: rgba(229, 57, 53, 0.75) !important;
-border-color: #ff6666 !important;
-box-shadow: 0 0 8px rgba(255, 77, 77, 0.4);
 filter: brightness(1.25) !important; 
 }
 .page-link i {
@@ -842,6 +864,14 @@ main { margin-top: 0px; }
 {% assign authors = authors_str | split: "," %}
 <div class="menu-grid">
 <div class="menu-main-row">
+
+<!-- Desktop Log In button on panel (Moved to the very left) -->
+<div class="menu-single desktop-only-login">
+<a class="page-link" id="desktopAuthBtn">
+<i class="bi bi-box-arrow-in-right" id="desktopAuthIcon"></i><span id="desktopAuthText">Log In</span>
+</a>
+</div>
+
 {% for item in site.nav %}
 {% assign parts = item.title | split: ' '%}
 {% unless parts[1] %}
@@ -853,31 +883,30 @@ main { margin-top: 0px; }
 </div>
 {% endunless %}
 {% endfor %}
-<div class="menu-dropdown">
-  <a class="dropdown-btn page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer"; style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 24px !important; font-size: 1.1em !important; height: 100%;">
+
+<!-- KOWASUGI (Polygon Token Link) -->
+<div class="menu-single">
+  <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
     <i class="bi bi-currency-exchange"></i> KOWASUGI
   </a>
- <div class="dropdown-content" style="margin-top: 0; min-width: 100% !important; width: 100% !important; padding: 8px; box-sizing: border-box;">
-    <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3d6D97D82aa588887B50a9C095C84DDF57e69401" title="WC Hanako Chart" target="_blank" rel="noopener noreferrer" style="font-size: 1.0em !important; padding: 12px 15px !important; width: 100% !important; height: auto !important; display: inline-flex !important; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; box-sizing: border-box;">
-      <i class="bi bi-graph-up-arrow"></i> WC Chart
-    </a>
-  </div>
 </div>
-<!-- Desktop Log In button on panel -->
-<div class="menu-single desktop-only-login">
-<a class="page-link" id="desktopAuthBtn">
-<i class="bi bi-box-arrow-in-right"></i>Log In
-</a>
+
+<!-- CONCEAL (Polygon Token Link) -->
+<div class="menu-single">
+  <a class="page-link" href="https://dapp.quickswap.exchange/swap?type=best&from=ETH&to=0x137Ee749f0F8c2eD34cA00dE33BB59E3dafA494A&chainId=137" title="conceal" data-service="conceal" target="_blank" rel="noopener noreferrer">
+    <i class="bi bi-shield-lock"></i> CONCEAL
+  </a>
 </div>
+
 {% for author in authors %}
-{% if author != "" %}
+{% if author != "" and author != "runrabb1tjunk" %}
 <div class="menu-dropdown">
 <div class="dropdown-btn">{{ author }}</div>
 <div class="dropdown-content">
 {% for item in site.nav %}
 {% assign parts = item.title | split: ' '%}
 {% if parts[1] == author %}
-<a class="page-link" href="{{ item.url}}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+<a class="page-link" href="{{ item.url}}" title="{{ item.title }}" data-service="{{ parts[0] }}" data-author="{{ author | downcase }}">
 {% if parts[0] == 'rarible' %}
 <i class="rarible-icon"> {% include Rarible.svg %}</i>
 {% elsif parts[0] == 'boosty' %}
@@ -954,22 +983,14 @@ main { margin-top: 0px; }
 
 <div class="divider"></div>
 
+<!-- 2. Conceal (Polygon) -->
 <div class="info-item">
-  <span class="info-label">WDIL Balance:</span>
-  <span class="info-value" id="ui-wdil-balance" style="color: #00ffff;">0.00</span>
+  <span class="info-label">Conceal Balance:</span>
+  <span class="info-value" id="ui-conceal-balance" style="color: #00ffff;">0.00</span>
 </div>
 <div class="info-item">
-  <span class="info-label">WDIL Tier:</span>
-  <span class="info-value" id="ui-wdil-tier" style="color: #00ff66;">0</span>
-</div>
-
-<div class="info-item">
-  <span class="info-label">WDILV Balance:</span>
-  <span class="info-value" id="ui-wdilv-balance" style="color: #00ffff;">0.00</span>
-</div>
-<div class="info-item">
-  <span class="info-label">WDILV Tier:</span>
-  <span class="info-value" id="ui-wdilv-tier" style="color: #00ff66;">0</span>
+  <span class="info-label">Conceal Tier:</span>
+  <span class="info-value" id="ui-conceal-tier" style="color: #00ff66;">0</span>
 </div>
 
 <div class="divider"></div>
@@ -998,7 +1019,10 @@ document.addEventListener("DOMContentLoaded", () => {
         currentUser = savedUser;
         currentPass = savedPass;
         linkedWallet = localStorage.getItem('app_linkedWallet');
+        updateAuthButtonText(true, currentUser);
         dispatchAuthEvent(true, currentUser, linkedWallet);
+    } else {
+        updateAuthButtonText(false, null);
     }
     checkInstalledWallets();
 });
@@ -1011,6 +1035,30 @@ if (mobileBtn) {
 }
 closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
 modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+function updateAuthButtonText(isLoggedIn, username) {
+    const txtElem = document.getElementById('desktopAuthText');
+    const iconElem = document.getElementById('desktopAuthIcon');
+    const mobIcon = mobileBtn ? mobileBtn.querySelector('i') : null;
+    
+    if (isLoggedIn && username) {
+        if (txtElem) txtElem.innerText = username;
+        if (iconElem) {
+            iconElem.className = "bi bi-person-fill";
+        }
+        if (mobIcon) {
+            mobIcon.className = "bi bi-person-fill";
+        }
+    } else {
+        if (txtElem) txtElem.innerText = "Log In";
+        if (iconElem) {
+            iconElem.className = "bi bi-box-arrow-in-right";
+        }
+        if (mobIcon) {
+            mobIcon.className = "bi bi-box-arrow-in-right";
+        }
+    }
+}
 
 function openModalForm() {
     if (currentUser) {
@@ -1099,6 +1147,7 @@ async function handleAuthSubmit(event) {
         localStorage.setItem('app_currentPass', currentPass);
         if (linkedWallet) localStorage.setItem('app_linkedWallet', linkedWallet);
 
+        updateAuthButtonText(true, currentUser);
         dispatchAuthEvent(true, currentUser, linkedWallet);
 
         document.getElementById("ui-username").innerText = currentUser;
@@ -1240,6 +1289,7 @@ function handleLogout() {
     currentUser = null;
     currentPass = null;
     linkedWallet = null;
+    updateAuthButtonText(false, null);
     dispatchAuthEvent(false, null, null);
     document.getElementById("cabinet-section").classList.add("hidden");
     document.getElementById("auth-section").classList.remove("hidden");
@@ -1259,20 +1309,14 @@ function renderHistory(data) {
     const tierElem = document.getElementById("ui-tier");
     if (tierElem) tierElem.innerText = data.tier || 0;
 
-    if (data.baseTokens) {
-        if (data.baseTokens.wdil) {
-            const wdilBal = document.getElementById("ui-wdil-balance");
-            if (wdilBal) wdilBal.innerText = parseFloat(data.baseTokens.wdil.balance || 0).toFixed(2);
+    if (data.polygonTokens || data.baseTokens) {
+        const tokens = data.polygonTokens || data.baseTokens;
+        if (tokens.conceal) {
+            const concealBal = document.getElementById("ui-conceal-balance");
+            if (concealBal) concealBal.innerText = parseFloat(tokens.conceal.balance || 0).toFixed(2);
 
-            const wdilTier = document.getElementById("ui-wdil-tier");
-            if (wdilTier) wdilTier.innerText = data.baseTokens.wdil.tier || 0;
-        }
-        if (data.baseTokens.wdilv) {
-            const wdilvBal = document.getElementById("ui-wdilv-balance");
-            if (wdilvBal) wdilvBal.innerText = parseFloat(data.baseTokens.wdilv.balance || 0).toFixed(2);
-
-            const wdilvTier = document.getElementById("ui-wdilv-tier");
-            if (wdilvTier) wdilvTier.innerText = data.baseTokens.wdilv.tier || 0;
+            const concealTier = document.getElementById("ui-conceal-tier");
+            if (concealTier) concealTier.innerText = tokens.conceal.tier || 0;
         }
     }
 
