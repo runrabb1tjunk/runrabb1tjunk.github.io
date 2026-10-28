@@ -61,7 +61,7 @@ nav:
     url: /
   - title: secretfiles
     url: /secretfiles
-  - title: NFTupload(proto)
+  - title: NFT_upload
     url: /upload
 
   - title: telegram lilpitkun

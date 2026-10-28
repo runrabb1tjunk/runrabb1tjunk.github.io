@@ -3,6 +3,8 @@ layout: page
 permalink: /upload/
 ---
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
+
 <div class="web3-gate-wrapper">
   <style>
     .upload-card {
@@ -95,6 +97,10 @@ permalink: /upload/
       text-align: center;
       position: relative;
     }
+    .nft-item-card.minted-on-chain {
+      border: 2px solid #34d399 !important;
+      background: rgba(16, 185, 129, 0.1) !important;
+    }
     .nft-item-card img {
       width: 100%;
       height: 140px;
@@ -122,10 +128,43 @@ permalink: /upload/
       color: #aaa;
       margin-top: 4px;
     }
+    .mint-badge {
+      font-size: 0.75em;
+      background: #34d399;
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 4px;
+      display: inline-block;
+    }
+    .mint-price-input {
+      margin-top: 6px;
+      width: 90%;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid #34d399;
+      color: #fff;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      text-align: center;
+    }
+    .action-buttons-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
   </style>
 
   <div class="upload-card">
-    <h1 style="text-align:center; color:#ff4d4d;">Direct Pinata Uploader</h1>
+    <div style="text-align:center; margin-bottom: 15px; font-size: 0.9em; color: #aaa;">
+      Download current version of gallery client at 
+      <a href="https://demidmorozov.itch.io/sphere-gallery" target="_blank" style="color: #ff4d4d; font-weight: bold; text-decoration: underline;">
+        https://demidmorozov.itch.io/sphere-gallery
+      </a>
+    </div>
+
     <div id="upload-auth-status" class="status-lock-notice" style="text-align:center; margin-bottom:15px;">
       Log in and connect wallet to upload
     </div>
@@ -142,7 +181,7 @@ permalink: /upload/
       <div id="preview-list"></div>
 
       <button id="btn-submit-pinata" class="btn-submit" style="display:none; width: 100%; padding: 12px; margin-top: 15px; background: #ff4d4d; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
-        Upload to Pinata & Save
+        Upload
       </button>
 
       <div id="upload-loader" class="status-msg"></div>
@@ -152,9 +191,15 @@ permalink: /upload/
         <h3 style="color:#ff4d4d; margin-bottom: 5px;">Your Uploaded Works (IPFS)</h3>
         <div id="existing-nfts-status" style="font-size: 0.85em; color: #aaa;">Loading existing works...</div>
         <div id="existing-nfts-grid" class="existing-grid"></div>
-        <button id="btn-delete-selected" style="display:none; margin-top: 15px; padding: 8px 16px; background: #b91c1c; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="deleteSelectedExistingNFTs()">
-          Удалить выбранные
-        </button>
+        
+        <div class="action-buttons-row">
+          <button id="btn-mint-selected" style="display:none; padding: 8px 16px; background: #10b981; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="handleMintButtonAction()">
+            Mint to chain
+          </button>
+          <button id="btn-delete-selected" style="display:none; padding: 8px 16px; background: #b91c1c; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="deleteSelectedExistingNFTs()">
+            Delete selected
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -163,11 +208,29 @@ permalink: /upload/
 <script>
 let processedImages = [];
 window.lastKnownFolderCid = null;
-let isFetchingNFTs = false; // Блокировка параллельных запросов
+let isFetchingNFTs = false;
+
+// Генератор случайного хэша
+function generateRandomHash() {
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const hash = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    console.log("🛠 [DEBUG] Generated random hash:", hash);
+    return hash;
+}
 
 (function() {
     const WORKER_URL = "https://throbbing-silence-679f.fgfg57468.workers.dev";
     const PINATA_GATEWAY = "https://black-obliged-cricket-162.mypinata.cloud/ipfs/";
+    const FACTORY_CONTRACT_ADDRESS = '0x10f44a41BE5CE208d47524Ff6FB77E21a9D8cA52';
+    const RPC_URL = 'https://polygon-mainnet.infura.io/v3/0594ea55d3cc4d2ba85c685603762bf6';
+
+    const FACTORY_ABI = [
+        "function batchMintAndList(string[] calldata _names, string[] calldata _tokenURIs, uint256[] calldata _prices) external",
+        "function walletCreatorTokensForSale(address _creator) external view returns (uint256[] memory)",
+        "function getNFTDetails(uint256 tokenId) external view returns (string memory nftName, string memory uri, uint256 price, address creator, address owner, bool isForSale)",
+        "event NFTMinted(uint256 indexed tokenId, address indexed creator, string name, uint256 price, string tokenURI)"
+    ];
 
     function updateAuthUI(username, wallet) {
         const statusDiv = document.getElementById("upload-auth-status");
@@ -178,7 +241,7 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
             statusDiv.className = "status-unlock-notice";
             statusDiv.innerText = `Author: ${username} | Wallet: ${wallet.substring(0,6)}...${wallet.substring(wallet.length-4)}`;
             mainArea.classList.remove("hidden");
-            loadExistingNFTs(username);
+            loadExistingNFTs(username, wallet);
         } else {
             statusDiv.className = "status-lock-notice";
             statusDiv.innerText = "Please log in and connect your wallet in the top menu.";
@@ -205,16 +268,15 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
         updateAuthUI(username, wallet);
     });
 
-    window.loadExistingNFTs = async function(username) {
+    window.loadExistingNFTs = async function(username, walletAddress) {
         const statusEl = document.getElementById('existing-nfts-status');
         const gridEl = document.getElementById('existing-nfts-grid');
         
-        // Предотвращаем параллельные гонки запросов при F5
         if (!statusEl || !gridEl || isFetchingNFTs) return;
 
         try {
             isFetchingNFTs = true;
-            statusEl.innerText = "Fetching your items from SQL/IPFS...";
+            statusEl.innerText = "Fetching your items from SQL/IPFS & checking blockchain status...";
 
             const res = await fetch(`${WORKER_URL}/get-user-nfts?username=${encodeURIComponent(username)}&t=${Date.now()}`, {
                 cache: 'no-store'
@@ -222,8 +284,6 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
             if (!res.ok) throw new Error("Failed to load user NFTs");
 
             const data = await res.json();
-
-            // Очищаем DOM строго перед отрисовкой результатов
             gridEl.innerHTML = "";
 
             if (!data.folderCid || !data.images || data.images.length === 0) {
@@ -239,6 +299,28 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
                 cleanCid = cleanCid.substring(0, cleanCid.indexOf('/'));
             }
 
+            let mintedTokensMap = new Map();
+            try {
+                const provider = new ethers.JsonRpcProvider(RPC_URL);
+                const factoryContract = new ethers.Contract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI, provider);
+                const activeIds = await factoryContract.walletCreatorTokensForSale(walletAddress);
+                
+                for (const tokenId of activeIds) {
+                    const details = await factoryContract.getNFTDetails(tokenId);
+                    let rawUri = (details.uri || "").trim();
+                    let normUri = rawUri.toLowerCase();
+                    if (normUri.includes('ipfs/')) normUri = normUri.split('ipfs/').pop();
+                    if (normUri.includes('//')) normUri = normUri.split('//').pop();
+
+                    mintedTokensMap.set(normUri, {
+                        tokenId: tokenId.toString(),
+                        price: ethers.formatUnits(details.price, 6)
+                    });
+                }
+            } catch (chainErr) {
+                console.warn("Could not fetch on-chain state:", chainErr);
+            }
+
             const uniqueMap = new Map();
             if (data.images && Array.isArray(data.images)) {
                 data.images.forEach(img => {
@@ -249,30 +331,46 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
 
                     const key = lowerName; 
                     if (!uniqueMap.has(key)) {
+                        let isMinted = false;
+                        let tokenData = null;
+
+                        for (let [onChainUri, info] of mintedTokensMap.entries()) {
+                            if (onChainUri.includes(lowerName) || (cleanCid && onChainUri.includes(cleanCid.toLowerCase()) && onChainUri.includes(lowerName))) {
+                                isMinted = true;
+                                tokenData = info;
+                                break;
+                            }
+                        }
+
                         uniqueMap.set(key, {
                             title: img.title ? img.title.trim() : '',
                             fileName: pureFileName,
                             width: img.width,
                             height: img.height,
                             folderCid: cleanCid,
-                            url: `${PINATA_GATEWAY}${cleanCid}/${pureFileName}?t=${Date.now()}`
+                            url: `${PINATA_GATEWAY}${cleanCid}/${pureFileName}?t=${Date.now()}`,
+                            isMinted: isMinted,
+                            tokenData: tokenData
                         });
                     }
                 });
             }
 
             const uniqueImages = Array.from(uniqueMap.values());
-
             statusEl.innerText = `Folder CID: ${cleanCid.substring(0, 12)}... (Total unique works: ${uniqueImages.length})`;
 
             uniqueImages.forEach((img) => {
                 const card = document.createElement('div');
-                card.className = "nft-item-card";
+                card.className = "nft-item-card" + (img.isMinted ? " minted-on-chain" : "");
                 card.dataset.title = img.title;
                 card.dataset.filename = img.fileName;
                 card.dataset.width = img.width;
                 card.dataset.height = img.height;
                 card.dataset.foldercid = img.folderCid;
+                card.dataset.isminted = img.isMinted ? "true" : "false";
+
+                let badgeHtml = img.isMinted ? `<div class="mint-badge">✓ Minted (#${img.tokenData.tokenId})</div>` : '';
+                let priceInputHtml = img.isMinted ? '' : `<input type="number" step="0.01" min="0.01" value="1.0" class="mint-price-input" placeholder="Price in USDT" title="Set price in USDT">`;
 
                 card.innerHTML = `
                     <input type="checkbox" class="nft-checkbox" onchange="toggleDeleteButton()">
@@ -281,6 +379,8 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
                     </a>
                     <div class="title" title="${img.title}">${img.title}</div>
                     <div class="dims">${img.width} x ${img.height} cm</div>
+                    ${badgeHtml}
+                    ${priceInputHtml}
                 `;
                 gridEl.appendChild(card);
             });
@@ -298,24 +398,14 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
 
     if (dropzone && fileInput) {
         dropzone.addEventListener('click', () => fileInput.click());
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('drag-over');
-        });
-        dropzone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('drag-over');
-        });
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+        dropzone.addEventListener('dragleave', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); });
         dropzone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropzone.classList.remove('drag-over');
-            if (e.dataTransfer && e.dataTransfer.files.length > 0) {
-                processFileList(Array.from(e.dataTransfer.files));
-            }
+            if (e.dataTransfer && e.dataTransfer.files.length > 0) processFileList(Array.from(e.dataTransfer.files));
         });
-        fileInput.addEventListener('change', (e) => {
-            processFileList(Array.from(e.target.files));
-        });
+        fileInput.addEventListener('change', (e) => processFileList(Array.from(e.target.files)));
     }
 
     async function compressToMax300KB(canvas) {
@@ -337,12 +427,10 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
                 tempCanvas.width = Math.round(canvas.width * scale);
                 tempCanvas.height = Math.round(canvas.height * scale);
                 ctx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
-
                 blob = await new Promise(resolve => tempCanvas.toBlob(resolve, 'image/jpeg', 0.7));
                 scale -= 0.15;
             }
         }
-
         return blob;
     }
 
@@ -368,14 +456,6 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
                     const heightCm = parseFloat((50 * (img.height / img.width)).toFixed(1));
                     const sizeKb = (blob.size / 1024).toFixed(1);
                     const baseTitle = file.name.replace(/\.[^/.]+$/, "").trim();
-
-                    const existsInProcessed = processedImages.some(p => p.title.toLowerCase() === baseTitle.toLowerCase());
-                    const existingCards = Array.from(document.querySelectorAll('.nft-item-card'));
-                    const existsInDOM = existingCards.some(card => card.dataset.title.toLowerCase() === baseTitle.toLowerCase());
-
-                    if (existsInProcessed || existsInDOM) {
-                        return;
-                    }
 
                     const item = {
                         id: 'img_' + Math.random().toString(36).substr(2, 9),
@@ -439,8 +519,7 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
         });
         container.querySelectorAll('.btn-remove').forEach(el => {
             el.addEventListener('click', (e) => {
-                const idx = e.currentTarget.dataset.idx;
-                processedImages.splice(idx, 1);
+                processedImages.splice(e.currentTarget.dataset.idx, 1);
                 renderPreviews();
             });
         });
@@ -459,16 +538,16 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
     window.toggleDeleteButton = function() {
         const checkboxes = document.querySelectorAll('.nft-checkbox:checked');
         const deleteBtn = document.getElementById('btn-delete-selected');
-        if (deleteBtn) {
-            deleteBtn.style.display = checkboxes.length > 0 ? 'inline-block' : 'none';
-        }
+        const mintBtn = document.getElementById('btn-mint-selected');
+        const displayStyle = checkboxes.length > 0 ? 'inline-block' : 'none';
+        if (deleteBtn) deleteBtn.style.display = displayStyle;
+        if (mintBtn) mintBtn.style.display = displayStyle;
     };
 
     window.deleteSelectedExistingNFTs = async function() {
         const checkboxes = document.querySelectorAll('.nft-checkbox:checked');
         if (!checkboxes.length) return;
-
-        if (!confirm("Удалить выбранные изображения? Изменения будут сохранены в IPFS.")) return;
+        if (!confirm("Delete selected images? Changes will be saved to IPFS.")) return;
 
         checkboxes.forEach(cb => {
             const card = cb.closest('.nft-item-card');
@@ -477,6 +556,77 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
 
         window.toggleDeleteButton();
         await processAndUploadDirect();
+    };
+
+    window.handleMintButtonAction = async function() {
+        const checkboxes = document.querySelectorAll('.nft-checkbox:checked');
+        if (!checkboxes.length) return;
+
+        if (typeof ethers === 'undefined' || !window.ethereum) {
+            alert("Ethers library or Web3 wallet not detected.");
+            return;
+        }
+
+        const loader = document.getElementById('upload-loader');
+        loader.innerText = "Connecting to wallet and checking account...";
+
+        try {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = await provider.getSigner();
+            const connectedWallet = (await signer.getAddress()).toLowerCase();
+            const expectedWallet = (localStorage.getItem('app_linkedWallet') || localStorage.getItem('linkedWallet') || "").toLowerCase();
+
+            if (expectedWallet && connectedWallet !== expectedWallet) {
+                alert(`Error: Connected wallet does not match your linked account.`);
+                loader.innerText = "";
+                return;
+            }
+
+            loader.innerText = "Preparing mint transaction...";
+            const factoryContract = new ethers.Contract(FACTORY_CONTRACT_ADDRESS, FACTORY_ABI, signer);
+
+            const namesArray = [];
+            const urisArray = [];
+            const pricesArray = [];
+
+            for (let cb of checkboxes) {
+                const card = cb.closest('.nft-item-card');
+                if (card) {
+                    if (card.dataset.isminted === "true") {
+                        alert("One of the selected items is already minted on-chain!");
+                        loader.innerText = "";
+                        return;
+                    }
+
+                    const title = card.dataset.title || "NFTAsset";
+                    const imgEl = card.querySelector('img');
+                    let imgUrl = imgEl ? imgEl.src.split('?')[0].replace('https://', '') : '';
+                    const priceVal = card.querySelector('.mint-price-input')?.value.trim() || "1.0";
+
+                    namesArray.push(title);
+                    urisArray.push(imgUrl);
+                    pricesArray.push(ethers.parseUnits(priceVal, 6));
+                }
+            }
+
+            const estimatedGas = await factoryContract.batchMintAndList.estimateGas(namesArray, urisArray, pricesArray);
+            const tx = await factoryContract.batchMintAndList(namesArray, urisArray, pricesArray, {
+                gasLimit: (estimatedGas * 140n) / 100n
+            });
+
+            loader.innerText = `Transaction sent! Waiting for confirmation...`;
+            await tx.wait();
+
+            loader.innerText = `✅ Successfully minted ${namesArray.length} NFT(s)!`;
+            alert(`Successfully minted ${namesArray.length} NFT(s)!`);
+
+            loadExistingNFTs(localStorage.getItem('app_currentUser') || localStorage.getItem('currentUser'), localStorage.getItem('app_linkedWallet') || localStorage.getItem('linkedWallet'));
+
+        } catch (err) {
+            console.error(err);
+            loader.innerText = `Mint error: ${err.message}`;
+        }
     };
 
     async function processAndUploadDirect() {
@@ -489,14 +639,18 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
             return;
         }
 
-        loader.innerText = "Формирование пакета, сохранение существующих и отправка на сервер...";
+        console.log("🚀 [DEBUG] Starting upload process for user:", username, "wallet:", wallet);
+        loader.innerText = "Forming package and uploading to server...";
 
         const formData = new FormData();
         formData.append("username", username);
         formData.append("wallet", wallet);
 
         const newImagesMeta = processedImages.map((item, index) => {
-            const fileName = `${item.title.replace(/[^a-z0-9_-]/gi, '_')}.jpg`;
+            const randomHash = generateRandomHash();
+            const fileName = `${randomHash}.jpg`;
+            
+            console.log(`📸 [DEBUG] Image [${index}] original title: "${item.title}" -> assigned hash filename: "${fileName}"`);
             formData.append(`file_${index}`, item.blob, fileName);
 
             return {
@@ -513,9 +667,7 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
         let targetFolderCid = window.lastKnownFolderCid;
 
         existingCards.forEach(card => {
-            if (card.dataset.foldercid) {
-                targetFolderCid = card.dataset.foldercid;
-            }
+            if (card.dataset.foldercid) targetFolderCid = card.dataset.foldercid;
             retainedExistingMeta.push({
                 title: card.dataset.title,
                 fileName: card.dataset.filename,
@@ -528,43 +680,36 @@ let isFetchingNFTs = false; // Блокировка параллельных з�
 
         const combined = [...newImagesMeta, ...retainedExistingMeta];
         const uniqueMap = new Map();
-
         combined.forEach(img => {
             const key = (img.fileName || '').toLowerCase().trim();
-            if (key && !uniqueMap.has(key)) {
-                uniqueMap.set(key, img);
-            }
+            if (key && !uniqueMap.has(key)) uniqueMap.set(key, img);
         });
 
-        const allImagesData = Array.from(uniqueMap.values());
-        formData.append("images", JSON.stringify(allImagesData));
+        const finalImagesPayload = Array.from(uniqueMap.values());
+        console.log("📦 [DEBUG] Final payload 'images' JSON being sent:", JSON.stringify(finalImagesPayload, null, 2));
 
-        if (targetFolderCid) {
-            formData.append("oldFolderCid", targetFolderCid);
-        }
+        formData.append("images", JSON.stringify(finalImagesPayload));
+        if (targetFolderCid) formData.append("oldFolderCid", targetFolderCid);
 
         try {
-            const response = await fetch(WORKER_URL, {
-                method: "POST",
-                body: formData
-            });
-
+            console.log("🌐 [DEBUG] Sending POST request to WORKER_URL:", WORKER_URL);
+            const response = await fetch(WORKER_URL, { method: "POST", body: formData });
             const resData = await response.json();
+            console.log("📥 [DEBUG] Response from Worker:", resData);
+
             if (!response.ok) throw new Error(resData.error || "Upload failed");
 
-            loader.innerText = `Успешно сохранено и обновлено в Pinata!`;
+            loader.innerText = `Successfully saved and updated in Pinata!`;
             processedImages = [];
             renderPreviews();
-            loadExistingNFTs(username);
+            loadExistingNFTs(username, wallet);
 
         } catch (err) {
-            loader.innerText = `Ошибка: ${err.message}`;
+            console.error("❌ [DEBUG] Upload error:", err);
+            loader.innerText = `Error: ${err.message}`;
         }
     }
 
-    const btnSubmit = document.getElementById('btn-submit-pinata');
-    if (btnSubmit) {
-        btnSubmit.addEventListener('click', processAndUploadDirect);
-    }
+    document.getElementById('btn-submit-pinata')?.addEventListener('click', processAndUploadDirect);
 })();
 </script>
