@@ -1,0 +1,488 @@
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+// Фиксированная стоимость действия в баллах
+const COST_PER_ACTION = 10; 
+
+async function hashPassword(password) {
+  const msgBuffer = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function verifySignatureOnChain(rpcUrl, message, signatureHex, expectedAddress) {
+  try {
+    const cleanAddress = expectedAddress.toLowerCase().trim();
+    const messageBytes = new TextEncoder().encode(message);
+    const prefix = `\x19Ethereum Signed Message:\n${messageBytes.length}`;
+    const prefixBytes = new TextEncoder().encode(prefix);
+    
+    const ethMessageBytes = new Uint8Array(prefixBytes.length + messageBytes.length);
+    ethMessageBytes.set(prefixBytes);
+    ethMessageBytes.set(messageBytes, prefixBytes.length);
+    
+    const ethMessageHex = "0x" + Array.from(ethMessageBytes).map(b => b.toString(16).padStart(2, "0")).join("");
+    
+    const sha3Response = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "web3_sha3", params: [ethMessageHex] })
+    });
+    const sha3Data = await sha3Response.json();
+    const messageHash = sha3Data.result;
+
+    const sig = signatureHex.startsWith("0x") ? signatureHex.slice(2) : signatureHex;
+    if (sig.length !== 130) return false;
+
+    const r = sig.slice(0, 64);
+    const s = sig.slice(64, 128);
+    let vVal = parseInt(sig.slice(128, 130), 16);
+    if (vVal < 27) vVal += 27;
+    const v = vVal.toString(16).padStart(64, "0");
+
+    const cleanHash = messageHash.startsWith("0x") ? messageHash.slice(2) : messageHash;
+    const callData = "0x" + cleanHash + v + r + s;
+
+    const callResponse = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 2,
+        method: "eth_call",
+        params: [{ to: "0x0000000000000000000000000000000000000001", data: callData }, "latest"]
+      })
+    });
+    const callDataJson = await callResponse.json();
+    
+    if (callDataJson.result && callDataJson.result !== "0x") {
+      const recoveredAddress = "0x" + callDataJson.result.slice(-40).toLowerCase();
+      return recoveredAddress === cleanAddress;
+    }
+    return false;
+  } catch (e) {
+    console.error("Ошибка верификации подписи:", e);
+    return false;
+  }
+}
+
+async function getErc20Balance(rpcUrl, contractAddress, walletAddress, decimals = 18) {
+  try {
+    const cleanWallet = walletAddress.replace("0x", "").padStart(64, "0");
+    const data = "0x70a08231" + cleanWallet;
+    
+    const res = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_call",
+        params: [{ to: contractAddress, data: data }, "latest"]
+      })
+    });
+    const json = await res.json();
+    if (!json.result || json.result === "0x") return 0;
+    return parseInt(json.result, 16) / Math.pow(10, decimals);
+  } catch (e) {
+    return 0;
+  }
+}
+
+async function getTransfers(rpcUrl, tokenAddress, walletAddress, direction) {
+  const params = {
+    fromBlock: "0x0",
+    toBlock: "latest",
+    contractAddresses: [tokenAddress],
+    category: ["erc20"],
+    excludeZeroValue: true,
+  };
+
+  if (direction === "IN") params.toAddress = walletAddress;
+  else params.fromAddress = walletAddress;
+
+  const response = await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: direction === "IN" ? 10 : 11,
+      method: "alchemy_getAssetTransfers",
+      params: [params]
+    })
+  });
+
+  const data = await response.json();
+  if (data.error) throw new Error(`Alchemy API Error: ${JSON.stringify(data.error)}`);
+  return data.result?.transfers || [];
+}
+
+async function getBlockTimestamp(rpcUrl, blockNumberHex) {
+  const response = await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 100,
+      method: "eth_getBlockByNumber",
+      params: [blockNumberHex, false]
+    })
+  });
+  const data = await response.json();
+  if (data.result && data.result.timestamp) {
+    return parseInt(data.result.timestamp, 16);
+  }
+  return null;
+}
+
+// Расчет начисленных баллов для Kowasugi (коэффициент 0.001)
+async function calculateKowasugiPoints(rpcUrl, walletAddress, contractAddress) {
+  const [transfersIn, transfersOut] = await Promise.all([
+    getTransfers(rpcUrl, contractAddress, walletAddress, "IN"),
+    getTransfers(rpcUrl, contractAddress, walletAddress, "OUT")
+  ]);
+
+  const rawHistory = [];
+  const uniqueBlocks = new Set();
+
+  transfersIn.forEach(tx => {
+    rawHistory.push({ blockHex: tx.blockNum, block: parseInt(tx.blockNum, 16), type: "IN", amount: parseFloat(tx.value || 0) });
+    uniqueBlocks.add(tx.blockNum);
+  });
+
+  transfersOut.forEach(tx => {
+    rawHistory.push({ blockHex: tx.blockNum, block: parseInt(tx.blockNum, 16), type: "OUT", amount: parseFloat(tx.value || 0) });
+    uniqueBlocks.add(tx.blockNum);
+  });
+
+  rawHistory.sort((a, b) => a.block - b.block);
+
+  const blockTimestamps = {};
+  const blockList = Array.from(uniqueBlocks);
+  
+  await Promise.all(
+    blockList.map(async (blockHex) => {
+      try {
+        const ts = await getBlockTimestamp(rpcUrl, blockHex);
+        if (ts) blockTimestamps[blockHex] = ts;
+      } catch (e) {}
+    })
+  );
+
+  const SECONDS_IN_DAY = 86400;
+  const POINTS_PER_TOKEN_PER_DAY = 0.001; 
+
+  let currentBalance = 0;
+  let calculatedPoints = 0;
+  let lastTimestamp = rawHistory.length > 0 ? blockTimestamps[rawHistory[0].blockHex] : null;
+
+  rawHistory.forEach(tx => {
+    const txTimestamp = blockTimestamps[tx.blockHex] || lastTimestamp;
+
+    if (currentBalance > 0 && txTimestamp && lastTimestamp && txTimestamp > lastTimestamp) {
+      const secondsHeld = txTimestamp - lastTimestamp;
+      calculatedPoints += currentBalance * POINTS_PER_TOKEN_PER_DAY * (secondsHeld / SECONDS_IN_DAY);
+    }
+
+    if (txTimestamp) lastTimestamp = txTimestamp;
+    if (tx.type === "IN") currentBalance += tx.amount;
+    else currentBalance -= tx.amount;
+  });
+
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  if (currentBalance > 0 && lastTimestamp && nowInSeconds > lastTimestamp) {
+    calculatedPoints += currentBalance * POINTS_PER_TOKEN_PER_DAY * ((nowInSeconds - lastTimestamp) / SECONDS_IN_DAY);
+  }
+
+  return { currentBalance, calculatedPoints };
+}
+
+// Расчет начисленных баллов для Conceal (коэффициент 0.0005 — 0.5 от Kowasugi)
+async function calculateConcealPoints(rpcUrl, walletAddress, contractAddress) {
+  const [transfersIn, transfersOut] = await Promise.all([
+    getTransfers(rpcUrl, contractAddress, walletAddress, "IN"),
+    getTransfers(rpcUrl, contractAddress, walletAddress, "OUT")
+  ]);
+
+  const rawHistory = [];
+  const uniqueBlocks = new Set();
+
+  transfersIn.forEach(tx => {
+    rawHistory.push({ blockHex: tx.blockNum, block: parseInt(tx.blockNum, 16), type: "IN", amount: parseFloat(tx.value || 0) });
+    uniqueBlocks.add(tx.blockNum);
+  });
+
+  transfersOut.forEach(tx => {
+    rawHistory.push({ blockHex: tx.blockNum, block: parseInt(tx.blockNum, 16), type: "OUT", amount: parseFloat(tx.value || 0) });
+    uniqueBlocks.add(tx.blockNum);
+  });
+
+  rawHistory.sort((a, b) => a.block - b.block);
+
+  const blockTimestamps = {};
+  const blockList = Array.from(uniqueBlocks);
+  
+  await Promise.all(
+    blockList.map(async (blockHex) => {
+      try {
+        const ts = await getBlockTimestamp(rpcUrl, blockHex);
+        if (ts) blockTimestamps[blockHex] = ts;
+      } catch (e) {}
+    })
+  );
+
+  const SECONDS_IN_DAY = 86400;
+  const POINTS_PER_TOKEN_PER_DAY = 0.0005; 
+
+  let currentBalance = 0;
+  let calculatedPoints = 0;
+  let lastTimestamp = rawHistory.length > 0 ? blockTimestamps[rawHistory[0].blockHex] : null;
+
+  rawHistory.forEach(tx => {
+    const txTimestamp = blockTimestamps[tx.blockHex] || lastTimestamp;
+
+    if (currentBalance > 0 && txTimestamp && lastTimestamp && txTimestamp > lastTimestamp) {
+      const secondsHeld = txTimestamp - lastTimestamp;
+      calculatedPoints += currentBalance * POINTS_PER_TOKEN_PER_DAY * (secondsHeld / SECONDS_IN_DAY);
+    }
+
+    if (txTimestamp) lastTimestamp = txTimestamp;
+    if (tx.type === "IN") currentBalance += tx.amount;
+    else currentBalance -= tx.amount;
+  });
+
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  if (currentBalance > 0 && lastTimestamp && nowInSeconds > lastTimestamp) {
+    calculatedPoints += currentBalance * POINTS_PER_TOKEN_PER_DAY * ((nowInSeconds - lastTimestamp) / SECONDS_IN_DAY);
+  }
+
+  return calculatedPoints;
+}
+
+// Автоматическая сверка: удаление записей расходов, если картины больше нет на стене
+async function syncSpentPointsWithPlacedPaintings(env, userId, username) {
+  try {
+    const placed = await env.DB.prepare(
+      `SELECT id FROM placed_paintings WHERE username = ?`
+    ).bind(username).all();
+    
+    const placedIds = new Set((placed.results || []).map(r => r.id));
+
+    const spentRecords = await env.DB.prepare(
+      `SELECT id, painting_id FROM user_points_spent WHERE user_id = ? AND painting_id IS NOT NULL`
+    ).bind(userId).all();
+
+    for (const record of (spentRecords.results || [])) {
+      if (!placedIds.has(record.painting_id)) {
+        await env.DB.prepare(
+          `DELETE FROM user_points_spent WHERE id = ?`
+        ).bind(record.id).run();
+      }
+    }
+  } catch (e) {
+    console.error("Ошибка синхронизации расходов баллов:", e);
+  }
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method === "OPTIONS") {
+      return new Response("OK", { status: 200, headers: corsHeaders });
+    }
+
+    const workerUrl = new URL(request.url);
+    const POLYGON_RPC_URL = "https://polygon-mainnet.g.alchemy.com/v2/TMbYtqLMNx-j6CT-UU6mM";
+    const KOWASUGI_CONTRACT = "0x3047511c064Ba6319814aA80b56d3E97002cb343";
+    const CONCEAL_CONTRACT  = "0x137Ee749f0F8c2eD34cA00dE33BB59E3dafA494A";
+
+    if (request.method === "POST") {
+      const body = await request.json().catch(() => ({}));
+
+      // 1. РЕГИСТРАЦИЯ (С гарантированным начислением приветственных 100 баллов)
+      if (workerUrl.pathname === "/api/register") {
+        const { username, password } = body;
+        if (!username || !password) {
+          return new Response(JSON.stringify({ error: "Заполните все поля" }), { status: 400, headers: corsHeaders });
+        }
+        const passwordHash = await hashPassword(password);
+        try {
+          // Сначала проверяем, не существует ли уже пользователь
+          const existing = await env.DB.prepare(`SELECT id FROM users WHERE username = ?`).bind(username).first();
+          if (existing) {
+            return new Response(JSON.stringify({ error: "Пользователь уже существует" }), { status: 409, headers: corsHeaders });
+          }
+
+          // Создаем пользователя
+          await env.DB.prepare(`INSERT INTO users (username, password_hash) VALUES (?, ?)`).bind(username, passwordHash).run();
+          
+          // Точно выбираем ID только что созданного пользователя по имени
+          const newUser = await env.DB.prepare(`SELECT id FROM users WHERE username = ?`).bind(username).first();
+          
+          if (newUser && newUser.id) {
+            // Начисляем 100 приветственных баллов через отрицательное значение в таблицу расходов (как пополнение)
+            await env.DB.prepare(
+              `INSERT INTO user_points_spent (user_id, amount, description, painting_id) VALUES (?, ?, ?, ?)`
+            ).bind(newUser.id, -100, "Приветственный бонус за регистрацию", null).run();
+          }
+
+          return new Response(JSON.stringify({ success: true, message: "Регистрация успешна, начислено 100 приветственных баллов!" }), { status: 201, headers: corsHeaders });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: "Ошибка регистрации: " + e.message }), { status: 500, headers: corsHeaders });
+        }
+      }
+
+      // 2. ВХОД
+      if (workerUrl.pathname === "/api/login") {
+        const { username, password } = body;
+        const passwordHash = await hashPassword(password);
+        
+        const user = await env.DB.prepare(`SELECT id, username FROM users WHERE username = ? AND password_hash = ?`).bind(username, passwordHash).first();
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Неверный логин или пароль" }), { status: 401, headers: corsHeaders });
+        }
+
+        const walletData = await env.DB.prepare(`SELECT wallet_address FROM user_wallets WHERE user_id = ?`).bind(user.id).first();
+        return new Response(JSON.stringify({ 
+          success: true, 
+          user: { username: user.username, wallet: walletData ? walletData.wallet_address : null } 
+        }), { status: 200, headers: corsHeaders });
+      }
+
+      // 3. СПИСАНИЕ БАЛЛОВ ЗА РАЗМЕЩЕНИЕ КАРТИНЫ (ФИКСИРОВАННО 10 БАЛЛОВ)
+      if (workerUrl.pathname === "/api/publish-artwork") {
+        const { username, password, artworkTitle } = body;
+        if (!username || !password) {
+          return new Response(JSON.stringify({ error: "Ошибка авторизации" }), { status: 400, headers: corsHeaders });
+        }
+
+        const passwordHash = await hashPassword(password);
+        const user = await env.DB.prepare(`SELECT id FROM users WHERE username = ? AND password_hash = ?`).bind(username, passwordHash).first();
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Неверный логин или пароль" }), { status: 401, headers: corsHeaders });
+        }
+
+        await syncSpentPointsWithPlacedPaintings(env, user.id, username);
+
+        const walletData = await env.DB.prepare(`SELECT wallet_address FROM user_wallets WHERE user_id = ?`).bind(user.id).first();
+        
+        let concealPointsEarned = 0;
+        let kowasugiCalculated = 0;
+
+        if (walletData) {
+          const [kowasugiData, concealEarned] = await Promise.all([
+            calculateKowasugiPoints(POLYGON_RPC_URL, walletData.wallet_address, KOWASUGI_CONTRACT),
+            calculateConcealPoints(POLYGON_RPC_URL, walletData.wallet_address, CONCEAL_CONTRACT)
+          ]);
+          kowasugiCalculated = kowasugiData.calculatedPoints;
+          concealPointsEarned = concealEarned;
+        }
+
+        const totalEarnedPoints = kowasugiCalculated + concealPointsEarned;
+        
+        // Суммируем все траты и бонусы (бонус -100 уменьшит общую сумму spent, тем самым увеличив доступные баллы)
+        const spentRes = await env.DB.prepare(`SELECT SUM(amount) as total_spent FROM user_points_spent WHERE user_id = ?`).bind(user.id).first();
+        const totalSpent = spentRes?.total_spent || 0;
+
+        const availablePoints = totalEarnedPoints - totalSpent;
+
+        if (availablePoints < COST_PER_ACTION) {
+          return new Response(JSON.stringify({ 
+            error: `Недостаточно баллов. Требуется ${COST_PER_ACTION}, а доступно ${availablePoints.toFixed(2)}` 
+          }), { status: 400, headers: corsHeaders });
+        }
+
+        const description = artworkTitle ? `Размещение картины: "${artworkTitle}"` : "Размещение картины";
+        
+        await env.DB.prepare(
+          `INSERT INTO user_points_spent (user_id, amount, description, painting_id) VALUES (?, ?, ?, ?)`
+        ).bind(user.id, COST_PER_ACTION, description, artworkTitle || null).run();
+
+        return new Response(JSON.stringify({ 
+          success: true, 
+          spent: COST_PER_ACTION, 
+          remainingPoints: (availablePoints - COST_PER_ACTION).toFixed(2),
+          message: "Картина успешно опубликована, списано 10 баллов."
+        }), { status: 200, headers: corsHeaders });
+      }
+
+      // 4. ПРИВЯЗКА ИЛИ РАСЧЕТ БАЛАНСА
+      if (workerUrl.pathname === "/api/link-wallet") {
+        const { username, password, walletAddress, signature, message } = body;
+
+        const passwordHash = await hashPassword(password);
+        const user = await env.DB.prepare(`SELECT id FROM users WHERE username = ? AND password_hash = ?`).bind(username, passwordHash).first();
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Сессия устарела" }), { status: 401, headers: corsHeaders });
+        }
+
+        if (!walletAddress) {
+          return new Response(JSON.stringify({ error: "Необходим адрес кошелька" }), { status: 400, headers: corsHeaders });
+        }
+
+        const cleanWallet = walletAddress.toLowerCase().trim();
+
+        if (signature && message) {
+          const expectedMessage = `Authorize wallet ${cleanWallet} for account ${username}`;
+          if (message !== expectedMessage) {
+            return new Response(JSON.stringify({ error: "Неверный текст сообщения" }), { status: 400, headers: corsHeaders });
+          }
+
+          const isValid = await verifySignatureOnChain(POLYGON_RPC_URL, message, signature, cleanWallet);
+          if (!isValid) {
+            return new Response(JSON.stringify({ error: "Подпись не прошла проверку!" }), { status: 403, headers: corsHeaders });
+          }
+
+          await env.DB.prepare(
+            `INSERT INTO user_wallets (user_id, wallet_address) VALUES (?, ?)
+             ON CONFLICT(user_id) DO UPDATE SET wallet_address = EXCLUDED.wallet_address`
+          ).bind(user.id, cleanWallet).run();
+        }
+
+        try {
+          await syncSpentPointsWithPlacedPaintings(env, user.id, username);
+
+          const [concealBal, concealPointsEarned, kowasugiData, spentRes, transfersIn, transfersOut] = await Promise.all([
+            getErc20Balance(POLYGON_RPC_URL, CONCEAL_CONTRACT, cleanWallet, 6),
+            calculateConcealPoints(POLYGON_RPC_URL, cleanWallet, CONCEAL_CONTRACT),
+            calculateKowasugiPoints(POLYGON_RPC_URL, cleanWallet, KOWASUGI_CONTRACT),
+            env.DB.prepare(`SELECT SUM(amount) as total_spent FROM user_points_spent WHERE user_id = ?`).bind(user.id).first(),
+            getTransfers(POLYGON_RPC_URL, KOWASUGI_CONTRACT, cleanWallet, "IN"),
+            getTransfers(POLYGON_RPC_URL, KOWASUGI_CONTRACT, cleanWallet, "OUT")
+          ]);
+
+          let concealTier = concealBal >= 1000 ? 2 : (concealBal >= 100 ? 1 : 0);
+          let kowasugiTier = kowasugiData.currentBalance >= 4444 ? 2 : (kowasugiData.currentBalance >= 1333 ? 1 : 0);
+
+          const totalEarnedPoints = kowasugiData.calculatedPoints + concealPointsEarned;
+          const totalSpent = spentRes?.total_spent || 0; // Сюда входит и приветственный бонус (-100), уменьшающий общие "траты"
+          const finalAvailablePoints = Math.max(0, totalEarnedPoints - totalSpent);
+
+          const rawHistory = [];
+          transfersIn.forEach(tx => rawHistory.push({ block: parseInt(tx.blockNum, 16), type: "IN", amount: parseFloat(tx.value || 0) }));
+          transfersOut.forEach(tx => rawHistory.push({ block: parseInt(tx.blockNum, 16), type: "OUT", amount: parseFloat(tx.value || 0) }));
+          rawHistory.sort((a, b) => a.block - b.block);
+
+          return new Response(JSON.stringify({ 
+            success: true, 
+            walletAddress: cleanWallet, 
+            balance: kowasugiData.currentBalance.toFixed(2),
+            tier: kowasugiTier,
+            points: finalAvailablePoints.toFixed(2),
+            totalEarned: totalEarnedPoints.toFixed(2),
+            totalSpent: totalSpent.toFixed(2),
+            polygonTokens: {
+              conceal: { balance: concealBal.toFixed(2), tier: concealTier }
+            }
+          }), { status: 200, headers: corsHeaders });
+
+        } catch (apiErr) {
+          return new Response(JSON.stringify({ error: `Ошибка расчета: ${apiErr.message}` }), { status: 500, headers: corsHeaders });
+        }
+      }
+    }
+    return new Response("Not Found", { status: 404, headers: corsHeaders });
+  }
+};

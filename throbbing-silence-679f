@@ -1,0 +1,299 @@
+const BUCKET_NAME = "global-bucket-78131f"; 
+const S3_HOST = "global.s3.cloud.ru";
+
+export default {
+  async fetch(request, env, ctx) {
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    const url = new URL(request.url);
+    const workerOrigin = url.origin;
+
+    try {
+      // ========================================================
+      // 1. GET: Получение списка NFT пользователя из SQL
+      // ========================================================
+      if (request.method === "GET" && url.pathname.endsWith("/get-user-nfts")) {
+        const username = url.searchParams.get("username");
+        if (!username) {
+          return new Response(JSON.stringify({ error: "Missing username" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        if (!env.DB) throw new Error("Database binding 'DB' not found");
+
+        const user = await env.DB.prepare("SELECT id FROM users WHERE username = ?").bind(username).first();
+        if (!user) {
+          return new Response(JSON.stringify({ folderCid: null, images: [] }), {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        const { results } = await env.DB.prepare(
+          "SELECT title, width, height, ipfs_cid, pinata_group_id FROM user_uploads WHERE user_id = ?"
+        ).bind(user.id).all();
+
+        if (!results || results.length === 0) {
+          return new Response(JSON.stringify({ folderCid: null, images: [] }), {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        const folderCid = results[0].pinata_group_id || `collection_${username}`;
+
+        const images = [];
+        const seenNames = new Set();
+
+        results.forEach(row => {
+          const rawCid = (row.ipfs_cid || "").toLowerCase();
+          const pureFileName = rawCid.split('/').pop() || "";
+          
+          // Пропускаем служебные файлы метаданных
+          if (pureFileName === "meta.json" || pureFileName.endsWith("_metadata.json")) {
+            return;
+          }
+
+          if (pureFileName && !seenNames.has(pureFileName.toLowerCase())) {
+            seenNames.add(pureFileName.toLowerCase());
+            
+            const baseFileName = pureFileName.substring(0, pureFileName.lastIndexOf('.')) || pureFileName;
+            const metadataPath = `${folderCid}/${baseFileName}_metadata.json`;
+
+            images.push({
+              title: row.title,
+              fileName: pureFileName,
+              width: row.width,
+              height: row.height,
+              // Ссылка на JSON-файл метаданных для минта (ERC-721)
+              tokenUri: `${workerOrigin}/get-file?path=${metadataPath}`,
+              // Прямая ссылка на изображение для галереи
+              imageUrl: `${workerOrigin}/get-file?path=${folderCid}/${pureFileName}`
+            });
+          }
+        });
+
+        return new Response(JSON.stringify({ folderCid, images }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // ========================================================
+      // ПРОКСИ-ОТДАЧА ФАЙЛОВ ИЗ БАКЕТА СБЕРА
+      // ========================================================
+      if (request.method === "GET" && url.pathname.endsWith("/get-file")) {
+        const filePath = url.searchParams.get("path");
+        if (!filePath) {
+          return new Response(JSON.stringify({ error: "Missing path parameter" }), { status: 400, headers: corsHeaders });
+        }
+
+        const s3Url = `https://${S3_HOST}/${BUCKET_NAME}/${filePath}`;
+        const s3Response = await fetch(s3Url);
+
+        if (!s3Response.ok) {
+          return new Response("File not found in Sber Bucket", { status: 404, headers: corsHeaders });
+        }
+
+        const contentType = filePath.endsWith(".json")
+          ? "application/json"
+          : (s3Response.headers.get("Content-Type") || "image/jpeg");
+
+        return new Response(s3Response.body, {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": contentType,
+            "Cache-Control": "public, max-age=86400"
+          }
+        });
+      }
+
+      // ========================================================
+      // 2. POST: Загрузка файлов + Генерация Metadata JSON + Синхронизация SQL
+      // ========================================================
+      if (request.method === "POST") {
+        const formData = await request.formData();
+        const username = formData.get("username");
+        const wallet = formData.get("wallet");
+        const imagesData = JSON.parse(formData.get("images") || "[]");
+        const oldFolderCid = formData.get("oldFolderCid");
+
+        if (!username) throw new Error("Missing username");
+        if (!env.DB) throw new Error("Database binding 'DB' not found");
+
+        const user = await env.DB.prepare("SELECT id FROM users WHERE username = ?").bind(username).first();
+        const userId = user ? user.id : null;
+        if (!userId) throw new Error("User not found");
+
+        const folderName = `collection_${username}`;
+
+        const rawValidImages = imagesData.filter(item => {
+          const f = (item.fileName || "").toLowerCase();
+          return !f.includes("meta.json") && !f.endsWith("_metadata.json");
+        });
+
+        const serverUniqueMap = new Map();
+        rawValidImages.forEach(item => {
+          const fileName = (item.fileName || "").trim().toLowerCase();
+          if (fileName && !serverUniqueMap.has(fileName)) {
+            serverUniqueMap.set(fileName, item);
+          }
+        });
+        const validImagesData = Array.from(serverUniqueMap.values());
+
+        // А. Загрузка картинок и генерация индивидуальных метаданных
+        for (let i = 0; i < validImagesData.length; i++) {
+          const item = validImagesData[i];
+          const baseFileName = item.fileName.substring(0, item.fileName.lastIndexOf('.')) || item.fileName;
+          
+          if (!item.isExisting) {
+            const fileField = formData.get(`file_${i}`);
+            if (fileField && fileField instanceof File) {
+              const fileData = await fileField.arrayBuffer();
+              const imageObjectKey = `${folderName}/${item.fileName}`;
+              const s3Url = `https://${S3_HOST}/${BUCKET_NAME}/${imageObjectKey}`;
+
+              const s3Response = await fetch(s3Url, {
+                method: "PUT",
+                headers: { "Content-Type": fileField.type || "image/jpeg" },
+                body: fileData
+              });
+              
+              if (!s3Response.ok) throw new Error(`S3 fail on ${item.fileName}: ${await s3Response.text()}`);
+            }
+          }
+
+          // Формируем ERC-721 метаданные со ссылкой на изображение
+          const imageUrl = `${workerOrigin}/get-file?path=${folderName}/${item.fileName}`;
+          const metadataContent = {
+            name: item.title || item.fileName,
+            description: `NFT artwork created by ${username}`,
+            image: imageUrl,
+            attributes: [
+              { trait_type: "Author", value: username },
+              { trait_type: "Width", value: item.width || 0 },
+              { trait_type: "Height", value: item.height || 0 }
+            ]
+          };
+
+          const metadataBuffer = new TextEncoder().encode(JSON.stringify(metadataContent, null, 2));
+          const metadataObjectKey = `${folderName}/${baseFileName}_metadata.json`;
+          const metadataS3Url = `https://${S3_HOST}/${BUCKET_NAME}/${metadataObjectKey}`;
+
+          const metaResponse = await fetch(metadataS3Url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: metadataBuffer
+          });
+
+          if (!metaResponse.ok) {
+            throw new Error(`Failed to upload metadata JSON for ${item.fileName}`);
+          }
+        }
+
+        // Б. Перенос СТАРЫХ файлов
+        const existingItems = validImagesData.filter(item => item.isExisting);
+        if (existingItems.length > 0 && oldFolderCid) {
+          for (const item of existingItems) {
+            try {
+              const cleanOldCid = oldFolderCid.includes('/') ? oldFolderCid.split('/')[0] : oldFolderCid;
+              const oldFileUrl = cleanOldCid.startsWith("collection_")
+                ? `https://${S3_HOST}/${BUCKET_NAME}/${cleanOldCid}/${item.fileName}`
+                : `https://mypinata.cloud/${cleanOldCid}/${item.fileName}`;
+
+              const fileRes = await fetch(oldFileUrl);
+              if (fileRes.ok) {
+                const fileBuffer = await fileRes.arrayBuffer();
+                const objectKey = `${folderName}/${item.fileName}`;
+                const s3Url = `https://${S3_HOST}/${BUCKET_NAME}/${objectKey}`;
+
+                await fetch(s3Url, {
+                  method: "PUT",
+                  headers: { "Content-Type": "image/jpeg" },
+                  body: fileBuffer
+                });
+              }
+            } catch (err) {
+              console.error(`Failed to migrate file ${item.fileName}:`, err);
+            }
+          }
+        }
+
+        if (validImagesData.length === 0) {
+          await env.DB.prepare("DELETE FROM user_uploads WHERE user_id = ?").bind(userId).run();
+          return new Response(JSON.stringify({ success: true, folderCid: null }), {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        }
+
+        // В. Общий meta.json для коллекции
+        const metaContent = validImagesData.map(item => {
+          const baseFileName = item.fileName.substring(0, item.fileName.lastIndexOf('.')) || item.fileName;
+          return {
+            title: item.title,
+            fileName: item.fileName,
+            metadataFile: `${baseFileName}_metadata.json`,
+            width: item.width,
+            height: item.height
+          };
+        });
+
+        const metaBuffer = new TextEncoder().encode(JSON.stringify(metaContent, null, 2));
+        const metaKey = `${folderName}/meta.json`;
+        const metaS3Url = `https://${S3_HOST}/${BUCKET_NAME}/${metaKey}`;
+
+        const metaRes = await fetch(metaS3Url, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: metaBuffer
+        });
+        if (!metaRes.ok) throw new Error("Failed to upload collection meta.json to Sber");
+
+        // Г. Запись в SQL: возвращаем путь к картинке в ipfs_cid для стабильной работы клиента
+        await env.DB.prepare("DELETE FROM user_uploads WHERE user_id = ?").bind(userId).run();
+
+        const stmt = env.DB.prepare(
+          `INSERT INTO user_uploads (user_id, title, width, height, ipfs_cid, pinata_group_id) VALUES (?, ?, ?, ?, ?, ?)`
+        );
+
+        const batch = validImagesData.map((item) => {
+          return stmt.bind(
+            userId,
+            item.title,
+            item.width,
+            item.height,
+            `${folderName}/${item.fileName}`, // Путь к картинке сохранен для клиента
+            folderName
+          );
+        });
+
+        await env.DB.batch(batch);
+
+        return new Response(JSON.stringify({ success: true, folderCid: folderName }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      return new Response("Not found", { status: 404, headers: corsHeaders });
+
+    } catch (err) {
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+  }
+};

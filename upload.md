@@ -5,6 +5,189 @@ permalink: /upload/
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
 
+<div class="gallery-console-top-wrapper" style="max-width: 800px; margin: 20px auto 0 auto; color: #fff;">
+  <style>
+    .gallery-stage-box {
+      background-image: url('/assets/background.webp') !important;
+      background-repeat: repeat !important;
+      border: 1px solid #ff4d4d;
+      border-radius: 8px 8px 0 0;
+      padding: 15px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    #gallery-canvas {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 77, 77, 0.45);
+      border-radius: 4px;
+      outline: none;
+    }
+    .gallery-console-box {
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #ff4d4d;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      padding: 10px 12px;
+      font-family: monospace;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+    .gallery-console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+    #gallery-console-output {
+      height: 130px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #e4e4e7;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .gallery-console-input-row {
+      display: flex;
+      gap: 6px;
+    }
+    #gallery-console-input {
+      flex-grow: 1;
+      background: rgba(0, 0, 0, 0.65);
+      border: 1px solid #ff4d4d;
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .gallery-console-btn {
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  </style>
+
+  <div class="gallery-stage-box">
+    <div id="gallery-status" style="font-size: 0.85em; color: #aaa; margin-bottom: 8px;">
+      Initializing gallery...
+    </div>
+    <canvas id="gallery-canvas" tabindex="0"></canvas>
+  </div>
+
+  <div class="gallery-console-box">
+    <div class="gallery-console-header">
+      <span>CONSOLE (/assets/gallery)</span>
+      <button type="button" class="gallery-console-btn" id="btn-clear-console" style="background:#333; padding:3px 8px;">
+        Clear
+      </button>
+    </div>
+    <div id="gallery-console-output"></div>
+    <form class="gallery-console-input-row" id="gallery-console-form">
+      <input type="text" id="gallery-console-input" placeholder="Enter JS expression or command..." autocomplete="off" />
+      <button type="submit" class="gallery-console-btn">Run</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  const GALLERY_BASE = "/assets/";
+  const canvasEl = document.getElementById("gallery-canvas");
+  const statusEl = document.getElementById("gallery-status");
+  const consoleOut = document.getElementById("gallery-console-output");
+  const consoleForm = document.getElementById("gallery-console-form");
+  const consoleInput = document.getElementById("gallery-console-input");
+  const clearBtn = document.getElementById("btn-clear-console");
+
+  function appendLog(text, level = "log") {
+    if (!consoleOut) return;
+    const line = document.createElement("div");
+    if (level === "error") line.style.color = "#f87171";
+    else if (level === "warn") line.style.color = "#fbbf24";
+    else if (level === "cmd") line.style.color = "#34d399";
+    line.textContent = text;
+    consoleOut.appendChild(line);
+    consoleOut.scrollTop = consoleOut.scrollHeight;
+  }
+
+  clearBtn?.addEventListener("click", () => {
+    if (consoleOut) consoleOut.innerHTML = "";
+  });
+
+  consoleForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const cmd = (consoleInput?.value || "").trim();
+    if (!cmd) return;
+    appendLog("> " + cmd, "cmd");
+    consoleInput.value = "";
+    try {
+      const result = (0, eval)(cmd);
+      if (result !== undefined) appendLog(String(result));
+    } catch (err) {
+      appendLog(err && err.message ? err.message : String(err), "error");
+    }
+  });
+
+  const origLog = console.log.bind(console);
+  const origWarn = console.warn.bind(console);
+  const origError = console.error.bind(console);
+
+  console.log = (...args) => {
+    origLog(...args);
+    appendLog(args.map(a => typeof a === "object" ? JSON.stringify(a) : String(a)).join(" "), "log");
+  };
+  console.warn = (...args) => {
+    origWarn(...args);
+    appendLog(args.map(a => typeof a === "object" ? JSON.stringify(a) : String(a)).join(" "), "warn");
+  };
+  console.error = (...args) => {
+    origError(...args);
+    appendLog(args.map(a => typeof a === "object" ? JSON.stringify(a) : String(a)).join(" "), "error");
+  };
+
+  window.Module = window.Module || {};
+  Module.canvas = canvasEl;
+  Module.locateFile = function(path) {
+    return GALLERY_BASE + path;
+  };
+  Module.print = function(text) {
+    appendLog(text, "log");
+  };
+  Module.printErr = function(text) {
+    appendLog(text, "error");
+  };
+  Module.setStatus = function(text) {
+    if (statusEl) {
+      statusEl.textContent = text || "Gallery ready";
+    }
+  };
+
+  const script = document.createElement("script");
+  script.src = GALLERY_BASE + "index.js";
+  script.async = true;
+  script.onerror = () => {
+    if (statusEl) statusEl.textContent = "Failed to load /assets/gallery/index.js";
+    appendLog("Failed to load " + GALLERY_BASE + "index.js", "error");
+  };
+  document.body.appendChild(script);
+})();
+</script>
+
 <div class="web3-gate-wrapper">
   <style>
     .upload-card {
@@ -533,8 +716,10 @@ function generateRandomHash() {
                     }
                     const title = card.dataset.title || "NFTAsset";
                     const folder = card.dataset.foldercid || `collection_${localStorage.getItem('app_currentUser') || localStorage.getItem('currentUser')}`;
-                    const file = card.dataset.filename;
-                    const finalWorkerUri = `${WORKER_URL}/get-file?path=${folder}/${file}`;
+                   const file = card.dataset.filename; // например, "randomhash.jpg"
+                  const baseFileName = file.substring(0, file.lastIndexOf('.')) || file;
+                  // Указываем путь к сгенерированному воркером JSON-файлу метаданных:
+                  const finalWorkerUri = `${WORKER_URL}/get-file?path=${folder}/${baseFileName}_metadata.json`;
                     namesArray.push(title);
                     urisArray.push(finalWorkerUri);
                     pricesArray.push(ethers.parseUnits(card.querySelector('.mint-price-input')?.value.trim() || "1.0", 6));

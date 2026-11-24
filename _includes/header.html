@@ -72,31 +72,13 @@ top: 0;
 left: 0;
 width: 100vw;
 height: 100vh;
-background-image: url('/assets/carrot.gif');
-background-repeat: repeat;
+background-image: url('/assets/background.png');
 background-size: auto;
 background-position: left top;
 z-index: -2;
 pointer-events: none;
 }
 
-body::after {
-content: "";
-position: fixed;
-top: 0;
-left: 0;
-width: 100vw;
-height: 100vh;
-background-image: url('/assets/background.webp');
-background-repeat: repeat;
-background-size: auto;
-background-position: left top;
-opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
-z-index: -1;
-pointer-events: none;
-}
 
 .bi {padding: 0.1em;}
 a:hover {text-decoration: none;}
@@ -113,11 +95,29 @@ background-repeat: repeat !important;
 background-size: auto !important;
 background-position: left top !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/* ===backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 box-shadow: none;
 border-top: none;
 border-bottom: 1px solid rgba(255, 77, 77, 0.4);
+}
+
+body::after {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-image: url('/assets/background.webp');
+background-repeat: repeat;
+background-size: auto;
+background-position: left top;
+opacity: 0.75;
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
+z-index: -1;
+pointer-events: none;
 }
 
 /* 
@@ -153,8 +153,8 @@ background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 }
 .footer-heading { color: #faf; }
 .footer-col-wrapper { color: #ffffff; }
@@ -164,6 +164,44 @@ width: 1.4em;
 height: 1.4em;
 vertical-align: -0.125em;
 color: inherit;
+}
+
+/* --- GLITCH TEXT & IDLE MOTION ON BUTTONS --- */
+.glitch-text {
+display: inline-block;
+position: relative;
+}
+
+@keyframes buttonIdleDrift {
+  0%, 100% {
+    translate: 0px 0px;
+  }
+  25% {
+    translate: 0.7px -0.6px;
+  }
+  50% {
+    translate: -0.6px 0.7px;
+  }
+  75% {
+    translate: 0.5px 0.5px;
+  }
+}
+
+.page-link,
+.btn-submit,
+.btn-flat,
+.btn-web3,
+.dropdown-btn {
+  animation: buttonIdleDrift 4.5s ease-in-out infinite;
+}
+
+.page-link:hover,
+.btn-submit:hover,
+.btn-flat:hover,
+.btn-web3:hover,
+.dropdown-btn:hover,
+.btn-web3:disabled {
+  animation: none;
 }
 
 /* --- MODAL WINDOW & AUTH / CABINET --- */
@@ -190,8 +228,8 @@ background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 border: 2px solid #ff4d4d;
 border-radius: 12px;
 width: 100%;
@@ -246,8 +284,8 @@ color: #ff4d4d;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 border: 1px solid #ff4d4d !important;
 border-radius: 6px;
 padding: 10px;
@@ -273,8 +311,8 @@ box-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
-backdrop-filter: blur(2px) !important;
--webkit-backdrop-filter: blur(2px) !important;
+/*---backdrop-filter: blur(2px) !important;
+-webkit-backdrop-filter: blur(2px) !important;--- */
 box-sizing: border-box;
 }
 
@@ -479,8 +517,8 @@ height: 100vh;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 box-shadow: none;
 padding: 20px 15px;
 overflow-y: auto;
@@ -713,8 +751,8 @@ width: max-content;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 opacity: 0.95;
-backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);
+/*---backdrop-filter: blur(2px);
+-webkit-backdrop-filter: blur(2px);--- */
 border: 1px solid #ff4d4d;
 border-radius: 0 0 4px 4px;
 box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
@@ -884,7 +922,7 @@ main { margin-top: 0px; }
 <!-- Desktop Log In button on panel (Moved to the very left) -->
 <div class="menu-single desktop-only-login">
 <a class="page-link" id="desktopAuthBtn">
-<i class="bi bi-box-arrow-in-right" id="desktopAuthIcon"></i><span id="desktopAuthText">Log In</span>
+<i class="bi bi-box-arrow-in-right" id="desktopAuthIcon"></i><span id="desktopAuthText" class="glitch-text">Log In</span>
 </a>
 </div>
 
@@ -894,7 +932,7 @@ main { margin-top: 0px; }
 <div class="menu-single">
 <a class="page-link" href="{{ item.url}}" title="{{ item.title}}" data-service="{{ parts[0] }}">
 <i class="bi bi-{% case parts[0] %} {% when 'home' %} house-door {% when 'secretfiles' %}lock {% else %} {{ parts[0] }}{% endcase %}"></i>
-{{ parts[0]}}
+<span class="glitch-text">{{ parts[0]}}</span>
 </a>
 </div>
 {% endunless %}
@@ -903,21 +941,21 @@ main { margin-top: 0px; }
 <!-- KOWASUGI (Polygon Token Link) -->
 <div class="menu-single">
   <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
-    <i class="bi bi-currency-exchange"></i> KOWASUGI
+    <i class="bi bi-currency-exchange"></i> <span class="glitch-text">KOWASUGI</span>
   </a>
 </div>
 
 <!-- CONCEAL (Polygon Token Link) -->
 <div class="menu-single">
   <a class="page-link" href="https://dapp.quickswap.exchange/swap?type=best&from=ETH&to=0x137Ee749f0F8c2eD34cA00dE33BB59E3dafA494A&chainId=137" title="conceal" data-service="conceal" target="_blank" rel="noopener noreferrer">
-    <i class="bi bi-shield-lock"></i> CONCEAL
+    <i class="bi bi-shield-lock"></i> <span class="glitch-text">CONCEAL</span>
   </a>
 </div>
 
 {% for author in authors %}
 {% if author != "" and author != "runrabb1tjunk" %}
 <div class="menu-dropdown">
-<div class="dropdown-btn">{{ author }}</div>
+<div class="dropdown-btn"><span class="glitch-text">{{ author }}</span></div>
 <div class="dropdown-content">
 {% for item in site.nav %}
 {% assign parts = item.title | split: ' '%}
@@ -930,7 +968,7 @@ main { margin-top: 0px; }
 {% else %}
 <i class="bi bi-{{ parts[0] }}"></i>
 {% endif %}
-{{ parts[0] | capitalize }}
+<span class="glitch-text">{{ parts[0] | capitalize }}</span>
 </a>
 {% endif %}
 {% endfor %}
@@ -963,9 +1001,9 @@ main { margin-top: 0px; }
 <label for="password">Password</label>
 <input type="password" id="password" required placeholder="******">
 </div>
-<button type="submit" class="btn-submit" id="submitBtn">Log In</button>
+<button type="submit" class="btn-submit" id="submitBtn"><span class="glitch-text">Log In</span></button>
 </form>
-<button class="btn-flat" id="switchBtn" onclick="toggleAuthMode()">Register</button>
+<button class="btn-flat" id="switchBtn" onclick="toggleAuthMode()"><span class="glitch-text">Register</span></button>
 <div id="auth-status" class="status-msg"></div>
 </div>
 <!-- PERSONAL CABINET SECTION -->
@@ -980,9 +1018,9 @@ main { margin-top: 0px; }
 </div>
 <!-- Wallet selectors (MetaMask, Trust, Phantom) -->
 <div id="web3-connect-group" class="web3-wallet-selectors hidden">
-<button class="btn-web3 btn-metamask" id="btn-mm" onclick="connectWallet('metamask')">MetaMask</button>
-<button class="btn-web3 btn-trust" id="btn-tw" onclick="connectWallet('trust')">Trust Wallet</button>
-<button class="btn-web3 btn-phantom" id="btn-ph" onclick="connectWallet('phantom')">Phantom</button>
+<button class="btn-web3 btn-metamask" id="btn-mm" onclick="connectWallet('metamask')"><span class="glitch-text">MetaMask</span></button>
+<button class="btn-web3 btn-trust" id="btn-tw" onclick="connectWallet('trust')"><span class="glitch-text">Trust Wallet</span></button>
+<button class="btn-web3 btn-phantom" id="btn-ph" onclick="connectWallet('phantom')"><span class="glitch-text">Phantom</span></button>
 </div>
 <div class="divider"></div>
 
@@ -1013,12 +1051,14 @@ main { margin-top: 0px; }
 </div>
 
 <div class="divider"></div>
-<button class="btn-submit" id="update-btn" onclick="updateData()">Update Balance & Points</button>
-<button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()">Log Out</button>
+<button class="btn-submit" id="update-btn" onclick="updateData()"><span class="glitch-text">Update Balance & Points</span></button>
+<button class="btn-flat" style="margin-top:15px;" id="logout-btn" onclick="handleLogout()"><span class="glitch-text">Log Out</span></button>
 <div id="cabinet-status" class="status-msg"></div>
 </div>
 </div>
 </div>
+
+<script src="https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js"></script>
 <script>
 const WORKER_URL = "https://nameless-snow-f3b7.fgfg57468.workers.dev";
 const modal = document.getElementById('authModal');
@@ -1030,6 +1070,152 @@ let isRegisterMode = false;
 let currentUser = null;
 let currentPass = null;
 let linkedWallet = null;
+
+// 100% ховер-глитч (оставляем ваши параметры без изменений)
+const glitchOptions = {
+  playMode: 'manual',
+  createContainers: true,
+  hideOverflow: false,
+  timing: {
+    duration: 1000,
+    iterations: Infinity,
+  },
+  glitchTimeSpan: {
+    start: 0,
+    end: 1,
+  },
+  shake: {
+    velocity: 10,
+    amplitudeX: 0.25,
+    amplitudeY: 0.25,
+  },
+  slice: {
+    count: 5,
+    velocity: 15,
+    minHeight: 0.02,
+    maxHeight: 0.15,
+    hueRotate: true,
+  },
+  pulse: false
+};
+
+// ~5% от ховер-глитча для спокойного состояния (оставляем ваши параметры без изменений)
+const idleGlitchOptions = {
+  playMode: 'always',
+  createContainers: true,
+  hideOverflow: false,
+  timing: {
+    duration: 2400,
+    iterations: Infinity,
+  },
+  glitchTimeSpan: {
+    start: 0,
+    end: 1,
+  },
+  shake: {
+    velocity: 10,
+    amplitudeX: 0.05,
+    amplitudeY: 0.05,
+  },
+  slice: {
+    count: 1,
+    velocity: 4,
+    minHeight: 0.01,
+    maxHeight: 0.03,
+    hueRotate: true,
+  },
+  pulse: false
+};
+
+const glitchInstances = new WeakMap();
+
+function attachGlitchToSpan(textSpan, parentBtn) {
+  if (!textSpan || typeof PowerGlitch === 'undefined') return;
+
+  // Очищаем предыдущие обработчики, если элемент уже инициализировался
+  const prev = glitchInstances.get(textSpan);
+  if (prev && prev.cleanup) {
+    prev.cleanup();
+  }
+
+  const idleGlitch = PowerGlitch.glitch(textSpan, idleGlitchOptions);
+  const hoverGlitch = PowerGlitch.glitch(textSpan, glitchOptions);
+
+  // Явно запускаем idle-анимацию сразу после создания
+  if (idleGlitch && typeof idleGlitch.startGlitch === 'function') {
+    idleGlitch.startGlitch();
+  }
+
+  const targetHoverNode = parentBtn || textSpan;
+
+  const onEnter = () => {
+    if (idleGlitch && typeof idleGlitch.stopGlitch === 'function') {
+      idleGlitch.stopGlitch();
+    }
+    if (hoverGlitch && typeof hoverGlitch.startGlitch === 'function') {
+      hoverGlitch.startGlitch();
+    }
+  };
+
+  const onLeave = () => {
+    if (hoverGlitch && typeof hoverGlitch.stopGlitch === 'function') {
+      hoverGlitch.stopGlitch();
+    }
+    if (idleGlitch && typeof idleGlitch.startGlitch === 'function') {
+      idleGlitch.startGlitch();
+    }
+  };
+
+  targetHoverNode.addEventListener('mouseenter', onEnter);
+  targetHoverNode.addEventListener('mouseleave', onLeave);
+
+  glitchInstances.set(textSpan, {
+    idleGlitch,
+    hoverGlitch,
+    cleanup: () => {
+      targetHoverNode.removeEventListener('mouseenter', onEnter);
+      targetHoverNode.removeEventListener('mouseleave', onLeave);
+    }
+  });
+}
+
+function refreshIdleGlitches() {
+  if (typeof PowerGlitch === 'undefined') return;
+  document.querySelectorAll('.glitch-text').forEach(textSpan => {
+    const entry = glitchInstances.get(textSpan);
+    if (entry && entry.idleGlitch && typeof entry.idleGlitch.startGlitch === 'function') {
+      entry.idleGlitch.startGlitch();
+    } else {
+      const parentBtn = textSpan.closest('.page-link, .btn-submit, .btn-flat, .btn-web3, .dropdown-btn');
+      attachGlitchToSpan(textSpan, parentBtn);
+    }
+  });
+}
+
+function setupButtonHoverGlitch() {
+  if (typeof PowerGlitch === 'undefined') return;
+  const buttons = document.querySelectorAll('.page-link, .btn-submit, .btn-flat, .btn-web3, .dropdown-btn');
+  buttons.forEach(btn => {
+    const textEl = btn.querySelector('.glitch-text');
+    if (textEl) {
+      attachGlitchToSpan(textEl, btn);
+    }
+  });
+}
+
+function setButtonGlitchText(elementOrId, newText) {
+  const el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
+  if (!el) return;
+
+  const textSpan = el.classList.contains('glitch-text') ? el : el.querySelector('.glitch-text');
+  if (textSpan) {
+    textSpan.textContent = newText;
+    const parentBtn = textSpan.closest('.page-link, .btn-submit, .btn-flat, .btn-web3, .dropdown-btn');
+    attachGlitchToSpan(textSpan, parentBtn);
+  } else {
+    el.innerText = newText;
+  }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const savedUser = localStorage.getItem('app_currentUser');
@@ -1044,6 +1230,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateAuthButtonText(false, null);
     }
     checkInstalledWallets();
+    setupButtonHoverGlitch();
+
+    // Повторный пинок idle-анимации после полной отрисовки шрифтов и верстки
+    requestAnimationFrame(() => refreshIdleGlitches());
+    window.addEventListener('load', () => refreshIdleGlitches(), { once: true });
 });
 
 if (desktopBtn) {
@@ -1056,12 +1247,11 @@ closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
 modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
 function updateAuthButtonText(isLoggedIn, username) {
-    const txtElem = document.getElementById('desktopAuthText');
     const iconElem = document.getElementById('desktopAuthIcon');
     const mobIcon = mobileBtn ? mobileBtn.querySelector('i') : null;
     
     if (isLoggedIn && username) {
-        if (txtElem) txtElem.innerText = username;
+        setButtonGlitchText('desktopAuthText', username);
         if (iconElem) {
             iconElem.className = "bi bi-person-fill";
         }
@@ -1069,7 +1259,7 @@ function updateAuthButtonText(isLoggedIn, username) {
             mobIcon.className = "bi bi-person-fill";
         }
     } else {
-        if (txtElem) txtElem.innerText = "Log In";
+        setButtonGlitchText('desktopAuthText', "Log In");
         if (iconElem) {
             iconElem.className = "bi bi-box-arrow-in-right";
         }
@@ -1099,6 +1289,7 @@ function openModalForm() {
     modal.classList.add('active');
     if (authCard) authCard.scrollTop = 0;
     if (modal) modal.scrollTop = 0;
+    requestAnimationFrame(() => refreshIdleGlitches());
 }
 
 function toggleAuthMode() {
@@ -1108,17 +1299,15 @@ function toggleAuthMode() {
 function resetAuthForm(toRegister) {
     isRegisterMode = toRegister;
     const title = document.getElementById('modalTitle');
-    const submitBtn = document.getElementById('submitBtn');
-    const switchBtn = document.getElementById('switchBtn');
     document.getElementById("auth-status").innerText = "";
     if (isRegisterMode) {
         title.innerText = "Register";
-        submitBtn.innerText = "Create Account";
-        switchBtn.innerText = "Already have an account? Log In";
+        setButtonGlitchText('submitBtn', "Create Account");
+        setButtonGlitchText('switchBtn', "Already have an account? Log In");
     } else {
         title.innerText = "System Login";
-        submitBtn.innerText = "Log In";
-        switchBtn.innerText = "Register";
+        setButtonGlitchText('submitBtn', "Log In");
+        setButtonGlitchText('switchBtn', "Register");
     }
 }
 
@@ -1184,6 +1373,7 @@ async function handleAuthSubmit(event) {
         }
         if (authCard) authCard.scrollTop = 0;
         if (modal) modal.scrollTop = 0;
+        requestAnimationFrame(() => refreshIdleGlitches());
     } catch (err) {
         statusDiv.innerText = `Connection error: ${err.message}`;
     } finally {
@@ -1203,11 +1393,11 @@ function checkInstalledWallets() {
         }
     }
     const mmBtn = document.getElementById('btn-mm');
-    if (mmBtn && !hasMetaMask && !isAnyEth) { mmBtn.disabled = true; mmBtn.innerText = "MetaMask (Not Installed)"; }
+    if (mmBtn && !hasMetaMask && !isAnyEth) { mmBtn.disabled = true; setButtonGlitchText(mmBtn, "MetaMask (Not Installed)"); }
     const twBtn = document.getElementById('btn-tw');
-    if (twBtn && !hasTrust) { twBtn.disabled = true; twBtn.innerText = "Trust Wallet (Not Installed)"; }
+    if (twBtn && !hasTrust) { twBtn.disabled = true; setButtonGlitchText(twBtn, "Trust Wallet (Not Installed)"); }
     const phBtn = document.getElementById('btn-ph');
-    if (phBtn && !hasPhantom) { phBtn.disabled = true; phBtn.innerText = "Phantom (Not Installed)"; }
+    if (phBtn && !hasPhantom) { phBtn.disabled = true; setButtonGlitchText(phBtn, "Phantom (Not Installed)"); }
 }
 
 function getProvider(walletType) {

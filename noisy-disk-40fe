@@ -1,0 +1,89 @@
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+
+    // CORS заголовки для доступа из игры
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    try {
+      // 1. Получение списка повешенных картин для конкретного пользователя
+      if (path === "/get-placed-paintings") {
+        const username = url.searchParams.get("username");
+        const { results } = await env.DB.prepare(
+          "SELECT * FROM placed_paintings WHERE username = ?"
+        ).bind(username).all();
+        
+        return new Response(JSON.stringify(results || []), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // 1.1. Новый метод: получение ВСЕХ размещенных картин для всех пользователей
+      if (path === "/get-all-paintings") {
+        const { results } = await env.DB.prepare(
+          "SELECT * FROM placed_paintings"
+        ).all();
+        
+        return new Response(JSON.stringify(results || []), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // 2. Сохранение / обновление положения картины (принимает плоские координаты)
+      if (path === "/save-placed-painting" && request.method === "POST") {
+        const body = await request.json();
+
+        await env.DB.prepare(`
+          INSERT INTO placed_paintings (id, username, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, rot_w, width_cm, height_cm, image_url)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id, username) DO UPDATE SET
+            pos_x=excluded.pos_x, pos_y=excluded.pos_y, pos_z=excluded.pos_z,
+            rot_x=excluded.rot_x, rot_y=excluded.rot_y, rot_z=excluded.rot_z, rot_w=excluded.rot_w,
+            width_cm=excluded.width_cm, height_cm=excluded.height_cm, image_url=excluded.image_url
+        `).bind(
+          body.id, 
+          body.username, 
+          body.pos_x ?? 0, body.pos_y ?? 0, body.pos_z ?? 0,
+          body.rot_x ?? 0, body.rot_y ?? 0, body.rot_z ?? 0, body.rot_w ?? 1,
+          body.widthCm ?? 50, 
+          body.heightCm ?? 50, 
+          body.imageUrl ?? ""
+        ).run();
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      // 3. Удаление картины со стены
+      if (path === "/delete-placed-painting" && request.method === "POST") {
+        const body = await request.json();
+        await env.DB.prepare(
+          "DELETE FROM placed_paintings WHERE id = ? AND username = ?"
+        ).bind(body.id, body.username).run();
+
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      return new Response("Not Found", { status: 404, headers: corsHeaders });
+
+    } catch (err) {
+      // Возвращает текст ошибки в лог C# при исключении в базе данных
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+  }
+};

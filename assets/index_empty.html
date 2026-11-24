@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raylib Web</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #111;
+        color: #eee;
+        font-family: monospace;
+      }
+
+      /* Контейнер только под холст и консоль */
+      #app {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      /* У canvas не должно быть border/padding, чтобы координаты мыши не смещались */
+      canvas#canvas {
+        display: block;
+        border: 0;
+        padding: 0;
+        background: #000;
+        outline: none;
+      }
+
+      /* Консоль под окном игры */
+      textarea#output {
+        display: block;
+        width: 1280px;
+        max-width: 100%;
+        height: 220px;
+        margin: 0;
+        padding: 8px;
+        border: 1px solid #333;
+        background: #000;
+        color: #ddd;
+        font-family: 'Lucida Console', Monaco, monospace;
+        font-size: 13px;
+        resize: vertical;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+      <textarea id="output" rows="10" readonly></textarea>
+    </div>
+
+    <script type="text/javascript">
+      var canvasElement = document.getElementById('canvas');
+      var outputElement = document.getElementById('output');
+      if (outputElement) outputElement.value = '';
+
+      canvasElement.addEventListener('webglcontextlost', function (e) {
+        e.preventDefault();
+        if (outputElement) {
+          outputElement.value += '[WebGL] Context lost\n';
+          outputElement.scrollTop = outputElement.scrollHeight;
+        }
+      }, false);
+
+      var Module = {
+        canvas: canvasElement,
+        print: function () {
+          var args = Array.prototype.slice.call(arguments);
+          console.log.apply(console, args);
+          if (outputElement) {
+            outputElement.value += args.join(' ') + '\n';
+            outputElement.scrollTop = outputElement.scrollHeight;
+          }
+        },
+        printErr: function () {
+          var args = Array.prototype.slice.call(arguments);
+          console.error.apply(console, args);
+          if (outputElement) {
+            outputElement.value += '[ERR] ' + args.join(' ') + '\n';
+            outputElement.scrollTop = outputElement.scrollHeight;
+          }
+        }
+      };
+
+      window.onerror = function (event) {
+        if (outputElement) {
+          outputElement.value += '[ERROR] ' + event + '\n';
+          outputElement.scrollTop = outputElement.scrollHeight;
+        }
+      };
+    </script>
+    <script async type="text/javascript" src="index.js"></script>
+  </body>
+</html>
