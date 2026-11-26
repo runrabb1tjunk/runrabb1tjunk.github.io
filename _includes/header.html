@@ -483,7 +483,7 @@ top: 15px;
 right: 15px;
 z-index: 1010;
 background-color: rgba(183, 28, 28, 0.6) !important;
-border: 1px solid #ff4d4d !important;
+border: none !important;
 border-radius: 8px;
 width: 50px;
 height: 50px;
@@ -566,7 +566,7 @@ box-sizing: border-box;
 margin: 0;
 }
 
-/* Normalized general menu buttons styling */
+/* Normalized general menu buttons styling (без красных рамок) */
 .nav-trigger:checked ~.trigger .menu-single .page-link {
 display: flex !important;
 align-items: center !important;
@@ -574,7 +574,7 @@ justify-content: center !important;
 gap: 10px;
 padding: 12px 15px !important;
 background-color: rgba(183, 28, 28, 0.5) !important;
-border: 1px solid #ff4d4d !important;
+border: none !important;
 border-radius: 8px !important;
 color: #ffffff !important;
 text-decoration: none;
@@ -597,7 +597,7 @@ border: 1px solid #00ff66 !important;
 
 .nav-trigger:checked ~.trigger .menu-single .page-link:hover {
 background-color: rgba(229, 57, 53, 0.8) !important;
-border-color: #ff6666 !important;
+border: none !important;
 box-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
 filter: brightness(1.3) !important;
 }
@@ -613,38 +613,59 @@ display: inline-flex;
 align-items: center;
 }
 
-/* Mobile Tokens & Authors Blocks */
+/* Mobile Tokens & Authors Blocks (иконка слева от текста + цветовое выделение заголовков) */
 .nav-trigger:checked ~.trigger .menu-dropdown {
 display: flex !important;
 flex-direction: column !important;
 align-items: center !important;
 width: 100% !important;
+max-width: 100% !important;
 background: transparent !important;
 border: none !important;
 padding: 0 !important;
-margin: 6px 0 0 0 !important;
+margin: 10px 0 0 0 !important;
 position: static !important;
 box-sizing: border-box !important;
 }
 
 .nav-trigger:checked ~.trigger .dropdown-btn {
-display: block !important;
-color: #ffffff !important;
-font-size: 1.5em !important;
+display: inline-flex !important;
+flex-direction: row !important;
+align-items: center !important;
+justify-content: center !important;
+gap: 8px !important;
+color: #7ef9c7 !important;
+font-size: 1.55em !important;
 font-weight: bold !important;
 text-align: center !important;
-padding: 0 !important;
-margin-bottom: 8px !important;
+padding: 0 12px 4px 12px !important;
+margin-bottom: 10px !important;
 text-transform: uppercase !important;
-letter-spacing: 1px !important;
+letter-spacing: 2px !important;
 background: transparent !important;
+background-image: none !important;
 border: none !important;
-width: 100% !important;
+border-bottom: 1px dashed rgba(126, 249, 199, 0.45) !important;
+width: auto !important;
 pointer-events: none !important;
-text-shadow: 0px 1px 3px rgba(0,0,0,0.8) !important;
+text-shadow: 0px 0px 10px rgba(126, 249, 199, 0.25), 0px 2px 4px rgba(0, 0, 0, 0.9) !important;
 backdrop-filter: none !important;
 -webkit-backdrop-filter: none !important;
 box-shadow: none !important;
+}
+
+.nav-trigger:checked ~.trigger .menu-dropdown.authors-dropdown .dropdown-btn {
+color: #d99bff !important;
+border-bottom-color: rgba(217, 155, 255, 0.45) !important;
+text-shadow: 0px 0px 10px rgba(217, 155, 255, 0.25), 0px 2px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+.nav-trigger:checked ~.trigger .dropdown-btn i {
+display: inline-flex !important;
+align-items: center !important;
+font-size: 1.15em !important;
+line-height: 1 !important;
+color: inherit !important;
 }
 .nav-trigger:checked~.trigger .dropdown-btn::after { display: none !important; }
 
@@ -652,14 +673,19 @@ box-shadow: none !important;
 .nav-trigger:checked ~.trigger .tokens-list-dropdown {
 display: flex !important;
 position: static !important;
+left: auto !important;
+right: auto !important;
 flex-direction: column !important;
+align-items: center !important;
 gap: 10px !important;
 width: 100% !important;
+max-width: 100% !important;
 background: transparent !important;
 border: none !important;
 box-shadow: none !important;
 padding: 0 !important;
-margin: 0 !important;
+margin: 0 auto !important;
+box-sizing: border-box !important;
 }
 
 .nav-trigger:checked ~.trigger .tokens-list-dropdown .page-link {
@@ -669,16 +695,23 @@ justify-content: center !important;
 gap: 10px;
 padding: 12px 15px !important;
 background-color: rgba(183, 28, 28, 0.5) !important;
-border: 1px solid #ff4d4d !important;
+border: none !important;
 border-radius: 8px !important;
 color: #ffffff !important;
 text-decoration: none;
 font-size: 1.3em !important;
 width: 100% !important;
+max-width: 100% !important;
 min-height: 48px;
 font-weight: bold;
 box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+margin: 0 auto !important;
+box-sizing: border-box !important;
+}
+
+.nav-trigger:checked ~.trigger .tokens-list-dropdown .page-link:hover {
+border: none !important;
 }
 
 /* Mobile Author Social Buttons Layout */
@@ -687,7 +720,7 @@ display: flex !important;
 position: static !important;
 flex-direction: column !important;
 align-items: center !important;
-gap: 12px !important;
+gap: 14px !important;
 width: 100% !important;
 background: transparent !important;
 border: none !important;
@@ -705,12 +738,12 @@ width: 100% !important;
 }
 
 .nav-trigger:checked ~.trigger .author-name-label {
-color: #ffffff !important;
-font-size: 1.35em !important;
+color: #ffd166 !important;
+font-size: 1.4em !important;
 font-weight: bold !important;
 text-transform: uppercase !important;
-letter-spacing: 1px !important;
-text-shadow: 0px 1px 3px rgba(0,0,0,0.8) !important;
+letter-spacing: 1.5px !important;
+text-shadow: 0px 0px 8px rgba(255, 209, 102, 0.2), 0px 2px 4px rgba(0, 0, 0, 0.95) !important;
 }
 
 .nav-trigger:checked ~.trigger .author-socials-group {
@@ -736,6 +769,7 @@ max-width: 48px !important;
 aspect-ratio: 1/1 !important;
 padding: 0 !important;
 margin: 0 !important;
+border: none !important;
 border-radius: 8px !important;
 transition: all 0.2s !important;
 box-sizing: border-box !important;
@@ -1311,10 +1345,10 @@ main { margin-top: 0px; }
         playMode: 'manual',
         createContainers: true,
         hideOverflow: false,
-        timing: { duration: 900, iterations: Infinity },
+        timing: { duration: 750, iterations: Infinity },
         glitchTimeSpan: { start: 0, end: 1 },
-        shake: false,
-        slice: { count: 6, velocity: 14, minHeight: 0.02, maxHeight: 0.14, hueRotate: true },
+        shake: { velocity: 18, amplitudeX: 0.08, amplitudeY: 0.08 },
+        slice: { count: 8, velocity: 18, minHeight: 0.02, maxHeight: 0.16, hueRotate: true },
         pulse: false
       });
     }
@@ -1324,10 +1358,10 @@ main { margin-top: 0px; }
         playMode: 'manual',
         createContainers: true,
         hideOverflow: false,
-        timing: { duration: 900, iterations: Infinity },
+        timing: { duration: 750, iterations: Infinity },
         glitchTimeSpan: { start: 0, end: 1 },
-        shake: false,
-        slice: { count: 5, velocity: 14, minHeight: 0.02, maxHeight: 0.14, hueRotate: true },
+        shake: { velocity: 22, amplitudeX: 0.18, amplitudeY: 0.14 },
+        slice: { count: 7, velocity: 18, minHeight: 0.02, maxHeight: 0.16, hueRotate: true },
         pulse: false
       });
     }

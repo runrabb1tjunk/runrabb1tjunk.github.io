@@ -39,17 +39,23 @@ html, body {
     text-align: center;
     margin-top: 0;
     margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
     color: #007cba;
     font-size: 2.5rem;
 }
 
-.gateway-card p {
+.gateway-card p,
+.gateway-card #gateway-desc {
     font-size: 1.5rem;
     line-height: 1.6;
     color: #fff;
     text-align: center;
+    margin-top: 0;
     margin-bottom: 25px;
-    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 650px;
 }
 
 .status-lock-notice {
@@ -58,6 +64,8 @@ html, body {
     text-align: center;
     font-weight: bold;
     margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .status-unlock-notice {
@@ -66,6 +74,8 @@ html, body {
     text-align: center;
     font-weight: bold;
     margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .loading-container {
@@ -179,6 +189,12 @@ html, body {
     font-family: inherit;
 }
 
+.tiers-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .gateway-card .box {
     display: block;
     width: 100%;
@@ -261,28 +277,60 @@ html, body {
     cursor: not-allowed;
 }
 
-.gateway-card #gateway-desc {
-    font-size: 1.5rem;
+@media (min-width: 769px) {
+    .web3-gate-wrapper {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        margin-top: 20px;
+        margin-bottom: 40px;
+        padding-left: calc(20px + 1.5cm);
+        padding-right: calc(20px + 1.5cm);
+        box-sizing: border-box;
+    }
+
+    .gateway-card {
+        width: 100%;
+        max-width: none;
+        align-items: stretch;
+    }
+
+    .gateway-card .graph-wrapper {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .tiers-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        align-items: start;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .tiers-grid .box {
+        margin-top: 0;
+        height: 100%;
+    }
 }
 
 @media (max-width: 768px) {
     .gateway-card {
         padding: 15px;
     }
+
+    .tiers-grid {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
 }
 </style>
 
 <div class="gateway-card">
-    <h1>Web3 Access Verification</h1>
-    <div id="auth-notification" class="status-lock-notice">Please log in and connect your wallet in the top menu.</div>
-    <p id="gateway-desc">Log in to the site and connect your wallet. Access to hidden materials will unlock automatically based on your token balance.</p>
-
-    <div class="loading-container" id="loading-loader">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" id="loading-text-status">Loading protected data...</div>
-    </div>
-
-    <!-- Interactive Graph -->
+    <!-- Interactive Graph at top -->
     <div class="graph-wrapper" id="graph-viewport">
         <div class="graph-header-label">Interactive Sphere Path</div>
         <div id="cy"></div>
@@ -294,19 +342,30 @@ html, body {
         </div>
     </div>
 
-    <div id="tier-0-box" class="box">
-        <b style="color:#94a3b8;">Free Tier Access</b>
-        <div id="links-list-0" class="links-container"></div>
+    <h1>Web3 Access Verification</h1>
+    <div id="auth-notification" class="status-lock-notice">Please log in and connect your wallet in the top menu.</div>
+    <p id="gateway-desc">Log in to the site and connect your wallet. Access to hidden materials will unlock automatically based on your token balance.</p>
+
+    <div class="loading-container" id="loading-loader">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text-status">Loading protected data...</div>
     </div>
 
-    <div id="tier-1333-box" class="box">
-        <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
-        <div id="links-list-1333" class="links-container"></div>
-    </div>
+    <div class="tiers-grid">
+        <div id="tier-0-box" class="box">
+            <b style="color:#94a3b8;">Free Tier Access</b>
+            <div id="links-list-0" class="links-container"></div>
+        </div>
 
-    <div id="tier-4444-box" class="box">
-        <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
-        <div id="links-list-4444" class="links-container"></div>
+        <div id="tier-1333-box" class="box">
+            <b id="title-1333" style="color:#34d399;">Tier 1333+ Content</b>
+            <div id="links-list-1333" class="links-container"></div>
+        </div>
+
+        <div id="tier-4444-box" class="box">
+            <b id="title-4444" style="color:#60a5fa;">Tier 4444+ Content</b>
+            <div id="links-list-4444" class="links-container"></div>
+        </div>
     </div>
 
     <div id="error-box" class="error-box">
@@ -641,21 +700,9 @@ function buildGraph() {
     });
 
     cy.ready(function() {
-        cy.fit();
-        const currentZoom = cy.zoom();
-        cy.zoom(currentZoom * 3);
-        const nodes = cy.nodes();
-        if (nodes.length > 0) {
-            let minX = Infinity;
-            nodes.forEach(node => {
-                const posX = node.position('x');
-                if (posX < minX) {
-                    minX = posX;
-                }
-            });
-            const leftmostNodes = nodes.filter(node => Math.abs(node.position('x') - minX) < 10);
-            cy.center(leftmostNodes);
-        }
+        cy.resize();
+        cy.fit(undefined, 36);
+        cy.center();
     });
 
     cy.on('tap', 'node', function(evt) {

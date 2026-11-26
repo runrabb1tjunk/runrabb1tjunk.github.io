@@ -283,42 +283,39 @@ permalink: /upload/
     flex-wrap: wrap;
   }
 
-  /* Десктоп: оба блока друг под другом на всю ширину экрана */
+  /* Десктоп: растягиваем внешний workspace на всю ширину с едиными боковыми полями */
   @media (min-width: 769px) {
-    .gallery-console-top-wrapper,
-    .upload-card {
+    .upload-workspace {
       width: 100vw;
       max-width: 100vw;
       margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      margin-top: 20px;
+      margin-bottom: 40px;
       padding-left: calc(20px + 1.5cm);
       padding-right: calc(20px + 1.5cm);
+      box-sizing: border-box;
     }
 
     .gallery-console-top-wrapper {
-      margin-top: 20px;
-      margin-bottom: 20px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 20px 0;
+      box-sizing: border-box;
+    }
+
+    .web3-gate-wrapper {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      box-sizing: border-box;
     }
 
     .upload-card {
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-  }
-
-  /* Мобильная раскладка */
-  @media (max-width: 768px) {
-    .upload-workspace {
-      padding: 10px;
-    }
-
-    .gallery-console-top-wrapper {
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
-
-    .upload-card {
-      padding: 16px;
-      margin: 15px auto;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      box-sizing: border-box;
     }
   }
 </style>
