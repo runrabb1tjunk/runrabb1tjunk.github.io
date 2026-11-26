@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -20,7 +21,6 @@
     /* Основные стили */
     .gallery-wrapper {
         width: 100%;
-        max-width: 800px;
         margin: 0 auto;
         display: block;
         box-sizing: border-box;
@@ -29,7 +29,6 @@
 
     .galleria-container { 
         width: 100% !important;
-        max-width: 800px;
         height: 500px; 
         margin: 20px auto;
         display: block; 
@@ -40,8 +39,7 @@
         background-color: transparent;
         border-radius: 8px;
         width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
+        margin: 0;
         box-sizing: border-box;
     }
     
@@ -62,8 +60,11 @@
         border-radius: 8px; 
         box-sizing: border-box;
         width: 100%;
-        max-width: 800px;
         overflow: hidden;
+    }
+
+    .post-group:first-child {
+        margin-top: 0;
     }
     
     .hidden { display: none; }
@@ -76,7 +77,6 @@
         line-height: 1.4;
         text-align: left;
         width: 100%;
-        max-width: 800px;
         margin: 0 auto;
         padding: 0;
         box-sizing: border-box;
@@ -115,12 +115,11 @@
     }
     
     .main-container {
-        max-width: 1200px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: none;
+        margin: 0;
         padding: 20px;
         box-sizing: border-box;
-        width: 100%;
-        overflow-x: hidden;
     }
     
     .no-images {
@@ -129,7 +128,6 @@
         font-style: italic;
         padding: 10px;
         width: 100%;
-        max-width: 800px;
     }
     
     .post-group h3 {
@@ -137,7 +135,6 @@
         margin-top: 0;
         margin-bottom: 15px;
         width: 100%;
-        max-width: 800px;
         color: #007cba;
         word-break: break-word;
     }
@@ -228,7 +225,43 @@
         filter: brightness(1.2);
     }
 
-    /* Медиа-запрос для мобильных устройств */
+    /* ДЕСКТОПНАЯ РАЗМЕТКА: на всю ширину, колонки 30% и 60% */
+@media (min-width: 769px) {
+    .main-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        padding-left: calc(20px + 1.5cm);
+        padding-right: calc(20px + 1.5cm);
+    }
+
+    #posts-index-container {
+        flex: 0 0 30%;
+        min-width: 0;
+        position: sticky;
+        top: 20px;
+    }
+
+    .posts-index {
+        margin-bottom: 0;
+    }
+
+    .posts-list {
+        max-height: calc(100vh - 120px);
+    }
+
+    .mastodon-posts-container {
+        flex: 0 0 60%;
+        min-width: 0;
+        margin: 0;
+    }
+}
+
+    /* МОБИЛЬНАЯ РАЗМЕТКА: оставляем как сейчас */
     @media (max-width: 768px) {
         .galleria-container {
             height: 320px !important;

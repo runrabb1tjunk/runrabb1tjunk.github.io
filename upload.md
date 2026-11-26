@@ -5,102 +5,395 @@ permalink: /upload/
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.2/ethers.umd.min.js"></script>
 
-<div class="gallery-console-top-wrapper" style="max-width: 800px; margin: 20px auto 0 auto; color: #fff;">
-  <style>
-    .gallery-stage-box {
-      background-image: url('/assets/background.webp') !important;
-      background-repeat: repeat !important;
-      border: 1px solid #ff4d4d;
-      border-radius: 8px 8px 0 0;
-      padding: 15px;
-      text-align: center;
-      box-sizing: border-box;
-    }
-    #gallery-canvas {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      background: rgba(0, 0, 0, 0.75);
-      border: 1px solid rgba(255, 77, 77, 0.45);
-      border-radius: 4px;
-      outline: none;
-    }
-    .gallery-console-box {
-      background: rgba(0, 0, 0, 0.85);
-      border: 1px solid #ff4d4d;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      padding: 10px 12px;
-      font-family: monospace;
-      font-size: 12px;
-      box-sizing: border-box;
-    }
-    .gallery-console-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #aaa;
-      margin-bottom: 6px;
-    }
-    #gallery-console-output {
-      height: 130px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #e4e4e7;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 8px;
-      border-radius: 4px;
-      margin-bottom: 8px;
-      text-align: left;
-    }
-    .gallery-console-input-row {
-      display: flex;
-      gap: 6px;
-    }
-    #gallery-console-input {
-      flex-grow: 1;
-      background: rgba(0, 0, 0, 0.65);
-      border: 1px solid #ff4d4d;
-      color: #fff;
-      padding: 6px 8px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 12px;
-    }
-    .gallery-console-btn {
-      background: #ff4d4d;
-      color: #fff;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-    }
-  </style>
+<style>
+  .upload-workspace {
+    width: 100%;
+    box-sizing: border-box;
+    color: #fff;
+  }
 
-  <div class="gallery-stage-box">
-    <div id="gallery-status" style="font-size: 0.85em; color: #aaa; margin-bottom: 8px;">
-      Initializing gallery...
+  .gallery-console-top-wrapper {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px auto 0 auto;
+    box-sizing: border-box;
+    color: #fff;
+  }
+
+  .gallery-stage-box {
+    background-image: url('/assets/background.webp') !important;
+    background-repeat: repeat !important;
+    border: 1px solid #ff4d4d;
+    border-radius: 8px 8px 0 0;
+    padding: 15px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  #gallery-canvas {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 77, 77, 0.45);
+    border-radius: 4px;
+    outline: none;
+  }
+
+  .gallery-console-box {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #ff4d4d;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 10px 12px;
+    font-family: monospace;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+
+  .gallery-console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  #gallery-console-output {
+    height: 140px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #e4e4e7;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+
+  .gallery-console-input-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  #gallery-console-input {
+    flex-grow: 1;
+    min-width: 0;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid #ff4d4d;
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+
+  .gallery-console-btn {
+    background: #ff4d4d;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .web3-gate-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .upload-card {
+    background-image: url('/assets/background.webp') !important;
+    background-repeat: repeat !important;
+    border: 1px solid #ff4d4d;
+    border-radius: 8px;
+    padding: 25px;
+    color: #fff;
+    width: 100%;
+    max-width: 100%;
+    margin: 20px auto;
+    box-sizing: border-box;
+  }
+
+  .upload-dropzone {
+    border: 2px dashed #ff4d4d;
+    border-radius: 6px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    transition: background 0.2s ease;
+  }
+
+  .upload-dropzone.drag-over {
+    background: rgba(255, 77, 77, 0.2);
+  }
+
+  .image-preview-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .image-preview-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .dimensions-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .form-fields input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #ff4d4d;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .file-size-tag {
+    font-size: 0.8em;
+    color: #34d399;
+    margin-top: 2px;
+  }
+
+  .status-msg {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #34d399;
+    text-align: center;
+  }
+
+  .existing-nfts-section {
+    margin-top: 35px;
+    border-top: 1px dashed rgba(255, 77, 77, 0.4);
+    padding-top: 20px;
+  }
+
+  .existing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .nft-item-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+  }
+
+  .nft-item-card.minted-on-chain {
+    border: 2px solid #34d399 !important;
+    background: rgba(16, 185, 129, 0.1) !important;
+  }
+
+  .nft-item-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .nft-checkbox {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    transform: scale(1.3);
+    cursor: pointer;
+  }
+
+  .nft-item-card .title {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nft-item-card .dims {
+    font-size: 0.8em;
+    color: #aaa;
+    margin-top: 4px;
+  }
+
+  .mint-badge {
+    font-size: 0.75em;
+    background: #34d399;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .mint-price-input {
+    margin-top: 6px;
+    width: 90%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #34d399;
+    color: #fff;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .action-buttons-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+
+  /* Десктоп: оба блока друг под другом на всю ширину экрана */
+  @media (min-width: 769px) {
+    .gallery-console-top-wrapper,
+    .upload-card {
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding-left: calc(20px + 1.5cm);
+      padding-right: calc(20px + 1.5cm);
+    }
+
+    .gallery-console-top-wrapper {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .upload-card {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+  }
+
+  /* Мобильная раскладка */
+  @media (max-width: 768px) {
+    .upload-workspace {
+      padding: 10px;
+    }
+
+    .gallery-console-top-wrapper {
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .upload-card {
+      padding: 16px;
+      margin: 15px auto;
+    }
+  }
+</style>
+
+<div class="upload-workspace">
+  <div class="gallery-console-top-wrapper">
+    <div class="gallery-stage-box">
+      <div id="gallery-status" style="font-size: 0.85em; color: #aaa; margin-bottom: 8px;">
+        Initializing gallery...
+      </div>
+      <canvas id="gallery-canvas" tabindex="0"></canvas>
     </div>
-    <canvas id="gallery-canvas" tabindex="0"></canvas>
+
+    <div class="gallery-console-box">
+      <div class="gallery-console-header">
+        <span>CONSOLE (/assets/gallery)</span>
+        <button type="button" class="gallery-console-btn" id="btn-clear-console" style="background:#333; padding:3px 8px;">
+          Clear
+        </button>
+      </div>
+      <div id="gallery-console-output"></div>
+      <form class="gallery-console-input-row" id="gallery-console-form">
+        <input type="text" id="gallery-console-input" placeholder="Enter JS expression or command..." autocomplete="off" />
+        <button type="submit" class="gallery-console-btn">Run</button>
+      </form>
+    </div>
   </div>
 
-  <div class="gallery-console-box">
-    <div class="gallery-console-header">
-      <span>CONSOLE (/assets/gallery)</span>
-      <button type="button" class="gallery-console-btn" id="btn-clear-console" style="background:#333; padding:3px 8px;">
-        Clear
-      </button>
+  <div class="web3-gate-wrapper">
+    <div class="upload-card">
+      <div style="text-align:center; margin-bottom: 15px; font-size: 0.9em; color: #aaa;">
+        Download current version of gallery client at 
+        <a href="https://itch.io" target="_blank" style="color: #ff4d4d; font-weight: bold; text-decoration: underline;">
+          https://demidmorozov.itch.io/sphere-gallery
+        </a>
+      </div>
+
+      <div id="upload-auth-status" class="status-lock-notice" style="text-align:center; margin-bottom:15px;">
+        Log in and connect wallet to upload
+      </div>
+
+      <div id="upload-main-area" class="hidden">
+        <!-- Dropzone -->
+        <div class="upload-dropzone" id="dropzone">
+          <i class="bi bi-cloud-arrow-up" style="font-size:2rem; color:#ff4d4d;"></i>
+          <p>Click or drag new images here (Batch Upload & Auto-Compress to &lt;300 KB)</p>
+          <input type="file" id="file-input" multiple accept="image/*" class="hidden">
+        </div>
+
+        <!-- Item Preview List -->
+        <div id="preview-list"></div>
+
+        <button id="btn-submit-pinata" class="btn-submit" style="display:none; width: 100%; padding: 12px; margin-top: 15px; background: #ff4d4d; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+          Upload
+        </button>
+
+        <div id="upload-loader" class="status-msg"></div>
+
+        <!-- Раздел с уже загруженными работами -->
+        <div class="existing-nfts-section">
+          <h3 style="color:#ff4d4d; margin-bottom: 5px;">Your Uploaded Works</h3>
+          <div id="existing-nfts-status" style="font-size: 0.85em; color: #aaa;">Loading existing works...</div>
+          <div id="existing-nfts-grid" class="existing-grid"></div>
+          
+          <div class="action-buttons-row">
+            <button id="btn-mint-selected" style="display:none; padding: 8px 16px; background: #10b981; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="handleMintButtonAction()">
+              Mint to chain
+            </button>
+            <button id="btn-delete-selected" style="display:none; padding: 8px 16px; background: #b91c1c; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="deleteSelectedExistingNFTs()">
+              Delete selected
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="gallery-console-output"></div>
-    <form class="gallery-console-input-row" id="gallery-console-form">
-      <input type="text" id="gallery-console-input" placeholder="Enter JS expression or command..." autocomplete="off" />
-      <button type="submit" class="gallery-console-btn">Run</button>
-    </form>
   </div>
 </div>
 
@@ -187,206 +480,6 @@ permalink: /upload/
   document.body.appendChild(script);
 })();
 </script>
-
-<div class="web3-gate-wrapper">
-  <style>
-    .upload-card {
-      background-image: url('/assets/background.webp') !important;
-      background-repeat: repeat !important;
-      border: 1px solid #ff4d4d;
-      border-radius: 8px;
-      padding: 25px;
-      color: #fff;
-      max-width: 800px;
-      margin: 20px auto;
-      box-sizing: border-box;
-    }
-    .upload-dropzone {
-      border: 2px dashed #ff4d4d;
-      border-radius: 6px;
-      padding: 30px;
-      text-align: center;
-      cursor: pointer;
-      background: rgba(0,0,0,0.2);
-      margin-bottom: 20px;
-      transition: background 0.2s ease;
-    }
-    .upload-dropzone.drag-over {
-      background: rgba(255, 77, 77, 0.2);
-    }
-    .image-preview-card {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 15px;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-    .image-preview-card img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-    .form-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-grow: 1;
-    }
-    .dimensions-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .form-fields input {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #ff4d4d;
-      color: #fff;
-      padding: 8px;
-      border-radius: 4px;
-      font-family: inherit;
-    }
-    .file-size-tag {
-      font-size: 0.8em;
-      color: #34d399;
-      margin-top: 2px;
-    }
-    .status-msg {
-      margin-top: 15px;
-      font-weight: bold;
-      color: #34d399;
-      text-align: center;
-    }
-
-    .existing-nfts-section {
-      margin-top: 35px;
-      border-top: 1px dashed rgba(255, 77, 77, 0.4);
-      padding-top: 20px;
-    }
-    .existing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-    .nft-item-card {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(255, 77, 77, 0.4);
-      border-radius: 6px;
-      padding: 10px;
-      text-align: center;
-      position: relative;
-    }
-    .nft-item-card.minted-on-chain {
-      border: 2px solid #34d399 !important;
-      background: rgba(16, 185, 129, 0.1) !important;
-    }
-    .nft-item-card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-bottom: 8px;
-    }
-    .nft-checkbox {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      transform: scale(1.3);
-      cursor: pointer;
-    }
-    .nft-item-card .title {
-      font-weight: bold;
-      font-size: 0.9em;
-      color: #fff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .nft-item-card .dims {
-      font-size: 0.8em;
-      color: #aaa;
-      margin-top: 4px;
-    }
-    .mint-badge {
-      font-size: 0.75em;
-      background: #34d399;
-      color: #000;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: bold;
-      margin-top: 4px;
-      display: inline-block;
-    }
-    .mint-price-input {
-      margin-top: 6px;
-      width: 90%;
-      background: rgba(0,0,0,0.7);
-      border: 1px solid #34d399;
-      color: #fff;
-      padding: 4px;
-      border-radius: 4px;
-      font-size: 0.85em;
-      text-align: center;
-    }
-    .action-buttons-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-      flex-wrap: wrap;
-    }
-  </style>
-
-  <div class="upload-card">
-    <div style="text-align:center; margin-bottom: 15px; font-size: 0.9em; color: #aaa;">
-      Download current version of gallery client at 
-      <a href="https://itch.io" target="_blank" style="color: #ff4d4d; font-weight: bold; text-decoration: underline;">
-        https://demidmorozov.itch.io/sphere-gallery
-      </a>
-    </div>
-
-    <div id="upload-auth-status" class="status-lock-notice" style="text-align:center; margin-bottom:15px;">
-      Log in and connect wallet to upload
-    </div>
-
-    <div id="upload-main-area" class="hidden">
-      <!-- Dropzone -->
-      <div class="upload-dropzone" id="dropzone">
-        <i class="bi bi-cloud-arrow-up" style="font-size:2rem; color:#ff4d4d;"></i>
-        <p>Click or drag new images here (Batch Upload & Auto-Compress to &lt;300 KB)</p>
-        <input type="file" id="file-input" multiple accept="image/*" class="hidden">
-      </div>
-
-      <!-- Item Preview List -->
-      <div id="preview-list"></div>
-
-      <button id="btn-submit-pinata" class="btn-submit" style="display:none; width: 100%; padding: 12px; margin-top: 15px; background: #ff4d4d; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
-        Upload
-      </button>
-
-      <div id="upload-loader" class="status-msg"></div>
-
-      <!-- Раздел с уже загруженными работами -->
-      <div class="existing-nfts-section">
-        <h3 style="color:#ff4d4d; margin-bottom: 5px;">Your Uploaded Works</h3>
-        <div id="existing-nfts-status" style="font-size: 0.85em; color: #aaa;">Loading existing works...</div>
-        <div id="existing-nfts-grid" class="existing-grid"></div>
-        
-        <div class="action-buttons-row">
-          <button id="btn-mint-selected" style="display:none; padding: 8px 16px; background: #10b981; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="handleMintButtonAction()">
-            Mint to chain
-          </button>
-          <button id="btn-delete-selected" style="display:none; padding: 8px 16px; background: #b91c1c; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;" onclick="deleteSelectedExistingNFTs()">
-            Delete selected
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 let processedImages = [];
@@ -716,10 +809,9 @@ function generateRandomHash() {
                     }
                     const title = card.dataset.title || "NFTAsset";
                     const folder = card.dataset.foldercid || `collection_${localStorage.getItem('app_currentUser') || localStorage.getItem('currentUser')}`;
-                   const file = card.dataset.filename; // например, "randomhash.jpg"
-                  const baseFileName = file.substring(0, file.lastIndexOf('.')) || file;
-                  // Указываем путь к сгенерированному воркером JSON-файлу метаданных:
-                  const finalWorkerUri = `${WORKER_URL}/get-file?path=${folder}/${baseFileName}_metadata.json`;
+                    const file = card.dataset.filename;
+                    const baseFileName = file.substring(0, file.lastIndexOf('.')) || file;
+                    const finalWorkerUri = `${WORKER_URL}/get-file?path=${folder}/${baseFileName}_metadata.json`;
                     namesArray.push(title);
                     urisArray.push(finalWorkerUri);
                     pricesArray.push(ethers.parseUnits(card.querySelector('.mint-price-input')?.value.trim() || "1.0", 6));

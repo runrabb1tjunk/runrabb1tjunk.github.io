@@ -57,12 +57,13 @@ kramdown:
 
 
 nav:
-  - title: home
+  - title: runrabb1tjunk
     url: /
-  - title: secretfiles
-    url: /secretfiles
   - title: NFT_upload
     url: /upload
+
+  - title: secretfiles
+    url: /secretfiles
 
   - title: telegram lilpitkun
     url: https://t.me/animalpicandother

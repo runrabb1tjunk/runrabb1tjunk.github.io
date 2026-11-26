@@ -6,18 +6,18 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://runrabb1tjunk.github.io/">
 <meta property="og:title" content="Run Rabbit Junk">
-<meta property="og:description" content="Sphere and Hare comic creators' site">
-<meta property="og:image" content="https://runrabb1tjunk.github.io/assets/default-share.jpg">
+<meta property="og:description" content="3D NFT gallery">
+<meta property="og:image" content="https://runrabb1tjunk.github.io/default-share.jpg">
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:url" content="https://runrabb1tjunk.github.io/">
 <meta name="twitter:title" content="Run Rabbit Junk">
-<meta name="twitter:description" content="Sphere and Hare comic creators' site">
-<meta name="twitter:image" content="https://runrabb1tjunk.github.io/assets/default-share.jpg">
-<link rel="icon" type="image/png" href="./assets/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
-<link rel="shortcut icon" href="./assets/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+<meta name="twitter:description" content="3D NFT gallery">
+<meta name="twitter:image" content="https://runrabb1tjunk.github.io/default-share.jpg">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="runrabb1tjunk" />
 <link rel="manifest" href="./assets/site.webmanifest" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,10 +31,8 @@ box-sizing: border-box;
 }
 
 /* Overriding z-index for canvas in gallery */
-.galleria-container canvas {
-z-index: 100 !important;
-}
-galleria-theme-azur canvas {
+.galleria-container canvas,
+.galleria-theme-azur canvas {
 z-index: 100 !important;
 }
 html {
@@ -79,10 +77,8 @@ z-index: -2;
 pointer-events: none;
 }
 
-
 .bi {padding: 0.1em;}
 a:hover {text-decoration: none;}
-a:visited {color: none;}
 
 /* --- BACKGROUND TEXTURE FOR PANELS AND MODALS --- */
 .site-header {
@@ -95,8 +91,6 @@ background-repeat: repeat !important;
 background-size: auto !important;
 background-position: left top !important;
 opacity: 0.95;
-/* ===backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 box-shadow: none;
 border-top: none;
 border-bottom: 1px solid rgba(255, 77, 77, 0.4);
@@ -114,30 +108,9 @@ background-repeat: repeat;
 background-size: auto;
 background-position: left top;
 opacity: 0.75;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 z-index: -1;
 pointer-events: none;
 }
-
-/* 
-.header-grass-overlay {
-  position: absolute;
-  top: 100%; 
-  left: 0;
-  width: 100vw;
-  height: 20vw;
-  background-image: url('/assets/runrab_upper_grass.png');
-  background-repeat: no-repeat;
-  background-size: 100vw 100%;
-  background-position: top center;
-  filter: invert(1);
-  mix-blend-mode: screen;
-  opacity: 0.7;
-  pointer-events: none;
-  z-index: 1005;
-}
-*/
 
 .site-header .page-link {
 color: #ffffff !important;
@@ -153,8 +126,6 @@ background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
 opacity: 0.95;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 }
 .footer-heading { color: #faf; }
 .footer-col-wrapper { color: #ffffff; }
@@ -164,6 +135,49 @@ width: 1.4em;
 height: 1.4em;
 vertical-align: -0.125em;
 color: inherit;
+}
+
+/* --- PAGE TRANSITION GLITCH LABEL (NO OVERLAY BOX / NO SHAKE) --- */
+#pageTransitionGlitch {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+#pageTransitionGlitch.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+#pageGlitchFxLayer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.page-glitch-label {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  font-family: "Amatic SC", sans-serif;
+  font-size: 2.6em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
 }
 
 /* --- GLITCH TEXT & IDLE MOTION ON BUTTONS --- */
@@ -228,8 +242,6 @@ background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
 opacity: 0.95;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 border: 2px solid #ff4d4d;
 border-radius: 12px;
 width: 100%;
@@ -284,8 +296,6 @@ color: #ff4d4d;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 opacity: 0.95;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 border: 1px solid #ff4d4d !important;
 border-radius: 6px;
 padding: 10px;
@@ -311,8 +321,6 @@ box-shadow: 0 0 8px rgba(255, 77, 77, 0.6);
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 background-size: auto !important;
-/*---backdrop-filter: blur(2px) !important;
--webkit-backdrop-filter: blur(2px) !important;--- */
 box-sizing: border-box;
 }
 
@@ -454,7 +462,7 @@ padding-bottom: 4px;
 display: flex;
 position: fixed;
 top: 15px;
-left: 15px;
+right: 75px;
 z-index: 1010;
 background-color: rgba(139, 0, 0, 0.7) !important;
 border: 1px solid #00ff66 !important;
@@ -517,8 +525,6 @@ height: 100vh;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
 opacity: 0.95;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
 box-shadow: none;
 padding: 20px 15px;
 overflow-y: auto;
@@ -607,7 +613,7 @@ display: inline-flex;
 align-items: center;
 }
 
-/* Mobile Author Block */
+/* Mobile Tokens & Authors Blocks */
 .nav-trigger:checked ~.trigger .menu-dropdown {
 display: flex !important;
 flex-direction: column !important;
@@ -616,12 +622,11 @@ width: 100% !important;
 background: transparent !important;
 border: none !important;
 padding: 0 !important;
-margin: 10px 0 0 0 !important;
+margin: 6px 0 0 0 !important;
 position: static !important;
 box-sizing: border-box !important;
 }
 
-/* Author Name Header */
 .nav-trigger:checked ~.trigger .dropdown-btn {
 display: block !important;
 color: #ffffff !important;
@@ -643,26 +648,82 @@ box-shadow: none !important;
 }
 .nav-trigger:checked~.trigger .dropdown-btn::after { display: none !important; }
 
-/* Mobile Author Social Buttons Layout */
-.nav-trigger:checked ~.trigger .dropdown-content {
+/* Mobile Tokens Dropdown Content */
+.nav-trigger:checked ~.trigger .tokens-list-dropdown {
 display: flex !important;
 position: static !important;
+flex-direction: column !important;
+gap: 10px !important;
+width: 100% !important;
+background: transparent !important;
+border: none !important;
+box-shadow: none !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+
+.nav-trigger:checked ~.trigger .tokens-list-dropdown .page-link {
+display: flex !important;
+align-items: center !important;
+justify-content: center !important;
+gap: 10px;
+padding: 12px 15px !important;
+background-color: rgba(183, 28, 28, 0.5) !important;
+border: 1px solid #ff4d4d !important;
+border-radius: 8px !important;
+color: #ffffff !important;
+text-decoration: none;
+font-size: 1.3em !important;
+width: 100% !important;
+min-height: 48px;
+font-weight: bold;
+box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Mobile Author Social Buttons Layout */
+.nav-trigger:checked ~.trigger .authors-list-dropdown {
+display: flex !important;
+position: static !important;
+flex-direction: column !important;
+align-items: center !important;
+gap: 12px !important;
+width: 100% !important;
+background: transparent !important;
+border: none !important;
+box-shadow: none !important;
+padding: 0 !important;
+margin: 0 !important;
+}
+
+.nav-trigger:checked ~.trigger .author-row {
+display: flex !important;
+flex-direction: column !important;
+align-items: center !important;
+gap: 8px !important;
+width: 100% !important;
+}
+
+.nav-trigger:checked ~.trigger .author-name-label {
+color: #ffffff !important;
+font-size: 1.35em !important;
+font-weight: bold !important;
+text-transform: uppercase !important;
+letter-spacing: 1px !important;
+text-shadow: 0px 1px 3px rgba(0,0,0,0.8) !important;
+}
+
+.nav-trigger:checked ~.trigger .author-socials-group {
+display: flex !important;
 flex-direction: row !important;
 flex-wrap: wrap !important;
 justify-content: center !important;
 align-items: center !important;
 gap: 10px !important;
 width: 100% !important;
-max-width: 100% !important;
-background: transparent !important;
-border: none !important;
-box-shadow: none !important;
-padding: 0 !important;
-margin: 0 !important;
-box-sizing: border-box !important;
 }
 
-.nav-trigger:checked ~.trigger .dropdown-content .page-link {
+.nav-trigger:checked ~.trigger .author-socials-group .page-link {
 font-size: 0 !important;
 display: inline-flex !important;
 align-items: center !important;
@@ -681,9 +742,9 @@ box-sizing: border-box !important;
 box-shadow: 0 4px 8px rgba(0,0,0,0.4) !important;
 }
 
-.nav-trigger:checked ~.trigger .dropdown-content .page-link i,
-.nav-trigger:checked ~.trigger .dropdown-content .page-link .rarible-icon,
-.nav-trigger:checked ~.trigger .dropdown-content .page-link .boosty-icon {
+.nav-trigger:checked ~.trigger .author-socials-group .page-link i,
+.nav-trigger:checked ~.trigger .author-socials-group .page-link .rarible-icon,
+.nav-trigger:checked ~.trigger .author-socials-group .page-link .boosty-icon {
 font-size: 22px !important;
 color: #ffffff !important;
 }
@@ -697,12 +758,55 @@ max-height: none !important;
 overflow-y: visible !important;
 }
 
+/* Desktop brand logo: plain phrase logo without button borders/background */
+.menu-single.brand-logo-item {
+margin-right: 14px;
+flex-shrink: 0;
+}
+
+.menu-single.brand-logo-item a.page-link {
+display: inline-flex !important;
+align-items: center;
+padding: 4px 2px !important;
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border: none !important;
+border-radius: 0 !important;
+box-shadow: none !important;
+text-decoration: none !important;
+color: #ffffff !important;
+font-family: "Amatic SC", sans-serif !important;
+font-size: 1.75em !important;
+font-weight: bold !important;
+letter-spacing: 1px;
+text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+animation: none !important;
+transform: none !important;
+filter: none !important;
+white-space: nowrap;
+}
+
+.menu-single.brand-logo-item a.page-link:hover,
+.menu-single.brand-logo-item a.page-link:focus,
+.menu-single.brand-logo-item a.page-link:active {
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border: none !important;
+box-shadow: none !important;
+transform: none !important;
+filter: none !important;
+text-decoration: none !important;
+color: #ffffff !important;
+}
+
 .menu-toggle { display: none; -webkit-tap-highlight-color: transparent; }
 .site-nav {
 display: flex;
 justify-content: center;
 align-items: center;
-padding: 0;
+padding: 0 14px;
 float: none;
 -webkit-tap-highlight-color: transparent;
 }
@@ -731,64 +835,188 @@ flex-wrap: nowrap !important;
 gap: 4px !important;
 align-items: center !important;
 }
+
 .menu-dropdown {
 position: relative;
 display: inline-flex;
 align-items: center;
 }
 .dropdown-btn::after {
-font-size: 10px;
+content: " ▾";
+font-size: 11px;
 color: #ffffff;
 margin-left: 4px;
 }
-.dropdown-content {
+
+/* Tokens dropdown panel: styled like author rows without button borders */
+.dropdown-content.tokens-list-dropdown {
 display: none;
 position: absolute;
 left: 0;
 top: 100%;
-min-width: auto !important;
+min-width: 190px !important;
 width: max-content;
 background-image: url('/assets/background.webp') !important;
 background-repeat: repeat !important;
-opacity: 0.95;
-/*---backdrop-filter: blur(2px);
--webkit-backdrop-filter: blur(2px);--- */
+opacity: 0.96;
 border: 1px solid #ff4d4d;
-border-radius: 0 0 4px 4px;
-box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+border-radius: 0 0 6px 6px;
+box-shadow: 0px 8px 18px rgba(0,0,0,0.6);
 z-index: 100;
 margin-top: 2px;
-padding: 6px;
-flex-direction: row !important;
-gap: 6px !important;
+padding: 10px 14px;
+flex-direction: column !important;
+gap: 8px !important;
 }
-.menu-dropdown:hover .dropdown-content { display: flex !important; }
-.dropdown-content a.page-link {
-font-size: 0 !important;
-padding: 0 !important;
-margin: 0 !important;
-width: 38px !important;
-height: 38px !important;
-display: inline-flex !important;
-align-items: center !important;
-justify-content: center !important;
-border: 1px solid #ff4d4d !important;
-border-radius: 6px !important;
-transition: all 0.2s !important;
+.menu-dropdown:hover .dropdown-content.tokens-list-dropdown {
+display: flex !important;
 }
 
-.dropdown-content a.page-link i,
-.dropdown-content a.page-link .rarible-icon,
-.dropdown-content a.page-link .boosty-icon {
-font-size: 18px !important;
-width: 18px !important;
-height: 18px !important;
+.tokens-list-dropdown a.page-link {
+display: inline-flex !important;
+align-items: center !important;
+justify-content: flex-start !important;
+gap: 10px !important;
+width: 100% !important;
+padding: 4px 2px !important;
+margin: 0 !important;
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border: none !important;
+border-bottom: 1px dashed rgba(255, 77, 77, 0.35) !important;
+border-radius: 0 !important;
+box-shadow: none !important;
+font-family: "Amatic SC", sans-serif !important;
+font-size: 1.35em !important;
+font-weight: bold !important;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9);
+color: #ffffff !important;
+transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+.tokens-list-dropdown a.page-link:last-child {
+border-bottom: none !important;
+}
+.tokens-list-dropdown a.page-link:hover {
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border-top: none !important;
+border-left: none !important;
+border-right: none !important;
+box-shadow: none !important;
+transform: translateX(3px);
+filter: brightness(1.25) !important;
+}
+.tokens-list-dropdown a.page-link i {
+font-size: 20px !important;
+width: 22px !important;
+height: 22px !important;
 display: inline-flex !important;
 align-items: center !important;
 justify-content: center !important;
 color: #ffffff !important;
 }
-.dropdown-content a.page-link svg {
+
+/* Authors dropdown panel: list of author names on left, social icons on right */
+.dropdown-content.authors-list-dropdown {
+display: none;
+position: absolute;
+left: 0;
+top: 100%;
+min-width: 225px !important;
+width: max-content;
+background-image: url('/assets/background.webp') !important;
+background-repeat: repeat !important;
+opacity: 0.96;
+border: 1px solid #ff4d4d;
+border-radius: 0 0 6px 6px;
+box-shadow: 0px 8px 18px rgba(0,0,0,0.6);
+z-index: 100;
+margin-top: 2px;
+padding: 10px 12px;
+flex-direction: column !important;
+gap: 8px !important;
+}
+.menu-dropdown:hover .dropdown-content.authors-list-dropdown {
+display: flex !important;
+}
+
+.author-row {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 14px;
+padding: 4px 2px;
+border-bottom: 1px dashed rgba(255, 77, 77, 0.35);
+}
+.author-row:last-child {
+border-bottom: none;
+padding-bottom: 2px;
+}
+
+.author-name-label {
+color: #ffffff;
+font-family: "Amatic SC", sans-serif;
+font-size: 1.35em;
+font-weight: bold;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9);
+white-space: nowrap;
+user-select: none;
+cursor: default;
+}
+
+.author-socials-group {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+flex-shrink: 0;
+}
+
+/* Strictly borderless & backgroundless social icons ONLY inside Authors dropdown */
+.authors-list-dropdown .author-socials-group a.page-link {
+font-size: 0 !important;
+padding: 0 !important;
+margin: 0 !important;
+width: 28px !important;
+height: 28px !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border: none !important;
+border-radius: 0 !important;
+box-shadow: none !important;
+transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+.authors-list-dropdown .author-socials-group a.page-link:hover {
+background: transparent !important;
+background-color: transparent !important;
+background-image: none !important;
+border: none !important;
+box-shadow: none !important;
+transform: scale(1.15);
+filter: brightness(1.3) !important;
+}
+
+.authors-list-dropdown .author-socials-group a.page-link i,
+.authors-list-dropdown .author-socials-group a.page-link .rarible-icon,
+.authors-list-dropdown .author-socials-group a.page-link .boosty-icon {
+font-size: 21px !important;
+width: 21px !important;
+height: 21px !important;
+display: inline-flex !important;
+align-items: center !important;
+justify-content: center !important;
+color: #ffffff !important;
+}
+.authors-list-dropdown .author-socials-group a.page-link svg {
 width: 100% !important;
 height: 100% !important;
 }
@@ -807,8 +1035,6 @@ max-width: none !important;
 padding: 8px 14px !important;
 margin: 0 !important;
 background-color: rgba(183, 28, 28, 0.45) !important;
-border: 1px solid #ff4d4d !important;
-border-radius: 4px !important;
 font-size: 15px !important;
 color: #ffffff !important;
 text-decoration: none;
@@ -827,10 +1053,8 @@ white-space: nowrap;
   gap: 6px !important;
   width: auto !important;
   max-width: none !important;
-  padding: 2px 10px !important;
+  padding: 8px 14px !important;
   margin: 0 !important;
-  border-radius: 4px !important;
-  font-size: 1.4em !important;
   text-decoration: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -838,34 +1062,27 @@ white-space: nowrap;
   font-weight: bold !important;
   text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.8);
   white-space: nowrap;
-  font-family: "Amatic SC", sans-serif !important;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Кнопка Lilpitkun */
-.menu-dropdown:nth-last-of-type(2) .dropdown-btn {
-  background-color: rgba(50, 30, 90, 0.85) !important;
-  border: 1px solid #b19cd9 !important;
+  font-size: inherit !important;
   color: #ffffff !important;
 }
-.menu-dropdown:nth-last-of-type(2) .dropdown-btn:hover {
-  background-color: rgba(75, 45, 130, 0.95) !important;
-  border-color: #d1c2e0 !important;
-  box-shadow: 0 0 10px rgba(177, 156, 217, 0.5) !important;
+
+/* Tokens dropdown button */
+.menu-dropdown.tokens-dropdown .dropdown-btn {
+  background-color: rgba(20, 70, 50, 0.85) !important;
+  color: #ffffff !important;
+}
+.menu-dropdown.tokens-dropdown .dropdown-btn:hover {
+  background-color: rgba(30, 100, 70, 0.95) !important;
   filter: brightness(1.25) !important;
 }
 
-/* Кнопка Cattopainter */
-.menu-dropdown:last-of-type .dropdown-btn {
-  background-color: rgba(20, 70, 50, 0.85) !important;
-  border: 1px solid #7bc79d !important;
+/* Authors dropdown button */
+.menu-dropdown.authors-dropdown .dropdown-btn {
+  background-color: rgba(85, 35, 115, 0.85) !important;
   color: #ffffff !important;
 }
-.menu-dropdown:last-of-type .dropdown-btn:hover {
-  background-color: rgba(30, 100, 70, 0.95) !important;
-  border-color: #9ee0b8 !important;
-  box-shadow: 0 0 10px rgba(123, 199, 157, 0.5) !important;
+.menu-dropdown.authors-dropdown .dropdown-btn:hover {
+  background-color: rgba(115, 45, 150, 0.95) !important;
   filter: brightness(1.25) !important;
 }
 
@@ -894,6 +1111,12 @@ main { margin-top: 0px; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
+<!-- Page loading label (without overlay box) -->
+<div id="pageTransitionGlitch" aria-hidden="true">
+  <div id="pageGlitchFxLayer"></div>
+  <div class="page-glitch-label" id="pageTransitionGlitchLabel">Loading...</div>
+</div>
+
 <!-- Floating mobile login button -->
 <div class="mobile-login-trigger" id="mobileAuthBtn">
 <i class="bi bi-box-arrow-in-right"></i>
@@ -908,7 +1131,7 @@ main { margin-top: 0px; }
 <div class="trigger">
 {% assign authors_str = "" %}
 {% for item in site.nav %}
-{% assign parts = item.title | split: ' '%}
+{% assign parts = item.title | split: ' ' %}
 {% if parts[1] %}
 {% unless authors_str contains parts[1] %}
 {% assign authors_str = authors_str | append: parts[1] | append: "," %}
@@ -916,53 +1139,52 @@ main { margin-top: 0px; }
 {% endif %}
 {% endfor %}
 {% assign authors = authors_str | split: "," %}
+
 <div class="menu-grid">
 <div class="menu-main-row">
 
-<!-- Desktop Log In button on panel (Moved to the very left) -->
-<div class="menu-single desktop-only-login">
-<a class="page-link" id="desktopAuthBtn">
-<i class="bi bi-box-arrow-in-right" id="desktopAuthIcon"></i><span id="desktopAuthText" class="glitch-text">Log In</span>
-</a>
-</div>
-
 {% for item in site.nav %}
-{% assign parts = item.title | split: ' '%}
+{% assign parts = item.title | split: ' ' %}
 {% unless parts[1] %}
-<div class="menu-single">
-<a class="page-link" href="{{ item.url}}" title="{{ item.title}}" data-service="{{ parts[0] }}">
-<i class="bi bi-{% case parts[0] %} {% when 'home' %} house-door {% when 'secretfiles' %}lock {% else %} {{ parts[0] }}{% endcase %}"></i>
-<span class="glitch-text">{{ parts[0]}}</span>
+<div class="menu-single{% if parts[0] == 'runrabb1tjunk' %} brand-logo-item{% endif %}">
+<a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}">
+{% unless parts[0] == 'runrabb1tjunk' %}
+<i class="bi bi-{% case parts[0] %}{% when 'home' %}house-door{% when 'secretfiles' %}lock{% else %}{{ parts[0] }}{% endcase %}"></i>
+{% endunless %}
+<span class="glitch-text">{{ parts[0] }}</span>
 </a>
 </div>
 {% endunless %}
 {% endfor %}
 
-<!-- KOWASUGI (Polygon Token Link) -->
-<div class="menu-single">
-  <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
-    <i class="bi bi-currency-exchange"></i> <span class="glitch-text">KOWASUGI</span>
-  </a>
+<!-- Tokens Dropdown Button (KOWASUGI & CONCEAL) -->
+<div class="menu-dropdown tokens-dropdown">
+  <div class="dropdown-btn"><i class="bi bi-coin"></i> <span class="glitch-text">Tokens</span></div>
+  <div class="dropdown-content tokens-list-dropdown">
+    <a class="page-link" href="https://app.uniswap.org/explore/tokens/polygon/0x3047511c064ba6319814aa80b56d3e97002cb343" title="kowasugi" data-service="kowasugi" target="_blank" rel="noopener noreferrer">
+      <i class="bi bi-currency-exchange"></i> <span class="glitch-text">KOWASUGI</span>
+    </a>
+    <a class="page-link" href="https://dapp.quickswap.exchange/swap?type=best&from=ETH&to=0x137Ee749f0F8c2eD34cA00dE33BB59E3dafA494A&chainId=137" title="conceal" data-service="conceal" target="_blank" rel="noopener noreferrer">
+      <i class="bi bi-shield-lock"></i> <span class="glitch-text">CONCEAL</span>
+    </a>
+  </div>
 </div>
 
-<!-- CONCEAL (Polygon Token Link) -->
-<div class="menu-single">
-  <a class="page-link" href="https://dapp.quickswap.exchange/swap?type=best&from=ETH&to=0x137Ee749f0F8c2eD34cA00dE33BB59E3dafA494A&chainId=137" title="conceal" data-service="conceal" target="_blank" rel="noopener noreferrer">
-    <i class="bi bi-shield-lock"></i> <span class="glitch-text">CONCEAL</span>
-  </a>
-</div>
-
+<!-- Single Authors Dropdown Button -->
+<div class="menu-dropdown authors-dropdown">
+<div class="dropdown-btn"><i class="bi bi-people-fill"></i> <span class="glitch-text">Authors</span></div>
+<div class="dropdown-content authors-list-dropdown">
 {% for author in authors %}
 {% if author != "" and author != "runrabb1tjunk" %}
-<div class="menu-dropdown">
-<div class="dropdown-btn"><span class="glitch-text">{{ author }}</span></div>
-<div class="dropdown-content">
+<div class="author-row">
+<span class="author-name-label">{{ author }}</span>
+<div class="author-socials-group">
 {% for item in site.nav %}
-{% assign parts = item.title | split: ' '%}
+{% assign parts = item.title | split: ' ' %}
 {% if parts[1] == author %}
-<a class="page-link" href="{{ item.url}}" title="{{ item.title }}" data-service="{{ parts[0] }}" data-author="{{ author | downcase }}">
+<a class="page-link" href="{{ item.url }}" title="{{ item.title }}" data-service="{{ parts[0] }}" data-author="{{ author | downcase }}">
 {% if parts[0] == 'rarible' %}
-<i class="rarible-icon"> {% include Rarible.svg %}</i>
+<i class="rarible-icon">{% include Rarible.svg %}</i>
 {% elsif parts[0] == 'boosty' %}
 <i class="boosty-icon">{% include boosty.svg %}</i>
 {% else %}
@@ -976,6 +1198,16 @@ main { margin-top: 0px; }
 </div>
 {% endif %}
 {% endfor %}
+</div>
+</div>
+
+<!-- Desktop Log In button next to other menu items -->
+<div class="menu-single desktop-only-login">
+<a class="page-link" id="desktopAuthBtn">
+<i class="bi bi-box-arrow-in-right" id="desktopAuthIcon"></i><span id="desktopAuthText" class="glitch-text">Log In</span>
+</a>
+</div>
+
 </div>
 </div>
 </div>
@@ -1060,6 +1292,135 @@ main { margin-top: 0px; }
 
 <script src="https://unpkg.com/powerglitch@latest/dist/powerglitch.min.js"></script>
 <script>
+(function() {
+  const host = document.getElementById('pageTransitionGlitch');
+  const fxLayer = document.getElementById('pageGlitchFxLayer');
+  const label = document.getElementById('pageTransitionGlitchLabel');
+  if (!host) return;
+
+  let fxGlitchCtrl = null;
+  let labelGlitchCtrl = null;
+  let hideTimer = null;
+  let safetyTimer = null;
+
+  function initGlitches() {
+    if (typeof PowerGlitch === 'undefined') return;
+
+    if (!fxGlitchCtrl && fxLayer) {
+      fxGlitchCtrl = PowerGlitch.glitch(fxLayer, {
+        playMode: 'manual',
+        createContainers: true,
+        hideOverflow: false,
+        timing: { duration: 900, iterations: Infinity },
+        glitchTimeSpan: { start: 0, end: 1 },
+        shake: false,
+        slice: { count: 6, velocity: 14, minHeight: 0.02, maxHeight: 0.14, hueRotate: true },
+        pulse: false
+      });
+    }
+
+    if (!labelGlitchCtrl && label) {
+      labelGlitchCtrl = PowerGlitch.glitch(label, {
+        playMode: 'manual',
+        createContainers: true,
+        hideOverflow: false,
+        timing: { duration: 900, iterations: Infinity },
+        glitchTimeSpan: { start: 0, end: 1 },
+        shake: false,
+        slice: { count: 5, velocity: 14, minHeight: 0.02, maxHeight: 0.14, hueRotate: true },
+        pulse: false
+      });
+    }
+  }
+
+  function startPageGlitch(text = 'Loading...') {
+    if (label) label.textContent = text;
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    if (safetyTimer) {
+      clearTimeout(safetyTimer);
+      safetyTimer = null;
+    }
+
+    initGlitches();
+    host.style.opacity = '';
+    host.style.visibility = '';
+    host.classList.add('active');
+
+    if (fxGlitchCtrl && typeof fxGlitchCtrl.startGlitch === 'function') {
+      fxGlitchCtrl.startGlitch();
+    }
+    if (labelGlitchCtrl && typeof labelGlitchCtrl.startGlitch === 'function') {
+      labelGlitchCtrl.startGlitch();
+    }
+
+    safetyTimer = setTimeout(stopPageGlitch, 4000);
+  }
+
+  function stopPageGlitch() {
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    if (safetyTimer) {
+      clearTimeout(safetyTimer);
+      safetyTimer = null;
+    }
+
+    host.style.opacity = '0';
+    hideTimer = setTimeout(() => {
+      host.classList.remove('active');
+      host.style.opacity = '';
+      if (fxGlitchCtrl && typeof fxGlitchCtrl.stopGlitch === 'function') {
+        fxGlitchCtrl.stopGlitch();
+      }
+      if (labelGlitchCtrl && typeof labelGlitchCtrl.stopGlitch === 'function') {
+        labelGlitchCtrl.stopGlitch();
+      }
+    }, 220);
+  }
+
+  startPageGlitch('Loading...');
+
+  if (document.readyState === 'complete') {
+    setTimeout(stopPageGlitch, 120);
+  } else {
+    window.addEventListener('load', () => {
+      setTimeout(stopPageGlitch, 120);
+    }, { once: true });
+  }
+
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) stopPageGlitch();
+  });
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    if (link.target === '_blank' || link.hasAttribute('download')) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+
+    const rawHref = link.getAttribute('href');
+    if (!rawHref || rawHref.startsWith('#') || rawHref.startsWith('javascript:') || rawHref.startsWith('mailto:')) {
+      return;
+    }
+
+    try {
+      const url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
+
+      startPageGlitch('Loading...');
+    } catch (_) {}
+  }, true);
+
+  window.addEventListener('beforeunload', () => {
+    startPageGlitch('Loading...');
+  });
+})();
+
 const WORKER_URL = "https://nameless-snow-f3b7.fgfg57468.workers.dev";
 const modal = document.getElementById('authModal');
 const authCard = document.getElementById('authCard');
@@ -1132,7 +1493,6 @@ const glitchInstances = new WeakMap();
 function attachGlitchToSpan(textSpan, parentBtn) {
   if (!textSpan || typeof PowerGlitch === 'undefined') return;
 
-  // Очищаем предыдущие обработчики, если элемент уже инициализировался
   const prev = glitchInstances.get(textSpan);
   if (prev && prev.cleanup) {
     prev.cleanup();
@@ -1141,7 +1501,6 @@ function attachGlitchToSpan(textSpan, parentBtn) {
   const idleGlitch = PowerGlitch.glitch(textSpan, idleGlitchOptions);
   const hoverGlitch = PowerGlitch.glitch(textSpan, glitchOptions);
 
-  // Явно запускаем idle-анимацию сразу после создания
   if (idleGlitch && typeof idleGlitch.startGlitch === 'function') {
     idleGlitch.startGlitch();
   }
@@ -1232,7 +1591,6 @@ document.addEventListener("DOMContentLoaded", () => {
     checkInstalledWallets();
     setupButtonHoverGlitch();
 
-    // Повторный пинок idle-анимации после полной отрисовки шрифтов и верстки
     requestAnimationFrame(() => refreshIdleGlitches());
     window.addEventListener('load', () => refreshIdleGlitches(), { once: true });
 });
